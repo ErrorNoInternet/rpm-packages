@@ -34,7 +34,7 @@ On terminals that implement the Kitty Graphics Protocol or the iTerm2 Graphics P
 %build
 mkdir build
 cd build
-%cmake
+%cmake ..
 %make_build
 
 %install
