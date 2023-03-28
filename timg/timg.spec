@@ -1,11 +1,13 @@
-Name:           timg
-Version:        1.4.5
-Release:        1%{?dist}
-Summary:        A terminal image and video viewer.
+%global srcname timg
 
-License:        GPL-2.0
-URL:            https://timg.sh
-Source0:        https://github.com/hzeller/timg
+Name: timg
+Version: 1.4.5
+Release: 1%{?dist}
+Summary: A terminal image and video viewer.
+
+License: GPL-2.0
+URL: https://timg.sh
+Source0: https://github.com/hzeller/timg/releases/tag/v%{version}
 
 BuildRequires: cmake
 BuildRequires: git
@@ -21,7 +23,6 @@ BuildRequires: libavdevice-free-devel
 BuildRequires: openslide-devel
 BuildRequires: pandoc
 BuildRequires: zlib-devel
-Requires:
 
 %description
 A user-friendly viewer that uses 24-Bit color capabilities and unicode character blocks to display images, animations and videos in the terminal.
@@ -30,24 +31,19 @@ On terminals that implement the Kitty Graphics Protocol or the iTerm2 Graphics P
 %prep
 %autosetup
 
-
 %build
 %configure
 %make_build
 
-
 %install
 %make_install
 
-
 %check
 
-
 %files
-%{_bindir}/timg
-%{_mandir}/timg.1
 %license LICENSE
 %doc README.md
-
+%{_bindir}/timg
+%{_mandir}/timg.1
 
 %changelog
