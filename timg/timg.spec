@@ -7,7 +7,7 @@ Summary: A terminal image and video viewer.
 
 License: GPL-2.0
 URL: https://timg.sh
-Source0: https://github.com/hzeller/timg/releases/tag/v%{version}
+Source0: https://github.com/hzeller/timg/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires: cmake
 BuildRequires: git
@@ -32,13 +32,11 @@ On terminals that implement the Kitty Graphics Protocol or the iTerm2 Graphics P
 %autosetup
 
 %build
-%configure
+%cmake
 %make_build
 
 %install
 %make_install
-
-%check
 
 %files
 %license LICENSE
