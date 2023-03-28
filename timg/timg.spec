@@ -32,9 +32,6 @@ On terminals that implement the Kitty Graphics Protocol or the iTerm2 Graphics P
 %autosetup
 
 %build
-%cmake
-mkdir build
-cd build
 %make_build
 
 %install
