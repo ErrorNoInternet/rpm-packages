@@ -25,6 +25,8 @@ BuildRequires: pandoc
 BuildRequires: zlib-devel
 
 %description
+Upstream: https://github.com/hzeller/timg
+
 A user-friendly viewer that uses 24-Bit color capabilities and unicode character blocks to display images, animations and videos in the terminal.
 On terminals that implement the Kitty Graphics Protocol or the iTerm2 Graphics Protocol this displays images in full resolution.
 
