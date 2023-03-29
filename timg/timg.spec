@@ -7,7 +7,7 @@ Summary: A terminal image and video viewer
 
 License: GPL-2.0-or-later
 URL: https://timg.sh
-Source: https://codeload.github.com/hzeller/timg/tar.gz/refs/tags/v%{version}
+Source: https://github.com/hzeller/timg/archive/v%{version}.tar.gz
 
 BuildRequires: cmake
 BuildRequires: git
