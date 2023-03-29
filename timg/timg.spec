@@ -1,7 +1,7 @@
 %global srcname timg
 
 Name: timg
-Version: main
+Version: 1.4.5
 Release: %autorelease
 Summary: A terminal image and video viewer
 
@@ -45,9 +45,3 @@ On terminals that implement the Kitty Graphics Protocol or the iTerm2 Graphics P
 %{_mandir}/timg.1
 
 %changelog
-* Wed Mar 29 2023 ErrorNoInternet <error.nointernet@gmail.com> main-1
-- change tag
-
-* Wed Mar 29 2023 ErrorNoInternet <error.nointernet@gmail.com> 1.4.5-1
-- new package built with tito
-
