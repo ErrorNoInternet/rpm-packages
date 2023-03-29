@@ -6,8 +6,8 @@ Release: %autorelease
 Summary: A terminal image and video viewer
 
 License: GPL-2.0-or-later
-URL: https://timg.sh
-Source: https://github.com/hzeller/timg/archive/v%{version}.tar.gz
+URL: https://github.com/hzeller/timg
+Source: %{url}/archive/v%{version}.tar.gz
 
 BuildRequires: cmake
 BuildRequires: git
@@ -29,13 +29,16 @@ A user-friendly viewer that uses 24-Bit color capabilities and unicode character
 On terminals that implement the Kitty Graphics Protocol or the iTerm2 Graphics Protocol this displays images in full resolution.
 
 %prep
+mkdir build
 %autosetup
 
 %build
-%cmake
+cd build
+cmake ..
 %make_build
 
 %install
+cd build
 %make_install
 
 %files
