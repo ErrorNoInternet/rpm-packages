@@ -44,7 +44,6 @@ cd build
 %files
 %license LICENSE
 %doc README.md
-%{_bindir}/timg
-%{_mandir}/timg.1
+%{_prefix}/bin/timg
 
 %changelog
