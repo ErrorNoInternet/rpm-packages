@@ -1,7 +1,7 @@
 %global srcname timg
 
 Name: timg
-Version: 1.4.5
+Version: 1.4.6
 Release: %autorelease
 Summary: A terminal image and video viewer
 
@@ -48,3 +48,6 @@ cd build
 /usr/local/bin/timg
 
 %changelog
+* Wed Mar 29 2023 ErrorNoInternet <error.nointernet@gmail.com> 1.4.6-1
+- new package built with tito
+
