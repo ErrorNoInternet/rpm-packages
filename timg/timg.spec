@@ -2,7 +2,7 @@
 
 Name: timg
 Version: 1.4.5
-Release: 1%{?dist}
+Release: %autorelease
 Summary: A terminal image and video viewer
 
 License: GPL-2.0-or-later
