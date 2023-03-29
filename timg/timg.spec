@@ -44,6 +44,7 @@ cd build
 %files
 %license LICENSE
 %doc README.md
+/usr/local/share/man/man1/timg.1
 /usr/local/bin/timg
 
 %changelog
