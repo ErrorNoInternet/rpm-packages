@@ -10,8 +10,6 @@ Source0: %{url}/archive/%{version}.tar.gz
 BuildRequires: cmake extra-cmake-modules kf5-kconfig-devel kf5-kconfigwidgets-devel kf5-kcoreaddons-devel kf5-kwindowsystem-devel kwin-devel libepoxy-devel qt5-qtbase-devel
 
 %description
-Upstream: %{url}
-
 This is a simple effect that makes notification windows slide in and out when they are shown or hidden.
 
 %prep
