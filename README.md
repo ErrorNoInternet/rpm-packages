@@ -1,5 +1,5 @@
 # rpm-specs
-A repository for all the Fedora .spec files that I maintain (primarily on COPR)
+A repository for all the RPM .spec files that I maintain (primarily on Fedora COPR)
 
 If any packages are outdated, please [create an issue](https://github.com/ErrorNoInternet/rpm-specs/issues/new) (or make a PR)
 
