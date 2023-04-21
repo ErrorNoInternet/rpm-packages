@@ -1,7 +1,7 @@
 # rpm-specs
 A repository for all the RPM .spec files that I maintain (primarily on Fedora COPR)
 
-If any packages are outdated, please [create an issue](https://github.com/ErrorNoInternet/rpm-specs/issues/new) (or make a PR)
+If any packages are not working properly or are outdated, please [create an issue](https://github.com/ErrorNoInternet/rpm-specs/issues/new) or [submit a pull request](https://github.com/ErrorNoInternet/rpm-specs/pulls)
 
 ## Packages
 - [timg](https://github.com/hzeller/timg): A terminal image and video viewer ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/timg))
