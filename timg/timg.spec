@@ -1,5 +1,3 @@
-%global srcname timg
-
 Name: timg
 Version: 1.4.5
 Release: %autorelease
