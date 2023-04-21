@@ -1,0 +1,37 @@
+Name: kwin-effects-sliding-notifications
+Version: 1.5.0
+Release: %{autorelease}
+Summary: Sliding animation for notification windows
+
+License: GPL-3.0-or-later
+URL: https://github.com/zzag/kwin-effects-sliding-notifications
+Source0: %{url}/archive/%{version}.tar.gz
+
+BuildRequires: cmake extra-cmake-modules kf5-kconfig-devel kf5-kconfigwidgets-devel kf5-kcoreaddons-devel kf5-kwindowsystem-devel kwin-devel libepoxy-devel qt5-qtbase-devel
+
+%description
+Upstream: %{url}
+
+This is a simple effect that makes notification windows slide in and out when they are shown or hidden.
+
+%prep
+%autosetup -n %{name}-%{version}
+
+%build
+mkdir build
+cd build
+cmake .. \
+    -DCMAKE_BUILD_TYPE=Release \
+    -DCMAKE_INSTALL_PREFIX=/usr
+%make_build
+
+%install
+cd build
+%make_install
+
+%files
+/usr/lib64/qt5/plugins/kwin/effects/plugins/kwin4_effect_slidingnotifications.so
+
+%changelog
+* Fri Apr 21 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.0-1
+- Hello, world!
