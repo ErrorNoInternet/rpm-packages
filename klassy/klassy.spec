@@ -27,11 +27,6 @@ cd build
 
 %files
 /usr/bin/klassy-settings
-/usr/lib/debug/usr/bin/klassy-settings-4.1.breeze5.25.80-1.fc38.x86_64.debug
-/usr/lib/debug/usr/lib64/libklassycommon5.so.4.1.breeze5.25.80-4.1.breeze5.25.80-1.fc38.x86_64.debug
-/usr/lib/debug/usr/lib64/qt5/plugins/kstyle_klassy_config.so-4.1.breeze5.25.80-1.fc38.x86_64.debug
-/usr/lib/debug/usr/lib64/qt5/plugins/org.kde.kdecoration2/klassydecoration.so-4.1.breeze5.25.80-1.fc38.x86_64.debug
-/usr/lib/debug/usr/lib64/qt5/plugins/styles/klassy.so-4.1.breeze5.25.80-1.fc38.x86_64.debug
 /usr/lib64/cmake/Klassy/KlassyConfig.cmake
 /usr/lib64/cmake/Klassy/KlassyConfigVersion.cmake
 /usr/lib64/libklassycommon5.so.4.1.breeze5.25.80
