@@ -1,7 +1,7 @@
 Name: klassy
 Version: 4.1.breeze5.25.80
 Release: %{autorelease}
-Summary: Klassy is a highly customizable KDE Plasma Window Decoration
+Summary: A highly customizable KDE Plasma Window Decoration
 
 License: BSD-3-Clause AND CC0-1.0 AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND MIT
 URL: https://github.com/paulmcauley/klassy
