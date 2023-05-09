@@ -1,5 +1,5 @@
 Name: klassy
-Version: 4.1.breeze5.25.80
+Version: 4.2.breeze5.26
 Release: %{autorelease}
 Summary: A highly customizable KDE Plasma Window Decoration
 
@@ -29,7 +29,7 @@ cd build
 /usr/bin/klassy-settings
 /usr/lib64/cmake/Klassy/KlassyConfig.cmake
 /usr/lib64/cmake/Klassy/KlassyConfigVersion.cmake
-/usr/lib64/libklassycommon5.so.4.1.breeze5.25.80
+/usr/lib64/libklassycommon5.so.%{version}
 /usr/lib64/libklassycommon5.so.5
 /usr/lib64/qt5/plugins/kstyle_klassy_config.so
 /usr/lib64/qt5/plugins/org.kde.kdecoration2/klassydecoration.so
