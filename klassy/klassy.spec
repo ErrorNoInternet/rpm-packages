@@ -19,7 +19,7 @@ Klassy is a highly customizable binary Window Decoration and Application Style p
 mkdir build
 cd build
 cmake .. -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
-make -j$(nproc)
+%make_build
 
 %install
 cd build
