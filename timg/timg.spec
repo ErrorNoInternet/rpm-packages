@@ -7,20 +7,7 @@ License: GPL-2.0-or-later
 URL: https://github.com/hzeller/timg
 Source0: %{url}/archive/v%{version}.tar.gz
 
-BuildRequires: cmake
-BuildRequires: git
-BuildRequires: g++
-BuildRequires: pkg-config
-BuildRequires: GraphicsMagick-c++-devel
-BuildRequires: turbojpeg-devel
-BuildRequires: libexif-devel
-BuildRequires: libswscale-free-devel
-BuildRequires: libavcodec-free-devel
-BuildRequires: libavformat-free-devel
-BuildRequires: libavdevice-free-devel
-BuildRequires: openslide-devel
-BuildRequires: pandoc
-BuildRequires: zlib-devel
+BuildRequires: cmake git g++ pkg-config GraphicsMagick-c++-devel turbojpeg-devel libexif-devel libswscale-free-devel libavcodec-free-devel libavformat-free-devel libavdevice-free-devel openslide-devel pandoc zlib-devel
 
 %description
 A user-friendly viewer that uses 24-Bit color capabilities and unicode character blocks to display images, animations and videos in the terminal.
