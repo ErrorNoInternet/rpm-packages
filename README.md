@@ -1,7 +1,7 @@
 # rpm-specs
 A repository for all the RPM .spec files that I maintain (primarily on Fedora COPR).
 
-The packages are automatically updated by running a [script](/update.sh) that uses the GitHub API to fetch the latest releases from each repository.\
+The packages are automatically updated by a [script](/update.sh) that fetches the latest releases from the GitHub API.\
 The script is ran by GitHub actions every 12 hours.
 
 If anything is wrong with the packages, please [create an issue](https://github.com/ErrorNoInternet/rpm-specs/issues/new) (or [submit a pull request](https://github.com/ErrorNoInternet/rpm-specs/compare)).\
