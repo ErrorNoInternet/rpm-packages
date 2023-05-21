@@ -31,12 +31,13 @@ cd build
 /usr/lib64/cmake/Klassy/KlassyConfigVersion.cmake
 /usr/lib64/libklassycommon5.so.%{version}
 /usr/lib64/libklassycommon5.so.5
-/usr/lib64/qt5/plugins/kstyle_klassy_config.so
 /usr/lib64/qt5/plugins/org.kde.kdecoration2/klassydecoration.so
 /usr/lib64/qt5/plugins/styles/klassy.so
+/usr/lib64/qt5/plugins/plasma/kcms/klassy/kcm_klassydecoration.so
+/usr/lib64/qt5/plugins/plasma/kcms/systemsettings_qwidgets/klassystyleconfig.so
+/usr/share/applications/kcm_klassydecoration.desktop
+/usr/share/applications/klassystyleconfig.desktop
 /usr/share/icons/hicolor/scalable/apps/klassy-settings.svgz
-/usr/share/kservices5/klassydecorationconfig.desktop
-/usr/share/kservices5/klassystyleconfig.desktop
 /usr/share/kstyle/themes/klassy.themerc
 
 %changelog
