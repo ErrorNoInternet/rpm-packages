@@ -7,7 +7,7 @@ for file in $(find . -type f -name "*.spec"); do
 	repository=$(echo $url | sed -n 's|.*github.com/\(.*\)$|\1|p')
 	api_response=$(curl -s "https://api.github.com/repos/$repository/releases/latest")
 	if [[ $? -ne 0 ]]; then
-		echo failed to request latest version for $repository!
+		echo "failed to request latest version for $repository!"
 		continue
 	fi
 
