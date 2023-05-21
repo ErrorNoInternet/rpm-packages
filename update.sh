@@ -20,19 +20,23 @@ for file in $(find . -type f -name "*.spec"); do
 		echo "modifying version in file..."
 		updated_file=$(cat $file | sed "s|Version: $version|Version: $latest_version|")
 		echo "$updated_file" > $file
-	
+
 		echo "running git add && git commit..."
+		echo "=========="
 		git add $file
 		git commit -m "Update $repository"
+		echo "=========="
 
 		modified=true
 		echo "successfully updated $file from $version to $latest_version!"
 	else
-		echo "$file is up-to-date ($version)"
+		echo "$file is up-to-date ($latest_version)"
 	fi
 done
 
 if [[ $modified = true ]]; then
 	echo "running git push..."
+	echo "=========="
 	git push
+	echo "=========="
 fi
