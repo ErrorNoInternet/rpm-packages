@@ -1,5 +1,5 @@
 Name: timg
-Version: 
+Version: 1.4.5
 Release: %{autorelease}
 Summary: A terminal image and video viewer
 
