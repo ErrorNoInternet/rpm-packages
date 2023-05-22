@@ -1,5 +1,5 @@
 Name: klassy
-Version: 4.3.breeze5.27.5
+Version: 
 Release: %{autorelease}
 Summary: A highly customizable KDE Plasma Window Decoration
 
