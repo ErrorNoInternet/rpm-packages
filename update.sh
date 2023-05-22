@@ -8,10 +8,16 @@ for file in $(find . -type f -name "*.spec"); do
 	api_response=$(curl -s "https://api.github.com/repos/$repository/releases/latest")
 	if [[ $? -ne 0 ]]; then
 		echo "failed to request latest version for $repository!"
+		echo -e "api response:\n$api_response"
 		continue
 	fi
 
 	latest_version=$(echo "$api_response" | grep --color=never tag_name | sed -n 's|.*".*": "\(.*\)".*|\1|p' | sed 's|^v||')
+	if [[ -z "$latest_version" ]]; then
+		echo "failed to request latest version for $repository!"
+		echo -e "api response:\n$api_response"
+		continue
+	fi
 	version=$(cat $file | grep "Version: " | cut -d' ' -f2)
 
 	if [[ "$version" != "$latest_version" ]]; then
