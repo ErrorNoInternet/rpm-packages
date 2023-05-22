@@ -1,5 +1,5 @@
 Name: kwin-effects-sliding-notifications
-Version: 
+Version: 1.5.0
 Release: %{autorelease}
 Summary: Sliding animation for notification windows
 
