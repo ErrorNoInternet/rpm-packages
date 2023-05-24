@@ -1,6 +1,6 @@
 Name: timg
 Version: 1.4.5
-Release: %{autorelease}
+Release: 2%{?dist}
 Summary: A terminal image and video viewer
 
 License: GPL-2.0-or-later
@@ -19,7 +19,7 @@ On terminals that implement the Kitty Graphics Protocol or the iTerm2 Graphics P
 %build
 mkdir build
 cd build
-cmake ..
+cmake -DCMAKE_INSTALL_PREFIX:PATH=/usr ..
 %make_build
 
 %install
@@ -27,9 +27,12 @@ cd build
 %make_install
 
 %files
-/usr/local/share/man/man1/timg.1
-/usr/local/bin/timg
+/usr/share/man/man1/timg.1.gz
+/usr/bin/timg
 
 %changelog
+* Wed May 24 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-2
+- Install to /usr instead of /usr/local
+
 * Fri Apr 21 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-1
 - Hello, world!
