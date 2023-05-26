@@ -23,8 +23,11 @@ for file in $(find . -type f -name "*.spec"); do
 	if [[ "$version" != "$latest_version" ]]; then
 		echo "$file is not up-to-date ($version -> $latest_version)"
 
+		updated_file=$(cat $file)
 		echo "modifying version in file..."
-		updated_file=$(cat $file | sed "s|Version: $version|Version: $latest_version|")
+		updated_file=$(echo "$updated_file" | sed "s|Version: $version|Version: $latest_version|")
+		echo "modifying release in file..."
+		updated_file=$(echo "$updated_file" | sed "s|Release: [0-9]\+%{?dist}|Release: 1%{?dist}|")
 		echo "$updated_file" > $file
 
 		echo "running git add && git commit..."
