@@ -21,6 +21,8 @@ similar to mhddfs, unionfs, and aufs.
 %autosetup -n %{name}-%{version}
 
 %build
+mv libfuse/Makefile tmp-Makefile
+sed 's/chown/echo/g' tmp-Makefile > libfuse/Makefile
 make %{?_smp_mflags}
 
 %install
