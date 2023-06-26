@@ -18,7 +18,7 @@ similar to mhddfs, unionfs, and aufs.
 %global debug_package %{nil}
 
 %prep
-%autosetup -n %{name}-%{version}
+%setup -q
 
 %build
 make %{?_smp_mflags}
