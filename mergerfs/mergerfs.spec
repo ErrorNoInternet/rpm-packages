@@ -21,8 +21,10 @@ similar to mhddfs, unionfs, and aufs.
 %autosetup -n %{name}-%{version}
 
 %build
+# chown root causes permission issues
 mv libfuse/Makefile tmp-Makefile
-sed 's/chown/echo/g' tmp-Makefile > libfuse/Makefile
+sed 's/chown root/echo IGNORING: chown root/g' tmp-Makefile > libfuse/Makefile
+
 make %{?_smp_mflags}
 
 %install
