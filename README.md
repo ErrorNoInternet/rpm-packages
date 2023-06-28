@@ -9,7 +9,7 @@ Any modifications to the COPR pages may also be requested by [creating an issue]
 
 ## Packages
 - kwin-effects ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/kwin-effects)):
-  - [kwin-effects-sliding-notifications](https://github.com/zzag/kwin-effects-sliding-notifications): Sliding animation for notification windows ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/kwin-effects/package/kwin-effects-sliding-notifications))
+  - (Plasma 5.27.6) [kwin-effects-sliding-notifications](https://github.com/zzag/kwin-effects-sliding-notifications): Sliding animation for notification windows ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/kwin-effects/package/kwin-effects-sliding-notifications))
 - [timg](https://github.com/hzeller/timg): A terminal image and video viewer ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/timg))
 - [klassy](https://github.com/paulmcauley/klassy): A highly customizable KDE Plasma Window Decoration ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/klassy))
 - [par2cmdline-turbo](https://github.com/animetosho/par2cmdline-turbo): par2cmdline × ParPar: speed focused par2cmdline fork ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/par2cmdline-turbo))
