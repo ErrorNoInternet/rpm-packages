@@ -1,6 +1,6 @@
 Name: kwin-effects-sliding-notifications
 Version: 1.5.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Sliding animation for notification windows
 
 License: GPL-3.0-or-later
