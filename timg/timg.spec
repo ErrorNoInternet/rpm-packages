@@ -7,14 +7,13 @@ License: GPL-2.0 AND GPL-2.0-or-later AND MIT
 URL: https://github.com/hzeller/timg
 Source0: %{url}/archive/v%{version}.tar.gz
 
-BuildRequires: cmake git gcc-c++ pkg-config GraphicsMagick-c++-devel turbojpeg-devel libexif-devel libswscale-free-devel libavcodec-free-devel libavformat-free-devel libavdevice-free-devel openslide-devel pandoc zlib-devel
+BuildRequires: cmake gcc-c++ git GraphicsMagick-c++-devel libavcodec-free-devel libavdevice-free-devel libavformat-free-devel libexif-devel libswscale-free-devel openslide-devel pandoc pkg-config turbojpeg-devel zlib-devel
 
 %description
-A user-friendly viewer that uses 24-Bit color capabilities and
-unicode character blocks to display images, animations and videos
-in the terminal. On terminals that implement the Kitty Graphics
-Protocol or the iTerm2 Graphics Protocol this displays images
-in full resolution.
+A user-friendly viewer that uses 24-Bit color capabilities and unicode
+character blocks to display images, animations and videos in the
+terminal. On terminals that implement the Kitty Graphics Protocol or
+the iTerm2 Graphics Protocol this displays images in full resolution.
 
 %prep
 %autosetup -n %{name}-%{version}
