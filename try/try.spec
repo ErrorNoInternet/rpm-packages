@@ -33,8 +33,8 @@ cp completions/try.bash %{buildroot}%{_datadir}/bash-completion/completions
 %files
 %license LICENSE
 %doc README.md
+%{_mandir}/man1/try.1.gz
 %{_bindir}/try
-%{_datadir}/man/man1/try.1.gz
 %{_datadir}/bash-completion/completions/try.bash
 
 %changelog

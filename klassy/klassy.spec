@@ -27,19 +27,19 @@ cd build
 
 %files
 %doc README.md
-/usr/bin/klassy-settings
-/usr/lib64/cmake/Klassy/KlassyConfig.cmake
-/usr/lib64/cmake/Klassy/KlassyConfigVersion.cmake
-/usr/lib64/libklassycommon5.so.%{version}
-/usr/lib64/libklassycommon5.so.5
-/usr/lib64/qt5/plugins/org.kde.kdecoration2/klassydecoration.so
-/usr/lib64/qt5/plugins/styles/klassy.so
-/usr/lib64/qt5/plugins/plasma/kcms/klassy/kcm_klassydecoration.so
-/usr/lib64/qt5/plugins/plasma/kcms/systemsettings_qwidgets/klassystyleconfig.so
-/usr/share/applications/kcm_klassydecoration.desktop
-/usr/share/applications/klassystyleconfig.desktop
-/usr/share/icons/hicolor/scalable/apps/klassy-settings.svgz
-/usr/share/kstyle/themes/klassy.themerc
+%{_bindir}/klassy-settings
+%{_lib}/cmake/Klassy/KlassyConfig.cmake
+%{_lib}/cmake/Klassy/KlassyConfigVersion.cmake
+%{_lib}/libklassycommon5.so.%{version}
+%{_lib}/libklassycommon5.so.5
+%{_lib}/qt5/plugins/org.kde.kdecoration2/klassydecoration.so
+%{_lib}/qt5/plugins/styles/klassy.so
+%{_lib}/qt5/plugins/plasma/kcms/klassy/kcm_klassydecoration.so
+%{_lib}/qt5/plugins/plasma/kcms/systemsettings_qwidgets/klassystyleconfig.so
+%{_datadir}/applications/kcm_klassydecoration.desktop
+%{_datadir}/applications/klassystyleconfig.desktop
+%{_datadir}/icons/hicolor/scalable/apps/klassy-settings.svgz
+%{_datadir}/kstyle/themes/klassy.themerc
 
 %changelog
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 4.3.breeze5.27.5-2

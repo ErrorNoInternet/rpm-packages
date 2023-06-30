@@ -28,8 +28,8 @@ cd build
 %files
 %license LICENSE
 %doc README.md
-/usr/bin/timg
-/usr/share/man/man1/timg.1.gz
+%{_mandir}/man1/timg.1.gz
+%{_bindir}/timg
 
 %changelog
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-3

@@ -26,11 +26,11 @@ This is a *simple* fork of par2cmdline which replaces core computation routines 
 %files
 %license COPYING
 %doc README.md
-/usr/bin/par2
-/usr/bin/par2create
-/usr/bin/par2repair
-/usr/bin/par2verify
-/usr/share/man/man1/par2.1.gz
+%{_mandir}/man1/par2.1.gz
+%{_bindir}/par2
+%{_bindir}/par2create
+%{_bindir}/par2repair
+%{_bindir}/par2verify
 
 %changelog
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.0.1-2
