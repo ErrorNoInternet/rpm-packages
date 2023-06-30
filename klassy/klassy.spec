@@ -1,6 +1,6 @@
 Name: klassy
 Version: 4.3.breeze5.27.5
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A highly customizable KDE Plasma Window Decoration
 
 License: BSD-3-Clause AND CC0-1.0 AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND MIT
@@ -26,6 +26,7 @@ cd build
 %make_install
 
 %files
+%doc README.md
 /usr/bin/klassy-settings
 /usr/lib64/cmake/Klassy/KlassyConfig.cmake
 /usr/lib64/cmake/Klassy/KlassyConfigVersion.cmake
@@ -41,5 +42,8 @@ cd build
 /usr/share/kstyle/themes/klassy.themerc
 
 %changelog
+* Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 4.3.breeze5.27.5-2
+- Add README.md
+
 * Sat May 06 2023 ErrorNoInternet <errornointernet@envs.net> - 4.1.breeze5.25.80-1
 - Hello, world!

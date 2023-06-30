@@ -1,6 +1,6 @@
 Name: kwin-effects-sliding-notifications
 Version: 1.5.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Sliding animation for notification windows
 
 License: GPL-3.0-or-later
@@ -28,8 +28,12 @@ cd build
 %make_install
 
 %files
+%doc README.md
 /usr/lib64/qt5/plugins/kwin/effects/plugins/kwin4_effect_slidingnotifications.so
 
 %changelog
+* Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.0-3
+- Add README.md
+
 * Fri Apr 21 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.0-1
 - Hello, world!

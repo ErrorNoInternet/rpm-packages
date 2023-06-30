@@ -2,7 +2,7 @@
 
 Name: mergerfs
 Version: 2.35.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A featureful FUSE based union filesystem
 
 License: ISC
@@ -31,13 +31,18 @@ make %{?_smp_mflags}
 make install PREFIX=%{_prefix} DESTDIR=%{buildroot}
 
 %files
+%license LICENSE
+%doc README.md
 /usr/bin/mergerfs
 /usr/bin/mergerfs-fusermount
 /sbin/mount.mergerfs
 %doc %{_mandir}/*
 
 %changelog
-* Mon Jun 26 2023 ErrorNoInternet <errornointernet@envs.net>
+* Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 2.35.1-2
+- Add LICENSE and README.md
+
+* Mon Jun 26 2023 ErrorNoInternet <errornointernet@envs.net> - 2.35.1-1
 - Some minor changes
 
 * Fri Apr 26 2019 Antonio SJ Musumeci <trapexit@spawn.link>

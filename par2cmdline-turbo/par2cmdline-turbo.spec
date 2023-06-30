@@ -1,6 +1,6 @@
 Name: par2cmdline-turbo
 Version: 1.0.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: par2cmdline × ParPar: speed focused par2cmdline fork
 
 License: GPL-2.0
@@ -24,6 +24,8 @@ This is a *simple* fork of par2cmdline which replaces core computation routines 
 %make_install
 
 %files
+%license COPYING
+%doc README.md
 /usr/bin/par2
 /usr/bin/par2create
 /usr/bin/par2repair
@@ -31,5 +33,8 @@ This is a *simple* fork of par2cmdline which replaces core computation routines 
 /usr/share/man/man1/par2.1.gz
 
 %changelog
+* Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.0.1-2
+- Add COPYING and README.md
+
 * Wed May 24 2023 ErrorNoInternet <errornointernet@envs.net> - 1.0.0-1
 - Hello, world!
