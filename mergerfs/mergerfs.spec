@@ -1,3 +1,5 @@
+%global debug_package %{nil}
+
 Name: mergerfs
 Version: 2.35.1
 Release: 1%{?dist}
@@ -14,8 +16,6 @@ Requires: fuse
 mergerfs is a union filesystem geared towards simplifying storage and
 management of files across numerous commodity storage devices. It is
 similar to mhddfs, unionfs, and aufs.
-
-%global debug_package %{nil}
 
 %prep
 %autosetup -n %{name}-%{version}
