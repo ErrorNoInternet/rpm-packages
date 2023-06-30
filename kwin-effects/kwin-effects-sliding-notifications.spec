@@ -29,7 +29,7 @@ cd build
 
 %files
 %doc README.md
-%{_lib}/qt5/plugins/kwin/effects/plugins/kwin4_effect_slidingnotifications.so
+%{_prefix}/%{_lib}/qt5/plugins/kwin/effects/plugins/kwin4_effect_slidingnotifications.so
 
 %changelog
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.0-3

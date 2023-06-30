@@ -28,14 +28,14 @@ cd build
 %files
 %doc README.md
 %{_bindir}/klassy-settings
-%{_lib}/cmake/Klassy/KlassyConfig.cmake
-%{_lib}/cmake/Klassy/KlassyConfigVersion.cmake
-%{_lib}/libklassycommon5.so.%{version}
-%{_lib}/libklassycommon5.so.5
-%{_lib}/qt5/plugins/org.kde.kdecoration2/klassydecoration.so
-%{_lib}/qt5/plugins/styles/klassy.so
-%{_lib}/qt5/plugins/plasma/kcms/klassy/kcm_klassydecoration.so
-%{_lib}/qt5/plugins/plasma/kcms/systemsettings_qwidgets/klassystyleconfig.so
+%{_prefix}/%{_lib}/cmake/Klassy/KlassyConfig.cmake
+%{_prefix}/%{_lib}/cmake/Klassy/KlassyConfigVersion.cmake
+%{_prefix}/%{_lib}/libklassycommon5.so.%{version}
+%{_prefix}/%{_lib}/libklassycommon5.so.5
+%{_prefix}/%{_lib}/qt5/plugins/org.kde.kdecoration2/klassydecoration.so
+%{_prefix}/%{_lib}/qt5/plugins/styles/klassy.so
+%{_prefix}/%{_lib}/qt5/plugins/plasma/kcms/klassy/kcm_klassydecoration.so
+%{_prefix}/%{_lib}/qt5/plugins/plasma/kcms/systemsettings_qwidgets/klassystyleconfig.so
 %{_datadir}/applications/kcm_klassydecoration.desktop
 %{_datadir}/applications/klassystyleconfig.desktop
 %{_datadir}/icons/hicolor/scalable/apps/klassy-settings.svgz
