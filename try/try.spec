@@ -24,15 +24,18 @@ make
 
 %install
 mkdir -p %{buildroot}%{_bindir}
-mkdir -p %{buildroot}%{_mandir}/man1
 cp try %{buildroot}%{_bindir}
+mkdir -p %{buildroot}%{_mandir}/man1
 cp man/try.1 %{buildroot}%{_mandir}/man1
+mkdir -p %{buildroot}%{_datadir}/bash-completion/completions
+cp completions/try.bash %{buildroot}%{_datadir}/bash-completion/completions
 
 %files
 %license LICENSE
 %doc README.md
-/usr/bin/try
-/usr/share/man/man1/try.1.gz
+%{_bindir}/try
+%{_datadir}/man/man1/try.1.gz
+%{_datadir}/bash-completion/completions/try.bash
 
 %changelog
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 0.1.0-1
