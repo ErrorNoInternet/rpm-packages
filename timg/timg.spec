@@ -9,6 +9,7 @@ Source0: %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires: cmake
 BuildRequires: gcc-c++
+BuildRequires: git
 BuildRequires: GraphicsMagick-c++-devel
 BuildRequires: libavcodec-free-devel
 BuildRequires: libavdevice-free-devel
