@@ -3,7 +3,7 @@
 
 Name: qoi
 Version: %{snapdate}git%(c='%{commit}'; echo "${c:0:7}")
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: The "Quite OK Image Format" for fast, lossless image compression
 
 License: MIT
@@ -19,6 +19,12 @@ BuildRequires: make
 %description
 Binaries for fast, lossless image compression using the "Quite OK Image Format".
 
+%package devel
+Summary: Development files for %{name}
+
+%description devel
+Headers for fast, lossless image compression using the "Quite OK Image Format".
+
 %prep
 %autosetup -n qoi-%{commit}
 
@@ -29,6 +35,8 @@ Binaries for fast, lossless image compression using the "Quite OK Image Format".
 mkdir -p %{buildroot}/%{_bindir}
 cp qoibench %{buildroot}/%{_bindir}
 cp qoiconv %{buildroot}/%{_bindir}
+mkdir -p %{buildroot}/%{_includedir}
+cp qoi.h %{buildroot}/%{_includedir}
 
 %files
 %license LICENSE
@@ -36,6 +44,14 @@ cp qoiconv %{buildroot}/%{_bindir}
 %{_bindir}/qoibench
 %{_bindir}/qoiconv
 
+%files devel
+%license LICENSE
+%doc README.md
+%{_includedir}/qoi.h
+
 %changelog
-* Fri Jul 14 2023 ErrorNoInternet <errornointernet@envs.net> - 20230615git36190eb
+* Fri Jul 14 2023 ErrorNoInternet <errornointernet@envs.net> - 20230615git36190eb-2
+- Merge qoi-devel into qoi
+
+* Fri Jul 14 2023 ErrorNoInternet <errornointernet@envs.net> - 20230615git36190eb-1
 - Hello, world!
