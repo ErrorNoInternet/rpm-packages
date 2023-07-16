@@ -1,9 +1,9 @@
 Name: timg
 Version: 1.4.5
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: A terminal image and video viewer
 
-License: GPL-2.0 AND GPL-2.0-or-later AND MIT
+License: GPL-2.0-only AND GPL-2.0-or-later AND MIT
 URL: https://github.com/hzeller/timg
 Source0: %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
@@ -14,13 +14,16 @@ BuildRequires: GraphicsMagick-c++-devel
 BuildRequires: libavcodec-free-devel
 BuildRequires: libavdevice-free-devel
 BuildRequires: libavformat-free-devel
+BuildRequires: libdeflate-devel
+BuildRequires: libsixel
 BuildRequires: libexif-devel
 BuildRequires: libswscale-free-devel
 BuildRequires: openslide-devel
 BuildRequires: pandoc
 BuildRequires: pkg-config
+BuildRequires: stb_image-devel
+BuildRequires: stb_image_resize-devel
 BuildRequires: turbojpeg-devel
-BuildRequires: zlib-devel
 
 %description
 A user-friendly viewer that uses 24-Bit color capabilities and unicode
@@ -30,6 +33,7 @@ the iTerm2 Graphics Protocol this displays images in full resolution.
 
 %prep
 %autosetup -n %{name}-%{version}
+rm -rf third_party
 
 %build
 %cmake
@@ -41,10 +45,13 @@ the iTerm2 Graphics Protocol this displays images in full resolution.
 %files
 %license LICENSE
 %doc README.md
-%{_mandir}/man1/timg.1.gz
+%{_mandir}/man1/timg.1*
 %{_bindir}/timg
 
 %changelog
+* Fri Jul 14 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-6
+- Bump version and fix package review issues
+
 * Sat Jul 08 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-5
 - Fix package review issues
 
