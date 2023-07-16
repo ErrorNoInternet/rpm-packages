@@ -1,8 +1,14 @@
 #!/bin/bash
 
 modified=false
+ignore=("timg/timg.spec" "LightlyShaders/LightlyShaders.spec")
 
 for file in $(find . -type f -name "*.spec"); do
+    if [[ " ${ignore[*]} " =~ " ${$file} " ]]; then
+        echo "ignoring $file!"
+        continue
+    fi
+
 	url=$(cat $file | grep "URL: " | cut -d' ' -f2)
 	repository=$(echo $url | sed -n 's|.*github.com/\(.*\)$|\1|p')
 	api_response=$(curl -s "https://api.github.com/repos/$repository/releases/latest")
