@@ -1,7 +1,7 @@
 #!/bin/bash
 
 modified=false
-ignore=("timg/timg.spec" "LightlyShaders/LightlyShaders.spec")
+ignore=("./timg/timg.spec" "./LightlyShaders/LightlyShaders.spec" "./qoi/qoi.spec")
 
 for file in $(find . -type f -name "*.spec"); do
     if [[ " ${ignore[*]} " =~ " ${file} " ]]; then
