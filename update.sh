@@ -4,7 +4,7 @@ modified=false
 ignore=("timg/timg.spec" "LightlyShaders/LightlyShaders.spec")
 
 for file in $(find . -type f -name "*.spec"); do
-    if [[ " ${ignore[*]} " =~ " ${$file} " ]]; then
+    if [[ " ${ignore[*]} " =~ " ${file} " ]]; then
         echo "ignoring $file!"
         continue
     fi
