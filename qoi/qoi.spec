@@ -9,6 +9,7 @@ Summary: The "Quite OK Image Format" for fast, lossless image compression
 License: MIT
 URL: https://github.com/phoboslab/qoi
 Source0: %{url}/archive/%{commit}/qoi-%{commit}.tar.gz
+Patch0: Makefile-ldflags.patch
 
 BuildRequires: gcc
 BuildRequires: libpng-devel
@@ -21,22 +22,21 @@ Binaries for fast, lossless image compression using the "Quite OK Image Format".
 
 %package devel
 Summary: Development files for %{name}
+Requires: %{name}%{?isa} = %{version}-%{release}
 
 %description devel
 Headers for fast, lossless image compression using the "Quite OK Image Format".
 
 %prep
-%autosetup -n qoi-%{commit}
+%autosetup -n qoi-%{commit} -p1
 
 %build
 %make_build bench conv
 
 %install
-mkdir -p %{buildroot}/%{_bindir}
-cp qoibench %{buildroot}/%{_bindir}
-cp qoiconv %{buildroot}/%{_bindir}
-mkdir -p %{buildroot}/%{_includedir}
-cp qoi.h %{buildroot}/%{_includedir}
+install -d %{buildroot}/%{_bindir} %{buildroot}/%{_includedir}
+install -p qoibench qoiconv %{buildroot}/%{_bindir}
+install -p qoi.h %{buildroot}/%{_includedir}
 
 %files
 %license LICENSE
@@ -45,8 +45,6 @@ cp qoi.h %{buildroot}/%{_includedir}
 %{_bindir}/qoiconv
 
 %files devel
-%license LICENSE
-%doc README.md
 %{_includedir}/qoi.h
 
 %changelog
