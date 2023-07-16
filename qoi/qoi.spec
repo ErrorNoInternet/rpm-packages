@@ -3,7 +3,7 @@
 
 Name: qoi
 Version: %{snapdate}git%(c='%{commit}'; echo "${c:0:7}")
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: The "Quite OK Image Format" for fast, lossless image compression
 
 License: MIT
@@ -48,6 +48,10 @@ install -p qoi.h %{buildroot}/%{_includedir}
 %{_includedir}/qoi.h
 
 %changelog
+* Sun Jul 16 2023 ErrorNoInternet <errornointernet@envs.net> - 20230615git36190eb-3
+- Add Makefile-ldflags patch (now includes Fedora's LDFLAGS)
+- devel package now requires base package
+
 * Fri Jul 14 2023 ErrorNoInternet <errornointernet@envs.net> - 20230615git36190eb-2
 - Merge qoi-devel into qoi
 
