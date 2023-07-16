@@ -1,15 +1,16 @@
 %global debug_package %{nil}
 
 Name: mergerfs
-Version: 2.35.1
-Release: 2%{?dist}
+Version: 2.36.0
+Release: 1%{?dist}
 Summary: A featureful FUSE based union filesystem
 
 License: ISC
 URL: https://github.com/trapexit/mergerfs
-Source0: %{url}/archive/%{version}.tar.gz
+Source0: %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 
-BuildRequires: gcc-c++ git
+BuildRequires: gcc-c++
+BuildRequires: git
 Requires: fuse
 
 %description
