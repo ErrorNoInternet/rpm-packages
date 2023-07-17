@@ -15,3 +15,4 @@ Any modifications to the COPR pages may also be requested by [creating an issue]
 - [par2cmdline-turbo](https://github.com/animetosho/par2cmdline-turbo): par2cmdline × ParPar: speed focused par2cmdline fork ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/par2cmdline-turbo))
 - [mergerfs](https://github.com/trapexit/mergerfs): A featureful FUSE based union filesystem ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/mergerfs))
 - [qoi](https://github.com/phoboslab/qoi)(-devel): The "Quite OK Image Format" for fast, loseless image compression ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/qoi))
+- [7zip](https://7-zip.org): A file archiver with a high compression ratio ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/7zip))
