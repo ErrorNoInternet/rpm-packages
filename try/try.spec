@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name: try
-Version: 0.1.0
+Version: 0.2.0
 Release: 1%{?dist}
 Summary: Inspect a command's effects before modifying your live system
 
