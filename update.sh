@@ -3,6 +3,7 @@
 modified=false
 ignore=(
     "./7zip/7zip.spec"
+    "./libsixel/libsixel.spec"
     "./LightlyShaders/LightlyShaders.spec"
     "./qoi/qoi.spec"
     "./timg/timg.spec"
