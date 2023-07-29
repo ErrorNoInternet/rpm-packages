@@ -15,7 +15,7 @@ BuildRequires: pkgconfig(libjpeg)
 BuildRequires: pkgconfig(libpng)
 
 %description
-An encoder/decoder implementation for DEC SIXEL graphics
+An encoder/decoder implementation for DEC SIXEL graphics.
 
 %package devel
 Summary: Development files for %{name}
