@@ -37,7 +37,6 @@ the iTerm2 Graphics Protocol this displays images in full resolution.
 rm -rf third_party/stb
 
 %build
-#%cmake
 %cmake -DWITH_LIBSIXEL=off
 %cmake_build
 
