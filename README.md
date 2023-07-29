@@ -17,3 +17,4 @@ Any modifications to the COPR pages may also be requested by [creating an issue]
 - [qoi](https://github.com/phoboslab/qoi)(-devel): The "Quite OK Image Format" for fast, loseless image compression ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/qoi))
 - [timg](https://github.com/hzeller/timg): A terminal image and video viewer ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/timg))
 - [try](https://github.com/binpash/try): Inspect a command's effects before modifying your live system ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/try))
+- [libsixel](https://github.com/libsixel/libsixel): SIXEL encoding and decoding ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/libsixel))
