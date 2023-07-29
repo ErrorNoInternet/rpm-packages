@@ -1,6 +1,6 @@
 Name: timg
-Version: 1.4.5
-Release: 6%{?dist}
+Version: 1.5.1
+Release: 1%{?dist}
 Summary: A terminal image and video viewer
 
 License: GPL-2.0-only AND GPL-2.0-or-later AND MIT
@@ -15,7 +15,7 @@ BuildRequires: libavcodec-free-devel
 BuildRequires: libavdevice-free-devel
 BuildRequires: libavformat-free-devel
 BuildRequires: libdeflate-devel
-BuildRequires: libsixel
+#BuildRequires: libsixel
 BuildRequires: libexif-devel
 BuildRequires: libswscale-free-devel
 BuildRequires: openslide-devel
@@ -33,10 +33,12 @@ the iTerm2 Graphics Protocol this displays images in full resolution.
 
 %prep
 %autosetup -n %{name}-%{version}
-rm -rf third_party
+#rm -rf third_party
+rm -rf third_party/stb
 
 %build
-%cmake
+#%cmake
+%cmake -DWITH_LIBSIXEL=off
 %cmake_build
 
 %install
@@ -45,10 +47,13 @@ rm -rf third_party
 %files
 %license LICENSE
 %doc README.md
-%{_mandir}/man1/timg.1*
 %{_bindir}/timg
+%{_mandir}/man1/timg.1*
 
 %changelog
+* Sat Jul 29 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.1-1
+- Disable libsixel support for now
+
 * Fri Jul 14 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-6
 - Bump version and fix package review issues
 
