@@ -19,6 +19,7 @@ performance on x86/ARM platforms.
 %autosetup -n %{name}-%{version}
 
 %build
+./automake.sh
 %configure
 %make_build
 
