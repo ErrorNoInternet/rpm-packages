@@ -40,6 +40,7 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 
 %install
 %meson_install
+rm %{buildroot}/%{_libdir}/libsixel.a
 
 %files
 %license LICENSE
