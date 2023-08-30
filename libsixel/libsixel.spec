@@ -1,6 +1,6 @@
 Name: libsixel
 Version: 1.10.3
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: SIXEL encoding and decoding
 
 License: MIT
@@ -46,14 +46,13 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 %doc AUTHORS
 %doc NEWS
 %doc README.md
-%{_libdir}/libsixel.a
-%{_libdir}/libsixel.so
 %{_libdir}/libsixel.so.1
 %{_libdir}/libsixel.so.1.0.0
 
 %files devel
 %{_bindir}/libsixel-config
 %{_includedir}/sixel.h
+%{_libdir}/libsixel.so
 %{_libdir}/pkgconfig/libsixel.pc
 
 %files utils
@@ -65,5 +64,8 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 %{zsh_completions_dir}/_img2sixel
 
 %changelog
+* Wed Aug 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.10.3-2
+- Fix a few package review issues
+
 * Sat Jul 29 2023 ErrorNoInternet <errornointernet@envs.net> - 1.10.3-1
-- Hello, world!
+- Initial packaging
