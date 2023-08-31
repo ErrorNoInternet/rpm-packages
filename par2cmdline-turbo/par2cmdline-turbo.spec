@@ -1,13 +1,14 @@
 Name: par2cmdline-turbo
 Version: 1.1.0
-Release: 1%{?dist}
-Summary: par2cmdline × ParPar: speed focused par2cmdline fork
+Release: 2%{?dist}
+Summary: ParPar x par2cmdline: speed focused par2cmdline fork
 
 License: GPL-2.0-or-later
 URL: https://github.com/animetosho/par2cmdline-turbo
 Source0: %{url}/archive/v%{version}.tar.gz
 
-Obsoletes: par2cmdline
+Obsoletes: par2cmdline <= 0.8.1
+Provides: par2cmdline
 BuildRequires: automake gcc-c++
 
 %description
@@ -39,6 +40,9 @@ make check-TESTS
 %{_mandir}/man1/par2.1*
 
 %changelog
+* Thu Aug 31 2023 ErrorNoInternet <errornointernet@envs.net> - 1.1.0-2
+- Fixed a few package review issues
+
 * Wed Aug 09 2023 ErrorNoInternet <errornointernet@envs.net> - 1.0.1-4
 - Cleaned some stuff up
 
