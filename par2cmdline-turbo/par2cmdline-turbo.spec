@@ -1,6 +1,6 @@
 Name: par2cmdline-turbo
-Version: 1.0.1
-Release: 4%{?dist}
+Version: 1.1.0
+Release: 1%{?dist}
 Summary: par2cmdline × ParPar: speed focused par2cmdline fork
 
 License: GPL-2.0-or-later
