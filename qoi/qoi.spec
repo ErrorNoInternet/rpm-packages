@@ -1,9 +1,9 @@
-%global commit 36190eb07dc5d85f408d998d1884eb69573adf68
-%global snapdate 20230615
+%global commit 41e8f84bf68f7bb658430a37b5647c172d86e38e
+%global snapdate 20230828
 
 Name: qoi
 Version: %{snapdate}git%(c='%{commit}'; echo "${c:0:7}")
-Release: 3%{?dist}
+Release: 1%{?dist}
 Summary: The "Quite OK Image Format" for fast, lossless image compression
 
 License: MIT
@@ -18,11 +18,19 @@ BuildRequires: stb_image_write-devel
 BuildRequires: make
 
 %description
-Binaries for fast, lossless image compression using the "Quite OK Image Format".
+The "Quite OK Image Format" for fast, lossless image compression.
+
+%package tools
+Summary: Tools for %{name}
+Requires: %{name}%{?isa} = %{version}-%{release}
+
+%description tools
+Tools for fast, lossless image compression using the "Quite OK Image Format".
 
 %package devel
 Summary: Development files for %{name}
 Requires: %{name}%{?isa} = %{version}-%{release}
+BuildArch: noarch
 
 %description devel
 Headers for fast, lossless image compression using the "Quite OK Image Format".
@@ -39,6 +47,8 @@ install -p qoibench qoiconv %{buildroot}/%{_bindir}
 install -p qoi.h %{buildroot}/%{_includedir}
 
 %files
+
+%files tools
 %license LICENSE
 %doc README.md
 %{_bindir}/qoibench
@@ -48,6 +58,10 @@ install -p qoi.h %{buildroot}/%{_includedir}
 %{_includedir}/qoi.h
 
 %changelog
+* Thu Aug 31 2023 ErrorNoInternet <errornointernet@envs.net> - 20230828git41e8f84-1
+- Bump package version
+- Split package into -tools and -devel
+
 * Sun Jul 16 2023 ErrorNoInternet <errornointernet@envs.net> - 20230615git36190eb-3
 - Add Makefile-ldflags patch (now includes Fedora's LDFLAGS)
 - devel package now requires base package
