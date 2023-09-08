@@ -1,6 +1,6 @@
 Name: libsixel
 Version: 1.10.3
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: SIXEL encoding and decoding
 
 License: MIT
@@ -35,12 +35,15 @@ Requires: %{name}%{?_isa} = %{version}-%{release}
 %autosetup -n %{name}-%{version} -p1
 
 %build
-%meson
+%meson -Dtests=enabled
 %meson_build
 
 %install
 %meson_install
 rm %{buildroot}/%{_libdir}/libsixel.a
+
+%check
+%meson_test
 
 %files
 %license LICENSE
@@ -65,6 +68,9 @@ rm %{buildroot}/%{_libdir}/libsixel.a
 %{zsh_completions_dir}/_img2sixel
 
 %changelog
+* Wed Aug 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.10.3-3
+- Enabled tests
+
 * Wed Aug 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.10.3-2
 - Fix a few package review issues
 
