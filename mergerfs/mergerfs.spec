@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name: mergerfs
-Version: 2.36.0
+Version: 2.37.0
 Release: 1%{?dist}
 Summary: A featureful FUSE based union filesystem
 
