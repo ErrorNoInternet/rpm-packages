@@ -1,8 +1,8 @@
-%global commit 41e8f84bf68f7bb658430a37b5647c172d86e38e
-%global snapdate 20230828
+%global commit 8d35d93cdca85d2868246c2a8a80a1e2c16ba2a8
+%global snapdate 20230911
 
 Name: qoi
-Version: %{snapdate}git%(c='%{commit}'; echo "${c:0:7}")
+Version: 0^%{snapdate}
 Release: 1%{?dist}
 Summary: The "Quite OK Image Format" for fast, lossless image compression
 
@@ -22,14 +22,12 @@ The "Quite OK Image Format" for fast, lossless image compression.
 
 %package tools
 Summary: Tools for %{name}
-Requires: %{name}%{?isa} = %{version}-%{release}
 
 %description tools
 Tools for fast, lossless image compression using the "Quite OK Image Format".
 
 %package devel
 Summary: Development files for %{name}
-Requires: %{name}%{?isa} = %{version}-%{release}
 BuildArch: noarch
 
 %description devel
@@ -46,8 +44,6 @@ install -d %{buildroot}/%{_bindir} %{buildroot}/%{_includedir}
 install -p qoibench qoiconv %{buildroot}/%{_bindir}
 install -p qoi.h %{buildroot}/%{_includedir}
 
-%files
-
 %files tools
 %license LICENSE
 %doc README.md
@@ -55,6 +51,7 @@ install -p qoi.h %{buildroot}/%{_includedir}
 %{_bindir}/qoiconv
 
 %files devel
+%license LICENSE
 %{_includedir}/qoi.h
 
 %changelog
