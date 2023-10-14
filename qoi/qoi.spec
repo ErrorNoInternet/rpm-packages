@@ -3,7 +3,7 @@
 
 Name: qoi
 Version: 0^%{snapdate}
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: The "Quite OK Image Format" for fast, lossless image compression
 
 License: MIT
@@ -29,6 +29,7 @@ Tools for fast, lossless image compression using the "Quite OK Image Format".
 %package devel
 Summary: Development files for %{name}
 BuildArch: noarch
+Provides: qoi-static = %{version}-%{release}
 
 %description devel
 Headers for fast, lossless image compression using the "Quite OK Image Format".
@@ -55,6 +56,14 @@ install -p qoi.h %{buildroot}/%{_includedir}
 %{_includedir}/qoi.h
 
 %changelog
+* Sat Oct 14 2023 ErrorNoInternet <errornointernet@envs.net> - 0^20230911-2
+- Add `Provides: qoi-static` to the -devel package
+
+* Tue Oct 10 2023 ErrorNoInternet <errornointernet@envs.net> - 0^20230911-1
+- Use caret versioning
+- Remove `Requires` from the -devel and -tools package
+- Add LICENSE to -devel package
+
 * Thu Aug 31 2023 ErrorNoInternet <errornointernet@envs.net> - 20230828git41e8f84-1
 - Bump package version
 - Split package into -tools and -devel
