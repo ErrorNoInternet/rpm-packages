@@ -16,7 +16,7 @@ BuildRequires: libavdevice-free-devel
 BuildRequires: libavformat-free-devel
 BuildRequires: libdeflate-devel
 BuildRequires: libexif-devel
-BuildRequires: libsixel
+BuildRequires: libsixel-devel
 BuildRequires: libswscale-free-devel
 BuildRequires: openslide-devel
 BuildRequires: pandoc
