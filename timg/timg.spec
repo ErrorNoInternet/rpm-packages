@@ -1,6 +1,6 @@
 Name: timg
 Version: 1.5.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A terminal image and video viewer
 
 License: GPL-2.0-only AND GPL-2.0-or-later AND MIT
@@ -15,12 +15,13 @@ BuildRequires: libavcodec-free-devel
 BuildRequires: libavdevice-free-devel
 BuildRequires: libavformat-free-devel
 BuildRequires: libdeflate-devel
-#BuildRequires: libsixel
 BuildRequires: libexif-devel
+BuildRequires: libsixel
 BuildRequires: libswscale-free-devel
 BuildRequires: openslide-devel
 BuildRequires: pandoc
 BuildRequires: pkg-config
+BuildRequires: qoi-devel
 BuildRequires: stb_image-devel
 BuildRequires: stb_image_resize-devel
 BuildRequires: turbojpeg-devel
@@ -33,11 +34,10 @@ the iTerm2 Graphics Protocol this displays images in full resolution.
 
 %prep
 %autosetup -n %{name}-%{version}
-#rm -rf third_party
-rm -rf third_party/stb
+rm -rf third_party
 
 %build
-%cmake -DWITH_LIBSIXEL=off
+%cmake
 %cmake_build
 
 %install
@@ -50,6 +50,10 @@ rm -rf third_party/stb
 %{_mandir}/man1/timg.1*
 
 %changelog
+* Tue Nov 21 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.2-2
+- Enable libsixel support
+- Use Fedora-provided qoi
+
 * Sat Jul 29 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.1-1
 - Disable libsixel support for now
 
