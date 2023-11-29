@@ -1,6 +1,6 @@
 Name: timg
-Version: 1.5.2
-Release: 2%{?dist}
+Version: 1.5.3
+Release: 1%{?dist}
 Summary: A terminal image and video viewer
 
 License: GPL-2.0-only AND GPL-2.0-or-later AND MIT
