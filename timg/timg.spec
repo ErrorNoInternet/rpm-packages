@@ -1,12 +1,13 @@
 Name: timg
-Version: 1.5.3
+Version: 1.6.0
 Release: 1%{?dist}
 Summary: A terminal image and video viewer
-
 License: GPL-2.0-only AND GPL-2.0-or-later AND MIT
+
 URL: https://github.com/hzeller/timg
 Source0: %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
+BuildRequires: cairo
 BuildRequires: cmake
 BuildRequires: gcc-c++
 BuildRequires: git
@@ -16,11 +17,13 @@ BuildRequires: libavdevice-free-devel
 BuildRequires: libavformat-free-devel
 BuildRequires: libdeflate-devel
 BuildRequires: libexif-devel
+BuildRequires: librsvg2-devel
 BuildRequires: libsixel-devel
 BuildRequires: libswscale-free-devel
 BuildRequires: openslide-devel
 BuildRequires: pandoc
 BuildRequires: pkg-config
+BuildRequires: poppler-glib-devel
 BuildRequires: qoi-devel
 BuildRequires: stb_image-devel
 BuildRequires: stb_image_resize-devel
