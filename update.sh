@@ -43,7 +43,7 @@ for file in $(find . -type f -name "*.spec"); do
         echo "running git add && git commit..."
         echo ">>>>>>>>>>"
         git add $file
-        git commit -m "Update $repository"
+        git commit -m "chore($repository): $version -> $latest_version"
         echo "<<<<<<<<<<"
 
         modified=true
