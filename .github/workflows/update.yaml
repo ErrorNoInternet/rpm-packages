@@ -1,9 +1,6 @@
-# Thanks to https://github.com/aidandenlinger/autocopr
-
-name: Update .spec files
+name: Update
 on:
   workflow_dispatch:
-  
   schedule:
     - cron: '0 */12 * * *'
 
@@ -11,14 +8,15 @@ permissions:
   contents: write
 
 jobs:
-  update:
-    name: update
-    runs-on: ubuntu-latest
+  spec-files:
+    name: .spec files
+    runs-on: ubuntu-22.04
     
     steps:
-      - uses: actions/checkout@v3
+      - name: Clone repository
+        uses: actions/checkout@v4
 
-      - name: Set Git user to github-actions[bot]
+      - name: Configure Git user
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
