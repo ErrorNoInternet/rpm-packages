@@ -1,8 +1,13 @@
 Name: timg
 Version: 1.6.0
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A terminal image and video viewer
-License: GPL-2.0-only AND GPL-2.0-or-later AND MIT
+
+License: GPL-2.0-only
+# The following are under different terms, but are unused and removed in %prep.
+#
+# - third_party/qoi is MIT
+# - third_party/stb is MIT OR Unlicense
 
 URL: https://github.com/hzeller/timg
 Source0: %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -30,10 +35,11 @@ BuildRequires: stb_image_resize-devel
 BuildRequires: turbojpeg-devel
 
 %description
-A user-friendly viewer that uses 24-Bit color capabilities and unicode
-character blocks to display images, animations and videos in the
-terminal. On terminals that implement the Kitty Graphics Protocol or
-the iTerm2 Graphics Protocol this displays images in full resolution.
+A user-friendly terminal image viewer that uses graphic capabilities of
+terminals (Sixel, Kitty or iTerm2), or 24-bit color capabilities and Unicode
+character blocks if these are not available. On terminals that implement the
+Sixel protocol, the Kitty Graphics Protocol, or the iTerm2 Graphics Protocol,
+this displays images in full resolution.
 
 %prep
 %autosetup -n %{name}-%{version}
@@ -53,27 +59,37 @@ rm -rf third_party
 %{_mandir}/man1/timg.1*
 
 %changelog
+* Sat Mar 09 2024 ErrorNoInternet <errornointernet@envs.net> - 1.6.0-2
+- Fix licenses and add clarification.
+- Clean up descriptions and missing chaneglog entries.
+
+* Fri Jan 26 2024 ErrorNoInternet <errornointernet@envs.net> - 1.6.0-1
+- Update to version 1.6.0.
+
 * Tue Nov 21 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.2-2
-- Enable libsixel support
-- Use Fedora-provided qoi
+- Enable libsixel and qoi support as they are now in the Fedora repos.
+
+* Thu Aug 31 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.2-1
+- Update to version 1.5.2.
 
 * Sat Jul 29 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.1-1
-- Disable libsixel support for now
+- Update to version 1.5.1.
+- Disable libsixel support as it isn't packaged in the Fedora repos yet.
 
 * Fri Jul 14 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-6
-- Bump version and fix package review issues
+- Fix package review issues.
 
 * Sat Jul 08 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-5
-- Fix package review issues
+- Fix package review issues.
 
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-4
-- Fix Fedora Review issues
+- Fix package review issues.
 
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-3
-- Add LICENSE and README.md
+- Add LICENSE and README.md.
 
 * Wed May 24 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-2
-- Install to /usr instead of /usr/local
+- Install to /usr instead of /usr/local.
 
 * Fri Apr 21 2023 ErrorNoInternet <errornointernet@envs.net> - 1.4.5-1
-- Hello, world!
+- Initial packaging.
