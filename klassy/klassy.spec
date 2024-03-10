@@ -1,6 +1,6 @@
 Name: klassy
-Version: 4.3.breeze5.27.5
-Release: 2%{?dist}
+Version: 5.0.breeze5.27.11
+Release: 1%{?dist}
 Summary: A highly customizable KDE Plasma Window Decoration
 
 License: BSD-3-Clause AND CC0-1.0 AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND MIT
