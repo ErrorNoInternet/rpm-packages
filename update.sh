@@ -13,8 +13,8 @@ for file in $(find . -type f -name "*.spec"); do
         continue
     fi
 
-    url=$(cat $file | grep "URL: " | cut -d' ' -f2)
-    repository=$(echo $url | sed -n 's|.*github.com/\(.*\)$|\1|p')
+    url=$(grep "URL: " "$file" | cut -d' ' -f2)
+    repository=$(echo "$url" | sed -n 's|.*github.com/\(.*\)$|\1|p')
     api_response=$(curl -s "https://api.github.com/repos/$repository/releases/latest")
     if [[ $? -ne 0 ]]; then
         echo "failed to request latest version for $repository!"
@@ -28,22 +28,22 @@ for file in $(find . -type f -name "*.spec"); do
         echo -e "api response:\n$api_response"
         continue
     fi
-    version=$(cat $file | grep "Version: " | cut -d' ' -f2)
+    version=$(grep "Version: " "$file" | cut -d' ' -f2)
 
     if [[ "$version" != "$latest_version" ]]; then
         echo "$file is not up-to-date ($version -> $latest_version)"
 
-        updated_file=$(cat $file)
+        updated_file=$(cat "$file")
         echo "modifying version in file..."
         updated_file=$(echo "$updated_file" | sed "s|Version: $version|Version: $latest_version|")
         echo "modifying release in file..."
         updated_file=$(echo "$updated_file" | sed "s|Release: [0-9]\+%{?dist}|Release: 1%{?dist}|")
-        echo "$updated_file" > $file
+        echo "$updated_file" > "$file"
 
         echo "running git add && git commit..."
         echo ">>>>>>>>>>"
-        git add $file
-        git commit -m "chore($repository): $version -> $latest_version"
+        git add "$file"
+        git commit -m "$repository: $version -> $latest_version"
         echo "<<<<<<<<<<"
 
         modified=true
