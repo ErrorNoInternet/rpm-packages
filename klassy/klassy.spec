@@ -23,6 +23,7 @@ BuildRequires: cmake(Qt5Core)
 BuildRequires: cmake(Qt5DBus)
 BuildRequires: cmake(Qt5Gui)
 BuildRequires: cmake(Qt5Quick)
+BuildRequires: cmake(Qt5Svg)
 BuildRequires: cmake(Qt5X11Extras)
 BuildRequires: cmake(Qt6Gui)
 BuildRequires: extra-cmake-modules
