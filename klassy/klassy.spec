@@ -7,10 +7,30 @@ License: BSD-3-Clause AND CC0-1.0 AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-
 URL: https://github.com/paulmcauley/klassy
 Source0: %{url}/archive/%{version}.tar.gz
 
-BuildRequires: cmake extra-cmake-modules cmake(Qt5Core) cmake(Qt5Gui) cmake(Qt5DBus) cmake(Qt5X11Extras) cmake(KF5GuiAddons) cmake(KF5WindowSystem) cmake(KF5I18n) cmake(KDecoration2) cmake(KF5CoreAddons) cmake(KF5ConfigWidgets) cmake(KF5IconThemes) cmake(KF5Package) cmake(Qt5Quick) cmake(KF5FrameworkIntegration) cmake(KF5KCMUtils) cmake(KF5Kirigami2)
+BuildRequires: cmake
+BuildRequires: cmake(KDecoration2)
+BuildRequires: cmake(KF5ConfigWidgets)
+BuildRequires: cmake(KF5CoreAddons)
+BuildRequires: cmake(KF5FrameworkIntegration)
+BuildRequires: cmake(KF5GuiAddons)
+BuildRequires: cmake(KF5I18n)
+BuildRequires: cmake(KF5IconThemes)
+BuildRequires: cmake(KF5KCMUtils)
+BuildRequires: cmake(KF5Kirigami2)
+BuildRequires: cmake(KF5Package)
+BuildRequires: cmake(KF5WindowSystem)
+BuildRequires: cmake(Qt5Core)
+BuildRequires: cmake(Qt5DBus)
+BuildRequires: cmake(Qt5Gui)
+BuildRequires: cmake(Qt5Quick)
+BuildRequires: cmake(Qt5X11Extras)
+BuildRequires: cmake(Qt6Gui)
+BuildRequires: extra-cmake-modules
 
 %description
-Klassy is a highly customizable binary Window Decoration and Application Style plugin for recent versions of the KDE Plasma desktop. It provides the Klassy, Kite, Oxygen/Breeze, and Redmond icon styles.
+Klassy is a highly customizable binary Window Decoration and Application Style
+plugin for recent versions of the KDE Plasma desktop. It provides the Klassy,
+Kite, Oxygen/Breeze, and Redmond icon styles.
 
 %prep
 %autosetup -n %{name}-%{version}
@@ -42,8 +62,12 @@ cd build
 %{_datadir}/kstyle/themes/klassy.themerc
 
 %changelog
+* Tue Mar 12 2024 ErrorNoInternet <errornointernet@envs.net> - 5.0.breeze5.27.11-2
+- Minor description clean up.
+- Fix build by requiring Qt6Gui.
+
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 4.3.breeze5.27.5-2
-- Add README.md
+- Add README.md.
 
 * Sat May 06 2023 ErrorNoInternet <errornointernet@envs.net> - 4.1.breeze5.25.80-1
-- Hello, world!
+- Initial packaging.
