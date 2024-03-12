@@ -1,6 +1,6 @@
 Name: klassy
 Version: 5.0.breeze5.27.11
-Release: 1%{?dist}
+Release: 3%{?dist}
 Summary: A highly customizable KDE Plasma Window Decoration
 
 License: BSD-3-Clause AND CC0-1.0 AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND MIT
@@ -49,20 +49,29 @@ cd build
 %files
 %doc README.md
 %{_bindir}/klassy-settings
+%{_datadir}/applications/kcm_klassydecoration.desktop
+%{_datadir}/applications/klassy-settings.desktop
+%{_datadir}/applications/klassystyleconfig.desktop
+%{_datadir}/color-schemes/Klassy*
+%{_datadir}/icons/hicolor/scalable/apps/klassy-settings.svgz
+%{_datadir}/icons/klassy*
+%{_datadir}/kstyle/themes/klassy.themerc
+%{_datadir}/plasma/layout-templates/org.kde.klassy*
+%{_datadir}/plasma/look-and-feel/org.kde.klassy*
 %{_prefix}/%{_lib}/cmake/Klassy/KlassyConfig.cmake
 %{_prefix}/%{_lib}/cmake/Klassy/KlassyConfigVersion.cmake
 %{_prefix}/%{_lib}/libklassycommon5.so.%{version}
 %{_prefix}/%{_lib}/libklassycommon5.so.5
 %{_prefix}/%{_lib}/qt5/plugins/org.kde.kdecoration2/klassydecoration.so
-%{_prefix}/%{_lib}/qt5/plugins/styles/klassy.so
-%{_prefix}/%{_lib}/qt5/plugins/plasma/kcms/klassy/kcm_klassydecoration.so
+%{_prefix}/%{_lib}/qt5/plugins/plasma/kcms/klassy
 %{_prefix}/%{_lib}/qt5/plugins/plasma/kcms/systemsettings_qwidgets/klassystyleconfig.so
-%{_datadir}/applications/kcm_klassydecoration.desktop
-%{_datadir}/applications/klassystyleconfig.desktop
-%{_datadir}/icons/hicolor/scalable/apps/klassy-settings.svgz
-%{_datadir}/kstyle/themes/klassy.themerc
+%{_prefix}/%{_lib}/qt5/plugins/styles/klassy.so
 
 %changelog
+* Tue Mar 12 2024 ErrorNoInternet <errornointernet@envs.net> - 5.0.breeze5.27.11-3
+- Fix build by requiring Qt5Svg.
+- Include all files from new release.
+
 * Tue Mar 12 2024 ErrorNoInternet <errornointernet@envs.net> - 5.0.breeze5.27.11-2
 - Minor description clean up.
 - Fix build by requiring Qt6Gui.
