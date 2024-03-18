@@ -1,9 +1,9 @@
 Name: timg
 Version: 1.6.0
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: A terminal image and video viewer
 
-License: GPL-2.0-only AND MIT
+License: GPL-2.0-only AND MIT AND (MIT OR Unlicense)
 # The following are under different terms.
 #
 # - third_party/qoi is MIT
@@ -59,6 +59,9 @@ rm -rf third_party
 %{_mandir}/man1/timg.1*
 
 %changelog
+* Mon Mar 18 2024 ErrorNoInternet <errornointernet@envs.net> - 1.6.0-4
+- Set license to `GPL-2.0-only AND MIT AND (MIT OR Unlicense)`.
+
 * Tue Mar 12 2024 ErrorNoInternet <errornointernet@envs.net> - 1.6.0-3
 - Set license to `GPL-2.0-only AND MIT`.
 
