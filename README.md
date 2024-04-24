@@ -8,14 +8,6 @@ The script is ran by GitHub actions every 12 hours.
 If anything is wrong with the packages, please [create an issue](https://github.com/ErrorNoInternet/rpm-specs/issues/new) (or [submit a pull request](https://github.com/ErrorNoInternet/rpm-specs/compare)).\
 Any modifications to the COPR pages may also be requested by [creating an issue](https://github.com/ErrorNoInternet/rpm-specs/issues/new) here.
 
-## Fedora Packages
-
-- [libsixel](https://github.com/libsixel/libsixel): SIXEL encoding and decoding ([Fedora RPMs](https://src.fedoraproject.org/rpms/libsixel))
-
-- [qoi](https://github.com/phoboslab/qoi): The "Quite OK Image Format" for fast, loseless image compression ([Fedora RPMs](https://src.fedoraproject.org/rpms/qoi))
-
-- [timg](https://github.com/hzeller/timg): A terminal image and video viewer ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/timg))
-
 ## COPR Packages
 
 - [7zip](https://7-zip.org): A file archiver with a high compression ratio ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/7zip))
@@ -30,3 +22,13 @@ Any modifications to the COPR pages may also be requested by [creating an issue]
 - [par2cmdline-turbo](https://github.com/animetosho/par2cmdline-turbo): par2cmdline × ParPar: speed focused par2cmdline fork ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/par2cmdline-turbo))
 
 - [try](https://github.com/binpash/try): Inspect a command's effects before modifying your live system ([COPR](https://copr.fedorainfracloud.org/coprs/errornointernet/try))
+
+## Fedora Packages
+
+These are packages that used to be here, but are now official Fedora packages.
+
+- [libsixel](https://github.com/libsixel/libsixel): SIXEL encoding and decoding ([Fedora RPMs](https://src.fedoraproject.org/rpms/libsixel))
+
+- [qoi](https://github.com/phoboslab/qoi): The "Quite OK Image Format" for fast, loseless image compression ([Fedora RPMs](https://src.fedoraproject.org/rpms/qoi))
+
+- [timg](https://github.com/hzeller/timg): A terminal image and video viewer ([Fedora RPMs](https://src.fedoraproject.org/rpms/timg))
