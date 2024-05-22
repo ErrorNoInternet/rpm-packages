@@ -351,7 +351,7 @@ index 0000000..871c121
 + #define BTRFS_BCONF_QUIET	 0
 + /*
 diff --git a/btrfs-progs.spec b/btrfs-progs.spec
-index 3f26904..7004eb9 100644
+index 3f26904..6c1aa4b 100644
 --- a/btrfs-progs.spec
 +++ b/btrfs-progs.spec
 @@ -12,6 +12,9 @@ Source0:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{n
@@ -364,6 +364,15 @@ index 3f26904..7004eb9 100644
  BuildRequires:  gnupg2
  BuildRequires:  gcc, autoconf, automake, make
  BuildRequires:  git-core
+@@ -93,7 +96,7 @@ xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}
+ 
+ %build
+ ./autogen.sh
+-%configure CFLAGS="%{optflags} -fno-strict-aliasing" --with-crypto=libgcrypt --disable-python
++%configure CFLAGS="%{optflags} -fno-strict-aliasing" --with-crypto=libgcrypt --disable-python --enable-experimental
+ %make_build
+ 
+ pushd libbtrfsutil/python
 diff --git a/remove-receive-errors.diff b/remove-receive-errors.diff
 new file mode 100644
 index 0000000..a6a7c6a
