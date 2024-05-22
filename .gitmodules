@@ -1,0 +1,3 @@
+[submodule "btrfs-progs/upstream"]
+	path = btrfs-progs/upstream
+	url = https://src.fedoraproject.org/rpms/btrfs-progs
