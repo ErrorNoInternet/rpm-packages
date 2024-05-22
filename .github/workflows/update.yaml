@@ -1,0 +1,28 @@
+name: Update
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */12 * * *'
+
+permissions:
+  contents: write
+
+jobs:
+  spec-files:
+    name: .spec files
+    runs-on: ubuntu-22.04
+    
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git user
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          
+      - name: Check and update .spec files
+        run: bash update.sh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+

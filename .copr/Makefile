@@ -1,2 +1,2 @@
 srpm:
-	bash ../../.copr/build.sh
+	bash ../../build.sh
