@@ -2,9 +2,10 @@
 
 set -x
 
-sed -i "s|%{?dist}|.patched%{?dist}|g" "$spec"
-
+sed -i "s|%{?dist}|.patched%{?dist}|" "$spec"
+sed -i "s|-S git_am|-S git|" "$spec"
 patch -p1 < ../downstream.patch
+
 cp -r ./* /builddir/build/SOURCES
 rpmbuild -bs "$spec"
 cp -r /builddir/build/SRPMS/* "$outdir"
