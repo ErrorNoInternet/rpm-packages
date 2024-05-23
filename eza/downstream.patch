@@ -1,0 +1,56 @@
+diff --git a/filesystem-optimizations.diff b/filesystem-optimizations.diff
+new file mode 100644
+index 0000000..fdab02e
+--- /dev/null
++++ b/filesystem-optimizations.diff
+@@ -0,0 +1,38 @@
++diff --git a/src/fs/file.rs b/src/fs/file.rs
++index ba2703d9..0ca7522e 100644
++--- a/src/fs/file.rs
+++++ b/src/fs/file.rs
++@@ -666,6 +666,8 @@ impl<'dir> File<'dir> {
++     /// based on directory size alone.
++     #[cfg(unix)]
++     pub fn is_empty_dir(&self) -> bool {
+++        use std::ffi::CString;
+++
++         if self.is_directory() {
++             if self.metadata.nlink() > 2 {
++                 // Directories will have a link count of two if they do not have any subdirectories.
++@@ -675,6 +677,24 @@ impl<'dir> File<'dir> {
++                 // has subdirectories.
++                 false
++             } else {
+++                unsafe {
+++                    let Some(str_path) = self.path.to_str() else {
+++                        return self.is_empty_directory();
+++                    };
+++                    let Ok(c_path) = CString::new(str_path) else {
+++                        return self.is_empty_directory();
+++                    };
+++
+++                    let mut statfs_res: libc::statfs = std::mem::zeroed();
+++                    if libc::statfs(c_path.as_ptr().cast::<libc::c_char>(), &mut statfs_res) == 0 {
+++                        match statfs_res.f_type {
+++                            0x9123_683e => return self.metadata.size() == 0, // BTRFS
+++                            0x2fc1_2fc1 => return self.metadata.size() == 2, // ZFS
+++                            _ => (),
+++                        };
+++                    };
+++                };
+++
++                 self.is_empty_directory()
++             }
++         } else {
+diff --git a/rust-eza.spec b/rust-eza.spec
+index bcf7205..9c52df4 100644
+--- a/rust-eza.spec
++++ b/rust-eza.spec
+@@ -19,6 +19,7 @@ Patch:          eza-fix-metadata-auto.diff
+ # * drop features that are specific to NixOS packaging
+ # * exclude files that are only useful for upstream development
+ Patch:          eza-fix-metadata.diff
++Patch:          filesystem-optimizations.diff
+ 
+ BuildRequires:  cargo-rpm-macros >= 24
+ 
