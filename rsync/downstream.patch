@@ -13199,17 +13199,10 @@ index 0000000..b6a78a7
 + 		}
 +
 diff --git a/rsync.spec b/rsync.spec
-index dfff14e..bf3d625 100644
+index dfff14e..d03d3e3 100644
 --- a/rsync.spec
 +++ b/rsync.spec
-@@ -13,13 +13,14 @@ Release: 2%{?prerelease}%{?dist}
- URL: https://rsync.samba.org/
- 
- Source0: https://download.samba.org/pub/rsync/src/rsync-%{version}%{?prerelease}.tar.gz
--Source1: https://download.samba.org/pub/rsync/src/rsync-patches-%{version}%{?prerelease}.tar.gz
- Source2: rsyncd.socket
- Source3: rsyncd.service
- Source4: rsyncd.conf
+@@ -20,6 +20,8 @@ Source4: rsyncd.conf
  Source5: rsyncd.sysconfig
  Source6: rsyncd@.service
  
@@ -13218,7 +13211,7 @@ index dfff14e..bf3d625 100644
  BuildRequires: make
  BuildRequires: gcc
  BuildRequires: gcc-c++
-@@ -73,9 +74,6 @@ package provides the anonymous rsync service.
+@@ -73,9 +75,6 @@ package provides the anonymous rsync service.
  
  %patch 1 -p1 -b .runtests
  
