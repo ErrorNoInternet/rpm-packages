@@ -16,4 +16,5 @@
     branch = f40
 [submodule "kernel/upstream"]
 	path = kernel/upstream
-	url = https://src.fedoraproject.org/rpms/kernel
+    url = https://src.fedoraproject.org/rpms/kernel
+    branch = f40
