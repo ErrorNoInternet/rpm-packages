@@ -1,17 +1,8 @@
 diff --git a/rsync.spec b/rsync.spec
-index dfff14e..9e74ecf 100644
+index dfff14e..7ceb513 100644
 --- a/rsync.spec
 +++ b/rsync.spec
-@@ -20,6 +20,8 @@ Source4: rsyncd.conf
- Source5: rsyncd.sysconfig
- Source6: rsyncd@.service
- 
-+Patch0: reflink.diff
-+
- BuildRequires: make
- BuildRequires: gcc
- BuildRequires: gcc-c++
-@@ -75,6 +77,7 @@ package provides the anonymous rsync service.
+@@ -75,6 +75,7 @@ package provides the anonymous rsync service.
  
  patch -p1 -i patches/detect-renamed.diff
  patch -p1 -i patches/detect-renamed-lax.diff
