@@ -1,18 +1,16 @@
 #!/usr/bin/env bash
 
 modified=false
-ignore=(
-    "./btrfs-progs"
-
-    "./7zip/7zip.spec"
-    "./timg/timg.spec"
+allow=(
+    "./klassy/klassy.spec"
+    "./kwin-effects/kwin-effects-sliding-notifications.spec"
+    "./mergerfs/mergerfs.spec"
+    "./par2cmdline-turbo/par2cmdline-turbo.spec"
+    "./try/try.spec"
 )
 
 for file in $(find . -type f -name "*.spec"); do
-    if [[ " ${ignore[*]} " =~ " ${file} " ]]; then
-        echo "ignoring $file!"
-        continue
-    fi
+    if [[ ! " ${allow[*]} " =~ " ${file} " ]]; then continue; fi
 
     url=$(grep "URL: " "$file" | cut -d' ' -f2)
     repository=$(echo "$url" | sed -n 's|.*github.com/\(.*\)$|\1|p')
