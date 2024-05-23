@@ -1,3 +1,6 @@
 [submodule "btrfs-progs/upstream"]
 	path = btrfs-progs/upstream
 	url = https://src.fedoraproject.org/rpms/btrfs-progs
+[submodule "rsync/upstream"]
+	path = rsync/upstream
+	url = https://src.fedoraproject.org/rpms/rsync
