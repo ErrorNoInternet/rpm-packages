@@ -4,6 +4,6 @@
 [submodule "rsync/upstream"]
 	path = rsync/upstream
 	url = https://src.fedoraproject.org/rpms/rsync
-[submodule "eza/upstream"]
-	path = eza/upstream
+[submodule "rust-eza/upstream"]
+	path = rust-eza/upstream
 	url = https://src.fedoraproject.org/rpms/rust-eza
