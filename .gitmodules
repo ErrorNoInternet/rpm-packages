@@ -7,3 +7,6 @@
 [submodule "rust-eza/upstream"]
 	path = rust-eza/upstream
 	url = https://src.fedoraproject.org/rpms/rust-eza
+[submodule "kitty/upstream"]
+	path = kitty/upstream
+	url = https://src.fedoraproject.org/rpms/kitty
