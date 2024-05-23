@@ -5326,7 +5326,7 @@ index bc5871285..c651d2a45 100644
  CONFIG_IMA_APPRAISE_BOOTPARAM=y
  # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
 diff --git a/kernel.spec b/kernel.spec
-index bd479f992..af9becfd2 100644
+index bd479f992..9fc9688d9 100644
 --- a/kernel.spec
 +++ b/kernel.spec
 @@ -982,6 +982,11 @@ Source4002: gating.yaml
@@ -5341,6 +5341,17 @@ index bd479f992..af9becfd2 100644
  # empty final patch to facilitate testing of kernel patches
  Patch999999: linux-kernel-test.patch
  
+@@ -2003,8 +2008,8 @@ cp_vmlinux()
+ # from redhat-rpm-config assume that host == target so target arch
+ # flags cause issues with the host compiler.
+ %if !%{with_cross}
+-%define build_hostcflags  %{?build_cflags}
+-%define build_hostldflags %{?build_ldflags}
++%define build_hostcflags  %{?build_cflags} -march=haswell -mtune=haswell
++%define build_hostldflags %{?build_ldflags} 
+ %endif
+ 
+ %define make %{__make} %{?cross_opts} %{?make_opts} HOSTCFLAGS="%{?build_hostcflags}" HOSTLDFLAGS="%{?build_hostldflags}"
 diff --git a/zstd-updates.patch b/zstd-updates.patch
 new file mode 100644
 index 000000000..6dc279315
