@@ -3,6 +3,7 @@
 set -x
 
 dnf install -y git fedpkg
+git config --global --add safe.directory "$(pwd)"
 
 git checkout f40
 sed -i "s|%{?dist}|.patched%{?dist}|" "$spec"
