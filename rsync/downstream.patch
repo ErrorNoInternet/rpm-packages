@@ -1,9 +1,9 @@
 diff --git a/detect-renamed-and-clone-dest.diff b/detect-renamed-and-clone-dest.diff
 new file mode 100644
-index 0000000..b6a78a7
+index 0000000..c0a2ce6
 --- /dev/null
 +++ b/detect-renamed-and-clone-dest.diff
-@@ -0,0 +1,13194 @@
+@@ -0,0 +1,13175 @@
 +diff --git a/Makefile.in b/Makefile.in
 +index a1253e5d..b2e9ecfe 100644
 +--- a/Makefile.in
@@ -6524,25 +6524,6 @@ index 0000000..b6a78a7
 ++
 ++	return path;
 ++}
-+diff --git a/options.c.rej b/options.c.rej
-+new file mode 100644
-+index 00000000..d86868e6
-+--- /dev/null
-++++ b/options.c.rej
-+@@ -0,0 +1,13 @@
-++--- options.c
-+++++ options.c
-++@@ -744,7 +744,9 @@ static struct poptOption long_options[] = {
-++   {"compare-dest",     0,  POPT_ARG_STRING, 0, OPT_COMPARE_DEST, 0, 0 },
-++   {"copy-dest",        0,  POPT_ARG_STRING, 0, OPT_COPY_DEST, 0, 0 },
-++   {"link-dest",        0,  POPT_ARG_STRING, 0, OPT_LINK_DEST, 0, 0 },
-++-  {"detect-renamed",   0,  POPT_ARG_NONE,   &detect_renamed, 0, 0, 0 },
-+++  {"detect-renamed",   0,  POPT_ARG_VAL,    &detect_renamed, 1, 0, 0 },
-+++  {"detect-renamed-lax",0, POPT_ARG_VAL,    &detect_renamed, 2, 0, 0 },
-+++  {"detect-moved",     0,  POPT_ARG_VAL,    &detect_renamed, 3, 0, 0 },
-++   {"fuzzy",           'y', POPT_ARG_NONE,   0, 'y', 0, 0 },
-++   {"no-fuzzy",         0,  POPT_ARG_VAL,    &fuzzy_basis, 0, 0, 0 },
-++   {"no-y",             0,  POPT_ARG_VAL,    &fuzzy_basis, 0, 0, 0 },
 +diff --git a/receiver.c b/receiver.c
 +index 6b4b369e..c7caef77 100644
 +--- a/receiver.c
