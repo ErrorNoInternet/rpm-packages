@@ -1,0 +1,52 @@
+diff --git a/force-libusb.diff b/force-libusb.diff
+new file mode 100644
+index 0000000..4e7eeba
+--- /dev/null
++++ b/force-libusb.diff
+@@ -0,0 +1,33 @@
++--- a/OpenRGB.pro
+++++ b/OpenRGB.pro
++@@ -1844,27 +1844,10 @@
++ 
++     QMAKE_CXXFLAGS += -Wno-implicit-fallthrough
++ 
++-    #-------------------------------------------------------------------------------------------#
++-    # Determine which hidapi to use based on availability                                       #
++-    #   Prefer hidraw backend, then libusb                                                      #
++-    #-------------------------------------------------------------------------------------------#
++-    packagesExist(hidapi-hidraw) {
++-        LIBS += -lhidapi-hidraw
++-
++-        #---------------------------------------------------------------------------------------#
++-        # hidapi-hidraw >= 0.10.1 supports USAGE/USAGE_PAGE                                     #
++-        # Define USE_HID_USAGE if hidapi-hidraw supports it                                     #
++-        #---------------------------------------------------------------------------------------#
++-        HIDAPI_HIDRAW_VERSION = $$system($$PKG_CONFIG --modversion hidapi-hidraw)
++-        if(versionAtLeast(HIDAPI_HIDRAW_VERSION, "0.10.1")) {
++-            DEFINES += USE_HID_USAGE
++-        }
+++    packagesExist(hidapi-libusb) {
+++        LIBS += -lhidapi-libusb
++     } else {
++-        packagesExist(hidapi-libusb) {
++-            LIBS += -lhidapi-libusb
++-        } else {
++-            LIBS += -lhidapi
++-        }
+++        LIBS += -lhidapi
++     }
++ 
++     SOURCES +=                                                                                  \
+diff --git a/openrgb.spec b/openrgb.spec
+index c762d47..8414669 100644
+--- a/openrgb.spec
++++ b/openrgb.spec
+@@ -23,6 +23,8 @@ License:        GPL-2.0-only AND GPL-3.0-or-later
+ URL:            https://openrgb.org
+ Source0:        %{forgesource}
+ 
++Patch0:         force-libusb.diff
++
+ BuildRequires:  desktop-file-utils
+ BuildRequires:  gcc-c++
+ BuildRequires:  libappstream-glib
