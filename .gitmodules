@@ -19,3 +19,6 @@
 [submodule "openrgb/upstream"]
 	path = openrgb/upstream
 	url = https://src.fedoraproject.org/rpms/openrgb
+[submodule "strace/upstream"]
+	path = strace/upstream
+	url = https://src.fedoraproject.org/rpms/strace
