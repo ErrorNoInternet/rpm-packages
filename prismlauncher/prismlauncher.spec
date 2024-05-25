@@ -4,6 +4,7 @@
     print(release_number + base_release_number - 1);
 }%{?-e:.%{-e*}}%{?-s:.%{-s*}}%{!?-n:%{?dist}}
 
+%global _default_patch_fuzz 2
 %global real_name prismlauncher
 %global nice_name PrismLauncher
 %bcond_without qt6
