@@ -1,0 +1,44 @@
+diff --git a/neovim.spec b/neovim.spec
+index 374531d..5168e7c 100644
+--- a/neovim.spec
++++ b/neovim.spec
+@@ -46,6 +46,7 @@ Source1:        sysinit.vim
+ Source2:        spec-template
+ 
+ Patch1000:      neovim-lua-bit32.patch
++Patch0:         remove-fold-numbers.diff
+ 
+ BuildRequires:  gcc-c++
+ BuildRequires:  cmake
+@@ -106,6 +107,7 @@ parts of Vim, without compromise, and more.
+ 
+ %prep
+ %setup -q
++%patch -P 0 -p1
+ 
+ %if %{without luajit}
+ %patch -P 1000 -p1
+diff --git a/remove-fold-numbers.diff b/remove-fold-numbers.diff
+new file mode 100644
+index 0000000..9811f55
+--- /dev/null
++++ b/remove-fold-numbers.diff
+@@ -0,0 +1,18 @@
++diff --git a/src/nvim/drawline.c b/src/nvim/drawline.c
++index e8c41cb60..3191c89c6 100644
++--- a/src/nvim/drawline.c
+++++ b/src/nvim/drawline.c
++@@ -434,12 +434,8 @@ void fill_foldcolumn(win_T *wp, foldinfo_T foldinfo, linenr_T lnum, int attr, in
++       symbol = wp->w_p_fcs_chars.foldclosed;
++     } else if (foldinfo.fi_lnum == lnum && first_level + i >= foldinfo.fi_low_level) {
++       symbol = wp->w_p_fcs_chars.foldopen;
++-    } else if (first_level == 1) {
++-      symbol = wp->w_p_fcs_chars.foldsep;
++-    } else if (first_level + i <= 9) {
++-      symbol = schar_from_ascii('0' + first_level + i);
++     } else {
++-      symbol = schar_from_ascii('>');
+++      symbol = wp->w_p_fcs_chars.foldsep;
++     }
++ 
++     if (out_buffer) {
