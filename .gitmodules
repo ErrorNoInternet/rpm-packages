@@ -13,3 +13,6 @@
 [submodule "kernel/upstream"]
 	path = kernel/upstream
     url = https://src.fedoraproject.org/rpms/kernel
+[submodule "neovim/upstream"]
+	path = neovim/upstream
+	url = https://src.fedoraproject.org/rpms/neovim
