@@ -10,7 +10,7 @@ sed -i "s|\([^%]\)%{?dist}|\1.patched%{?dist}|" "$spec"
 sed -i "s|%autorelease|%autorelease -e patched|" "$spec"
 sed -i "s|-S git_am|-S git|" "$spec"
 
-patch -p1 < ../downstream.patch
+patch -p1 < ../downstream.diff
 
 fedpkg srpm
 cp -r ./*.src.rpm "$outdir"
