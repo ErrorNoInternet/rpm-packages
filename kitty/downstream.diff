@@ -49,7 +49,7 @@ index 0000000..ae7eebb
 +     return val
 diff --git a/remove-initial-color.diff b/remove-initial-color.diff
 new file mode 100644
-index 0000000..cc8e61a
+index 0000000..740bfc3
 --- /dev/null
 +++ b/remove-initial-color.diff
 @@ -0,0 +1,167 @@
@@ -92,10 +92,10 @@ index 0000000..cc8e61a
 +     _glfwInputError(GLFW_INVALID_ENUM, "Invalid window hint 0x%08X", hint);
 + }
 +diff --git a/glfw/wl_window.c b/glfw/wl_window.c
-+index 35fabd611..2a06db997 100644
++index fc83b8ac2..4a57171fc 100644
 +--- a/glfw/wl_window.c
 ++++ b/glfw/wl_window.c
-+@@ -789,78 +789,6 @@ typedef union pixel {
++@@ -821,78 +821,6 @@ typedef union pixel {
 +     uint32_t value;
 + } pixel;
 + 
@@ -166,17 +166,17 @@ index 0000000..cc8e61a
 +-    }
 +-    if (!window->wl.temp_buffer_used_during_window_creation) return false;
 +-    wl_surface_attach(window->wl.surface, window->wl.temp_buffer_used_during_window_creation, 0, 0);
-+-    wl_surface_commit(window->wl.surface);
-+-    debug("Attached temp buffer during window creation of size: %dx%d and rgba(%u, %u, %u, %u)\n", width, height, color.red, color.green, color.blue, color.alpha);
++-    debug("Attached temp buffer during window %llu creation of size: %dx%d and rgba(%u, %u, %u, %u)\n", window->id, width, height, color.red, color.green, color.blue, color.alpha);
++-    commit_window_surface(window);
 +-    return true;
 +-}
 +-
 + static void
 + loop_till_window_fully_created(_GLFWwindow *window) {
 +     if (!window->wl.window_fully_created) {
-+@@ -890,9 +818,6 @@ xdgSurfaceHandleConfigure(void* data, struct xdg_surface* surface, uint32_t seri
++@@ -922,9 +850,6 @@ xdgSurfaceHandleConfigure(void* data, struct xdg_surface* surface, uint32_t seri
 +     xdg_surface_ack_configure(surface, serial);
-+     debug("XDG surface configure event received and acknowledged\n");
++     debug("XDG surface configure event received and acknowledged for window %llu\n", window->id);
 +     apply_xdg_configure_changes(window);
 +-    if (!window->wl.window_fully_created) {
 +-        if (!attach_temp_buffer_during_window_creation(window)) window->wl.window_fully_created = true;
@@ -184,7 +184,7 @@ index 0000000..cc8e61a
 + }
 + 
 + static const struct xdg_surface_listener xdgSurfaceListener = {
-+@@ -1003,9 +928,6 @@ layer_surface_handle_configure(void* data, struct zwlr_layer_surface_v1* surface
++@@ -1035,9 +960,6 @@ layer_surface_handle_configure(void* data, struct zwlr_layer_surface_v1* surface
 +         layer_set_properties(window);
 +     }
 +     commit_window_surface_if_safe(window);
@@ -195,7 +195,7 @@ index 0000000..cc8e61a
 + 
 + static void
 +diff --git a/kitty/glfw-wrapper.h b/kitty/glfw-wrapper.h
-+index 62b3f7bf5..10f3577c9 100644
++index 3e9b34dff..c6b6a24b6 100644
 +--- a/kitty/glfw-wrapper.h
 ++++ b/kitty/glfw-wrapper.h
 +@@ -793,7 +793,6 @@ typedef enum {
@@ -207,10 +207,10 @@ index 0000000..cc8e61a
 + 
 + #define GLFW_NO_API                          0
 +diff --git a/kitty/glfw.c b/kitty/glfw.c
-+index c9550833b..7980528b4 100644
++index 96bd5ab04..5a6cb87fd 100644
 +--- a/kitty/glfw.c
 ++++ b/kitty/glfw.c
-+@@ -1149,9 +1149,6 @@ create_os_window(PyObject UNUSED *self, PyObject *args, PyObject *kw) {
++@@ -1165,9 +1165,6 @@ create_os_window(PyObject UNUSED *self, PyObject *args, PyObject *kw) {
 +     }
 +     bool want_semi_transparent = (1.0 - OPT(background_opacity) >= 0.01) || OPT(dynamic_background_opacity);
 +     glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, want_semi_transparent);
