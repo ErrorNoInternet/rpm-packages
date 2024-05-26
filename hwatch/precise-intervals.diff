@@ -1,0 +1,55 @@
+diff --git a/man/man.md b/man/man.md
+index 45b8557..94bf8b9 100644
+--- a/man/man.md
++++ b/man/man.md
+@@ -247,11 +247,11 @@ F3
+ 
+ \+
+ 
+-:   Increase interval by 0.5 seconds.
++:   Increase interval by 0.1 seconds.
+ 
+ \-
+ 
+-:   Decrease interval by 0.5 seconds (As long as it's positive).
++:   Decrease interval by 0.1 seconds (As long as it's positive).
+ 
+ Tab
+ 
+diff --git a/src/app.rs b/src/app.rs
+index 0ce695e..cd74bd8 100644
+--- a/src/app.rs
++++ b/src/app.rs
+@@ -505,14 +505,14 @@ impl<'a> App<'a> {
+     ///
+     fn increase_interval(&mut self) {
+         let cur_interval = *self.interval.read().unwrap();
+-        self.set_interval(cur_interval + 0.5);
++        self.set_interval(cur_interval + 0.1);
+     }
+ 
+     ///
+     fn decrease_interval(&mut self) {
+         let cur_interval = *self.interval.read().unwrap();
+-        if cur_interval > 0.5 {
+-            self.set_interval(cur_interval - 0.5);
++        if cur_interval >= 0.1 {
++            self.set_interval(cur_interval - 0.1);
+         }
+     }
+ 
+diff --git a/src/help.rs b/src/help.rs
+index 1aa3a53..565f089 100644
+--- a/src/help.rs
++++ b/src/help.rs
+@@ -150,8 +150,8 @@ fn gen_help_text<'a>() -> Vec<Line<'a>> {
+         KeyData { key: "F2".to_string(), description: "change output mode as stderr.".to_string() },
+         KeyData { key: "F3".to_string(), description: "change output mode as output(stdout/stderr set.).".to_string() },
+         // change interval
+-        KeyData { key: "+".to_string(), description: "Increase interval by .5 seconds.".to_string() },
+-        KeyData { key: "-".to_string(), description: "Decrease interval by .5 seconds.".to_string() },
++        KeyData { key: "+".to_string(), description: "Increase interval by .1 seconds.".to_string() },
++        KeyData { key: "-".to_string(), description: "Decrease interval by .1 seconds.".to_string() },
+         // change use area
+         KeyData { key: "Tab".to_string(), description: "toggle current area at history or watch.".to_string() },
+         // filter text input
