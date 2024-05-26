@@ -1,6 +1,6 @@
 Name: par2cmdline-turbo
 Version: 1.1.1
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: ParPar x par2cmdline: speed focused par2cmdline fork
 
 License: GPL-2.0-or-later
@@ -22,17 +22,17 @@ performance on x86/ARM platforms.
 %build
 ./automake.sh
 %configure
-%make_build
+%make_build -Wno-error=implicit-function-declaration
 
 %install
 %make_install
 
 %check
-make check-TESTS
+%make_build check-TESTS
 
 %files
-%license COPYING
 %doc AUTHORS ChangeLog README.md
+%license COPYING
 %{_bindir}/par2
 %{_bindir}/par2create
 %{_bindir}/par2repair
@@ -40,6 +40,10 @@ make check-TESTS
 %{_mandir}/man1/par2.1*
 
 %changelog
+* Sun May 26 2024 ErrorNoInternet <errornointernet@envs.net> - 1.1.1-2
+- Clean up a few things.
+- Fix aarch64 build by adding -Wno-error=implicit-function-declaration for posix_memalign.
+
 * Thu Aug 31 2023 ErrorNoInternet <errornointernet@envs.net> - 1.1.0-2
 - Fixed a few package review issues
 
