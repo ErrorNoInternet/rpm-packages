@@ -34,7 +34,7 @@ sed -i 's/chown root/echo IGNORING: chown root/' libfuse/Makefile
 %license LICENSE
 %{_bindir}/mergerfs
 %{_bindir}/mergerfs-fusermount
-%{_libdir}/mergerfs/preload.so
+%{_prefix}/lib/mergerfs/preload.so
 /sbin/mount.mergerfs
 
 %changelog
