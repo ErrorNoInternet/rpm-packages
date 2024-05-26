@@ -2,12 +2,14 @@
 
 modified=false
 allow=(
+    "./hwatch/hwatch.spec"
     "./klassy/klassy.spec"
     "./kwin-effects/kwin-effects-sliding-notifications.spec"
     "./mergerfs/mergerfs.spec"
     "./par2cmdline-turbo/par2cmdline-turbo.spec"
     "./prismlauncher/prismlauncher.spec"
     "./try/try.spec"
+    "./vesktop/vesktop.spec"
 )
 
 for file in $(find . -type f -name "*.spec"); do
