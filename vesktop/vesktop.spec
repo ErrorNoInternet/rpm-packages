@@ -12,6 +12,10 @@ Source0:	    %{url}/archive/refs/tags/v%{version}.tar.gz
 Source1:	    vesktop.sh
 Source2:	    vesktop.desktop
 
+Patch0:         fix-readonly.diff
+Patch1:         remove-splash.diff
+Patch2:         tray-notifications.diff
+
 BuildRequires:	pnpm
 
 %description
