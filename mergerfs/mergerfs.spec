@@ -2,7 +2,7 @@
 
 Name: mergerfs
 Version: 2.40.2
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: A featureful FUSE based union filesystem
 
 License: ISC
@@ -19,27 +19,29 @@ management of files across numerous commodity storage devices. It is
 similar to mhddfs, unionfs, and aufs.
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup -n %{name}-%{version} -p1
 
 %build
-# chown root causes permission issues
-mv libfuse/Makefile tmp-Makefile
-sed 's/chown root/echo IGNORING: chown root/g' tmp-Makefile > libfuse/Makefile
-
-make %{?_smp_mflags}
+sed -i 's/chown root/echo IGNORING: chown root/' libfuse/Makefile
+%make_build
 
 %install
-make install PREFIX=%{_prefix} DESTDIR=%{buildroot}
+%make_install PREFIX=%{_prefix} DESTDIR=%{buildroot}
 
 %files
-%license LICENSE
-%doc README.md
 %doc %{_mandir}/*
+%doc README.md
+%license LICENSE
 %{_bindir}/mergerfs
 %{_bindir}/mergerfs-fusermount
+%{_libdir}/mergerfs/preload.so
 /sbin/mount.mergerfs
 
 %changelog
+* Sun May 26 2024 ErrorNoInternet <errornointernet@envs.net> - 2.40.2-2
+- Clean up a few things
+- Add /usr/lib/mergerfs/preload.so to files
+
 * Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 2.35.1-2
 - Add LICENSE and README.md
 
