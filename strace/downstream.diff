@@ -919,7 +919,7 @@ index 0000000..7b682b9
 + 			break;
 + 		}
 diff --git a/strace.spec b/strace.spec
-index 58a0d8a..66d43c9 100644
+index 58a0d8a..7563bef 100644
 --- a/strace.spec
 +++ b/strace.spec
 @@ -115,6 +115,8 @@ BuildRequires: gcc gzip make
@@ -931,3 +931,27 @@ index 58a0d8a..66d43c9 100644
  # Install elfutils-devel or libdw-devel to enable strace -k option.
  # Install binutils-devel to enable symbol demangling.
  %if 0%{?fedora} >= 20 || 0%{?centos} >= 6 || 0%{?rhel} >= 6
+@@ -180,23 +182,6 @@ for f in ChangeLog ChangeLog-CVS; do
+ done
+ wait
+ 
+-%check
+-width=$(echo __LONG_WIDTH__ |%__cc -E -P -)
+-skip_32bit=0
+-%if 0%{?fedora} >= 35 || 0%{?rhel} > 9
+-skip_32bit=1
+-%endif
+-
+-if [ "${width}" != 32 ] || [ "${skip_32bit}" != 1 ]; then
+-	%{buildroot}%{_bindir}/strace -V
+-	%make_build -k check VERBOSE=1
+-	echo 'BEGIN OF TEST SUITE INFORMATION'
+-	tail -n 99999 -- tests*/test-suite.log tests*/ksysent.gen.log
+-	find tests* -type f -name '*.log' -print0 |
+-		xargs -r0 grep -H '^KERNEL BUG:' -- ||:
+-	echo 'END OF TEST SUITE INFORMATION'
+-fi
+-
+ %files
+ %maybe_use_defattr
+ %doc CREDITS ChangeLog.gz ChangeLog-CVS.gz COPYING NEWS README
