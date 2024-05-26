@@ -21,8 +21,8 @@ performance on x86/ARM platforms.
 
 %build
 ./automake.sh
-%configure
-%make_build -Wno-error=implicit-function-declaration
+%configure CFLAGS="%{optflags} -Wno-error=implicit-function-declaration"
+%make_build
 
 %install
 %make_install
