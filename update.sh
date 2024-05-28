@@ -12,6 +12,7 @@ allow=(
     "./mergerfs/mergerfs.spec"
     "./par2cmdline-turbo/par2cmdline-turbo.spec"
     "./prismlauncher/prismlauncher.spec"
+    "./ripdrag/ripdrag.spec"
     "./swaylock-effects/swaylock-effects.spec"
     "./swaync/swaync.spec"
     "./try/try.spec"
