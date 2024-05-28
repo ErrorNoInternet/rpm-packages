@@ -2,6 +2,7 @@
 
 modified=false
 allow=(
+    "./cliphist/golang-github-sentriz-cliphist.spec"
     "./hwatch/hwatch.spec"
     "./klassy/klassy.spec"
     "./kwin-effects/kwin-effects-sliding-notifications.spec"
