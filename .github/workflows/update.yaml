@@ -1,4 +1,4 @@
-name: Update
+name: Run update.sh
 on:
   workflow_dispatch:
   schedule:
@@ -8,8 +8,8 @@ permissions:
   contents: write
 
 jobs:
-  spec-files:
-    name: .spec files
+  run-update-sh:
+    name: Run update.sh
     runs-on: ubuntu-22.04
     
     steps:
