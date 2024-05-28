@@ -49,6 +49,7 @@ cargo vendor
 %files
 %license LICENSE
 %license LICENSE.dependencies
+%license cargo-vendor.txt
 %doc README.md
 %{_bindir}/hwatch
 
