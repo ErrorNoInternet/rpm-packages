@@ -919,7 +919,7 @@ index 0000000..7b682b9
 + 			break;
 + 		}
 diff --git a/strace.spec b/strace.spec
-index 58a0d8a..50b841b 100644
+index 58a0d8a..7a809ca 100644
 --- a/strace.spec
 +++ b/strace.spec
 @@ -115,6 +115,8 @@ BuildRequires: gcc gzip make
@@ -936,7 +936,7 @@ index 58a0d8a..50b841b 100644
  
  %prep
 -%setup -q
-+%autosetup -q -p1
++%autosetup -p1
  echo -n %version-%release > .tarball-version
  echo -n 2024 > .year
  echo -n 2024-05-05 > doc/.strace.1.in.date
