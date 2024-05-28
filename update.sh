@@ -8,8 +8,10 @@ allow=(
     "./mergerfs/mergerfs.spec"
     "./par2cmdline-turbo/par2cmdline-turbo.spec"
     "./prismlauncher/prismlauncher.spec"
+    "./swaync/swaync.spec"
     "./try/try.spec"
     "./vesktop/vesktop.spec"
+    "./yazi/yazi.spec"
 )
 
 for file in $(find . -type f -name "*.spec"); do
