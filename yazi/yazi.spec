@@ -34,8 +34,7 @@ cargo vendor
 %{cargo_vendor_manifest}
 
 %install
-%cargo_install --path yazi-cli
-%cargo_install --path yazi-fm
+%cargo_install
 
 %if %{with check}
 %check
