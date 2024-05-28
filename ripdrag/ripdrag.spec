@@ -14,6 +14,14 @@ URL:            https://github.com/nik012003/ripdrag
 Source:         %{url}/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  pkg-config
+BuildRequires:  glib2-devel
+BuildRequires:  gdk-pixbuf2-devel
+BuildRequires:  cairo-devel
+BuildRequires:  cairo-gobject-devel
+BuildRequires:  pango-devel
+BuildRequires:  graphene-devel
+BuildRequires:  gtk4-devel
 
 %global _description %{expand:
 Drag and Drop files to and from the terminal.}
