@@ -10,6 +10,7 @@ allow=(
     "./mergerfs/mergerfs.spec"
     "./par2cmdline-turbo/par2cmdline-turbo.spec"
     "./prismlauncher/prismlauncher.spec"
+    "./swaylock-effects/swaylock-effects.spec"
     "./swaync/swaync.spec"
     "./try/try.spec"
     "./vesktop/vesktop.spec"
