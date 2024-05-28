@@ -1,4 +1,4 @@
-%define upstreamversion 1.6
+%define upstreamversion 1.7.0.0
 %define forkversion 4
 
 Name:       swaylock-effects
@@ -7,7 +7,7 @@ Release:    %autorelease
 Summary:    Swaylock, with fancy effects
 
 License:    MIT
-URL:	    https://github.com/mortie/swaylock-effects
+URL:	    https://github.com/jirutka/swaylock-effects
 Source0:    %{url}/archive/v%{upstreamversion}-%{forkversion}/%{name}-v%{upstreamversion}-%{forkversion}.tar.gz
 
 Conflicts:      sway < 1.0
