@@ -4,7 +4,6 @@ modified=false
 allow=(
     "./cliphist/cliphist.spec"
     "./git-graph/git-graph.spec"
-    "./hsize/hsize.spec"
     "./hwatch/hwatch.spec"
     "./iamb/iamb.spec"
     "./klassy/klassy.spec"
@@ -13,7 +12,6 @@ allow=(
     "./par2cmdline-turbo/par2cmdline-turbo.spec"
     "./prismlauncher/prismlauncher.spec"
     "./ripdrag/ripdrag.spec"
-    "./swaylock-effects/swaylock-effects.spec"
     "./swaync/swaync.spec"
     "./try/try.spec"
     "./vesktop/vesktop.spec"
@@ -23,7 +21,7 @@ allow=(
 for file in $(find . -type f -name "*.spec"); do
     if [[ ! " ${allow[*]} " =~ " ${file} " ]]; then continue; fi
 
-    url=$(grep "URL: " "$file" | cut -d' ' -f2)
+    url=$(sed -n "s|^URL:\s\+\(.*\)$|\1|p" "$file")
     repository=$(echo "$url" | sed -n 's|.*github.com/\(.*\)$|\1|p')
     api_response=$(curl -s "https://api.github.com/repos/$repository/releases/latest")
     if [[ $? -ne 0 ]]; then
@@ -32,13 +30,13 @@ for file in $(find . -type f -name "*.spec"); do
         continue
     fi
 
-    latest_version=$(echo "$api_response" | grep --color=never tag_name | sed -n 's|.*".*": "\(.*\)".*|\1|p' | sed 's|^v||')
+    latest_version=$(echo "$api_response" | grep tag_name | sed -n 's|.*".*": "\(.*\)".*|\1|p' | sed 's|^v||')
     if [[ -z "$latest_version" ]]; then
         echo "failed to request latest version for $repository!"
         echo -e "api response:\n$api_response"
         continue
     fi
-    version=$(grep "Version: " "$file" | cut -d' ' -f2)
+    version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$file")
 
     if [[ "$version" != "$latest_version" ]]; then
         echo "$file is not up-to-date ($version -> $latest_version)"
