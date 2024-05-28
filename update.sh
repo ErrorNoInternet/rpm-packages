@@ -2,9 +2,11 @@
 
 modified=false
 allow=(
-    "./cliphist/golang-github-sentriz-cliphist.spec"
+    "./cliphist/cliphist.spec"
     "./git-graph/git-graph.spec"
+    "./hsize/hsize.spec"
     "./hwatch/hwatch.spec"
+    "./iamb/iamb.spec"
     "./klassy/klassy.spec"
     "./kwin-effects/kwin-effects-sliding-notifications.spec"
     "./mergerfs/mergerfs.spec"
