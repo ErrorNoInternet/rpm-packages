@@ -351,7 +351,7 @@ index 0000000..871c121
 + #define BTRFS_BCONF_QUIET	 0
 + /*
 diff --git a/btrfs-progs.spec b/btrfs-progs.spec
-index 3f26904..6c1aa4b 100644
+index 3f26904..ad609e7 100644
 --- a/btrfs-progs.spec
 +++ b/btrfs-progs.spec
 @@ -12,6 +12,9 @@ Source0:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{n
@@ -364,7 +364,12 @@ index 3f26904..6c1aa4b 100644
  BuildRequires:  gnupg2
  BuildRequires:  gcc, autoconf, automake, make
  BuildRequires:  git-core
-@@ -93,7 +96,7 @@ xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}
+@@ -89,11 +92,11 @@ btrfs filesystem-specific programs in Python.
+ 
+ %prep
+ xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data=-
+-%autosetup -n %{name}-v%{version_no_tilde} -S git_am
++%autosetup -n %{name}-v%{version_no_tilde} -p1 -S git_am
  
  %build
  ./autogen.sh
