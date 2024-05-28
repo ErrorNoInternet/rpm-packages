@@ -74,7 +74,7 @@ Requires:       %{name} = %{version}-%{release}
 This package installs Fish completion files for %{name}
 
 %prep
-%setup -T -b 0 -q -n SwayNotificationCenter
+%autosetup -n %{name}-%{version} -p1
 
 %build
 %meson
