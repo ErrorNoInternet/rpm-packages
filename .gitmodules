@@ -22,3 +22,6 @@
 [submodule "strace/upstream"]
 	path = strace/upstream
 	url = https://src.fedoraproject.org/rpms/strace
+[submodule "btop/btop"]
+	path = btop/btop
+	url = https://src.fedoraproject.org/rpms/btop
