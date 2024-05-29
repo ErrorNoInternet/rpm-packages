@@ -9,6 +9,7 @@ allow=(
     "./klassy/klassy.spec"
     "./kwin-effects/kwin-effects-sliding-notifications.spec"
     "./mergerfs/mergerfs.spec"
+    "./onefetch/onefetch.spec"
     "./par2cmdline-turbo/par2cmdline-turbo.spec"
     "./prismlauncher/prismlauncher.spec"
     "./ripdrag/ripdrag.spec"
