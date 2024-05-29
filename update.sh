@@ -13,6 +13,7 @@ allow=(
     "./par2cmdline-turbo/par2cmdline-turbo.spec"
     "./prismlauncher/prismlauncher.spec"
     "./ripdrag/ripdrag.spec"
+    "./stylua/stylua.spec"
     "./swaync/swaync.spec"
     "./try/try.spec"
     "./vesktop/vesktop.spec"
