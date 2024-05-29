@@ -2,7 +2,7 @@
 
 Name:		    vesktop
 Version:	    1.5.2
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:	    Vesktop is a custom Discord desktop app
 
 License:	    GPL-3.0-only
