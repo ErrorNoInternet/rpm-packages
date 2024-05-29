@@ -10,7 +10,6 @@ Name:           hwatch
 Version:        0.3.13
 Release:        %autorelease
 Summary:        Modern alternative to the watch command
-
 License:        MIT
 
 URL:            https://github.com/blacknon/hwatch
