@@ -2,6 +2,7 @@
 
 modified=false
 allow=(
+    "./btdu/btdu.spec"
     "./cliphist/cliphist.spec"
     "./git-graph/git-graph.spec"
     "./hwatch/hwatch.spec"
