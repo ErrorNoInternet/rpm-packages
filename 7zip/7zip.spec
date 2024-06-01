@@ -1,3 +1,5 @@
+%global debug_package %{nil}
+
 Name:           7zip
 Version:        24.05
 Release:        1%{?dist}
