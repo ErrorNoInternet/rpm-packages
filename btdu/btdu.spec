@@ -11,6 +11,7 @@ Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  dub
 BuildRequires:  gcc
+BuildRequires:  ldc
 BuildRequires:  ncurses-devel
 BuildRequires:  zlib-devel
 
