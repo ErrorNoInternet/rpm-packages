@@ -1,11 +1,11 @@
-Name:       swaylock-effects
-Version:    1.7.0.0
-Release:    %autorelease
-Summary:    Swaylock, with fancy effects
+Name:           swaylock-effects
+Version:        1.7.0.0
+Release:        %autorelease
+Summary:        Swaylock, with fancy effects
 
-License:    MIT
-URL:	    https://github.com/jirutka/swaylock-effects
-Source0:    %{url}/archive/refs/tags/v%{version}.tar.gz
+License:        MIT
+URL:            https://github.com/jirutka/swaylock-effects
+Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
 
 Conflicts:      sway < 1.0
 
