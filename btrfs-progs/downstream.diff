@@ -351,9 +351,18 @@ index 0000000..871c121
 + #define BTRFS_BCONF_QUIET	 0
 + /*
 diff --git a/btrfs-progs.spec b/btrfs-progs.spec
-index 3f26904..ad609e7 100644
+index 3f26904..d0928b7 100644
 --- a/btrfs-progs.spec
 +++ b/btrfs-progs.spec
+@@ -3,7 +3,7 @@
+ 
+ Name:           btrfs-progs
+ Version:        6.8.1
+-Release:        1%{?dist}
++Release:        2%{?dist}
+ Summary:        Userspace programs for btrfs
+ 
+ License:        GPL-2.0-only
 @@ -12,6 +12,9 @@ Source0:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{n
  Source1:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{name}-v%{version_no_tilde}.tar.sign
  Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
