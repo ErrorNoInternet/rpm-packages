@@ -45,12 +45,12 @@ for file in $(find . -type f -name "*.spec"); do
     if [[ "$version" != "$latest_version" ]]; then
         echo "$file is not up-to-date ($version -> $latest_version)"
 
-        updated_file=$(cat "$file")
         echo "modifying version in file..."
-        updated_file=$(echo "$updated_file" | sed "s|Version: $version|Version: $latest_version|")
+        sed -i "s|Version:\(\s\+\)$version|Version:\1$latest_version|" "$file"
         echo "modifying release in file..."
-        updated_file=$(echo "$updated_file" | sed "s|Release: [0-9]\+%{?dist}|Release: 1%{?dist}|")
-        echo "$updated_file" > "$file"
+        sed -i "s|Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
+
+        return
 
         echo "running git add && git commit..."
         echo ">>>>>>>>>>"
@@ -71,4 +71,3 @@ if [[ $modified = true ]]; then
     git push
     echo "<<<<<<<<<<"
 fi
-
