@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-modified=false
 allow=(
     "./btdu/btdu.spec"
     "./cliphist/cliphist.spec"
@@ -21,6 +20,7 @@ allow=(
     "./vesktop/vesktop.spec"
     "./yazi/yazi.spec"
 )
+modified=false
 
 for file in $(find . -type f -name "*.spec"); do
     if [[ ! " ${allow[*]} " =~ " ${file} " ]]; then continue; fi
@@ -29,28 +29,25 @@ for file in $(find . -type f -name "*.spec"); do
     repository=$(echo "$url" | sed -n 's|.*github.com/\(.*\)$|\1|p')
     api_response=$(curl -s "https://api.github.com/repos/$repository/releases/latest")
     if [[ $? -ne 0 ]]; then
-        echo "failed to request latest version for $repository!"
+        echo "[!] failed to request latest version for $repository!"
         echo -e "api response:\n$api_response"
         continue
     fi
 
     latest_version=$(echo "$api_response" | grep tag_name | sed -n 's|.*".*": "\(.*\)".*|\1|p' | sed 's|^v||')
     if [[ -z "$latest_version" ]]; then
-        echo "failed to request latest version for $repository!"
+        echo "[!] failed to request latest version for $repository!"
         echo -e "api response:\n$api_response"
         continue
     fi
     version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$file")
 
     if [[ "$version" != "$latest_version" ]]; then
-        echo "$file is not up-to-date ($version -> $latest_version)"
+        echo "[!] $file is not up-to-date ($version -> $latest_version)"
 
-        echo "modifying version in file..."
+        echo "modifying attributes in file..."
         sed -i "s|Version:\(\s\+\)$version|Version:\1$latest_version|" "$file"
-        echo "modifying release in file..."
         sed -i "s|Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
-
-        return
 
         echo "running git add && git commit..."
         echo ">>>>>>>>>>"
