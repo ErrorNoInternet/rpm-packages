@@ -50,10 +50,8 @@ for file in $(find . -type f -name "*.spec"); do
         sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
 
         echo "running git add && git commit..."
-        echo ">>>>>>>>>>"
         git add "$file"
         git commit -m "$repository: $version -> $latest_version"
-        echo "<<<<<<<<<<"
 
         modified=true
         echo "successfully updated $file ($version -> $latest_version)"
@@ -62,9 +60,17 @@ for file in $(find . -type f -name "*.spec"); do
     fi
 done
 
+echo "updating submodules..."
+git submodule update --remote --recursive
+if [[ $(git status -z) ]]; then
+    echo "running git add && git commit..."
+    git add .
+    git commit -m "treewide: update submodules"
+
+    modified=true
+fi
+
 if [[ $modified = true ]]; then
     echo "running git push..."
-    echo ">>>>>>>>>>"
     git push
-    echo "<<<<<<<<<<"
 fi
