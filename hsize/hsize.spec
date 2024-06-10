@@ -11,8 +11,7 @@ Name:           hsize
 Version:        0^%{snapdate}
 Release:        %autorelease
 Summary:        Convert file sizes to and from human-readable units
-
-License:        LGPL-3
+License:        LGPL-3-only
 
 URL:            https://github.com/ErrorNoInternet/hsize
 Source:         %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
