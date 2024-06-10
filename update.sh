@@ -46,8 +46,8 @@ for file in $(find . -type f -name "*.spec"); do
         echo "[!] $file is not up-to-date ($version -> $latest_version)"
 
         echo "modifying attributes in file..."
-        sed -i "s|Version:\(\s\+\)$version|Version:\1$latest_version|" "$file"
-        sed -i "s|Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
+        sed -i "s|^Version:\(\s\+\)$version|Version:\1$latest_version|" "$file"
+        sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
 
         echo "running git add && git commit..."
         echo ">>>>>>>>>>"
