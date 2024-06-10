@@ -1,3 +1,20 @@
+diff --git a/man/hwatch.1 b/man/hwatch.1
+index fffb607..24814f9 100644
+--- a/man/hwatch.1
++++ b/man/hwatch.1
+@@ -211,10 +211,10 @@ F3
+ Display \f[I]Stdout\f[R] and \f[I]Stderr\f[R].
+ .TP
+ +
+-Increase interval by 0.5 seconds.
++Increase interval by 0.1 seconds.
+ .TP
+ \-
+-Decrease interval by 0.5 seconds (As long as it\[cq]s positive).
++Decrease interval by 0.1 seconds (As long as it\[cq]s positive).
+ .TP
+ Tab
+ Switch the target(\f[I]history\f[R] or \f[I]watch\f[R] pad).
 diff --git a/man/man.md b/man/man.md
 index 45b8557..94bf8b9 100644
 --- a/man/man.md
@@ -17,10 +34,10 @@ index 45b8557..94bf8b9 100644
  Tab
  
 diff --git a/src/app.rs b/src/app.rs
-index 0ce695e..cd74bd8 100644
+index 1c1b8d1..1261e7c 100644
 --- a/src/app.rs
 +++ b/src/app.rs
-@@ -505,14 +505,14 @@ impl<'a> App<'a> {
+@@ -606,14 +606,14 @@ impl<'a> App<'a> {
      ///
      fn increase_interval(&mut self) {
          let cur_interval = *self.interval.read().unwrap();
@@ -38,18 +55,19 @@ index 0ce695e..cd74bd8 100644
          }
      }
  
-diff --git a/src/help.rs b/src/help.rs
-index 1aa3a53..565f089 100644
---- a/src/help.rs
-+++ b/src/help.rs
-@@ -150,8 +150,8 @@ fn gen_help_text<'a>() -> Vec<Line<'a>> {
-         KeyData { key: "F2".to_string(), description: "change output mode as stderr.".to_string() },
-         KeyData { key: "F3".to_string(), description: "change output mode as output(stdout/stderr set.).".to_string() },
-         // change interval
--        KeyData { key: "+".to_string(), description: "Increase interval by .5 seconds.".to_string() },
--        KeyData { key: "-".to_string(), description: "Decrease interval by .5 seconds.".to_string() },
-+        KeyData { key: "+".to_string(), description: "Increase interval by .1 seconds.".to_string() },
-+        KeyData { key: "-".to_string(), description: "Decrease interval by .1 seconds.".to_string() },
-         // change use area
-         KeyData { key: "Tab".to_string(), description: "toggle current area at history or watch.".to_string() },
-         // filter text input
+diff --git a/src/keymap.rs b/src/keymap.rs
+index 169dc91..42c8803 100644
+--- a/src/keymap.rs
++++ b/src/keymap.rs
+@@ -540,8 +540,8 @@ pub fn get_input_action_description(input_action: InputAction) -> String {
+         InputAction::ToggleHistorySummary => "Toggle history summary".to_string(),
+ 
+         // Interval
+-        InputAction::IntervalPlus => "Interval +0.5sec".to_string(),
+-        InputAction::IntervalMinus => "Interval -0.5sec".to_string(),
++        InputAction::IntervalPlus => "Interval +0.1sec".to_string(),
++        InputAction::IntervalMinus => "Interval -0.1sec".to_string(),
+ 
+         // Command
+         InputAction::ChangeFilterMode => "Change filter mode".to_string(),
+
