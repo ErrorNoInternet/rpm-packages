@@ -24,7 +24,7 @@ declare -A package_ids=(
 )
 
 for package_file in "${!package_ids[@]}"; do
-    package_name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$package_file")
+    package_name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$package_file" | head -1)
     echo "> querying versions for $package_name ($package_file)..."
 
     api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${package_ids[$package_file]}")
@@ -40,12 +40,12 @@ for package_file in "${!package_ids[@]}"; do
     fi
 
     latest_version=$(echo "$latest_version" | sed "s|-|~|g")
-    current_version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$package_file")
+    current_version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$package_file" | head -1)
 
     if [[ "$current_version" != "$latest_version" ]]; then
         echo "$package_name is not up-to-date ($current_version -> $latest_version)! modifying attributes..."
 
-        sed -i "s|^Version:\(\s\+\)$current_version|Version:\1$latest_version|" "$package_file"
+        sed -i "s|^Version:\(\s\+\)$current_version$|Version:\1$latest_version|" "$package_file"
         sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$package_file"
 
         git add "$package_file"
