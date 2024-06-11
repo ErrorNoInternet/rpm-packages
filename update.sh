@@ -24,7 +24,7 @@ declare -A package_ids=(
 )
 
 for package_file in "${!package_ids[@]}"; do
-    package_name=$(echo "$package_file" | cut -d"/" -f1)
+    package_name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$package_file")
     echo "> querying versions for $package_name ($package_file)..."
 
     api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${package_ids[$package_file]}")
