@@ -56,11 +56,8 @@ done
 echo "updating submodules..."
 git submodule update --remote --recursive
 if [[ "$(git status -z)" ]]; then
-    echo "running git add && git commit..."
     git add .
     git commit -m "treewide: update submodules"
-
-    modified=true
 fi
 
 git push
