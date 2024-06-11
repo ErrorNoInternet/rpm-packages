@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           7zip
-Version:        24.05
+Version:        24.06
 Release:        1%{?dist}
 Summary:        A file archiver with a high compression ratio
 
