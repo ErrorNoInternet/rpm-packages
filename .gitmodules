@@ -25,3 +25,6 @@
 [submodule "btop/upstream"]
 	path = btop/upstream
 	url = https://src.fedoraproject.org/rpms/btop
+[submodule "uboot-tools/upstream"]
+	path = uboot-tools/upstream
+	url = https://src.fedoraproject.org/rpms/uboot-tools
