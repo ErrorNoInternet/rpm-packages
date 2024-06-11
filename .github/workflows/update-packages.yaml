@@ -3,24 +3,19 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *'
-
 permissions:
   contents: write
-
 jobs:
   update-packages:
     name: Update packages
     runs-on: ubuntu-22.04
-    
     steps:
       - name: Clone repository
         uses: actions/checkout@v4
-
       - name: Configure Git user
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          
       - name: Run update.sh
         run: ./update.sh
         env:
