@@ -1,68 +1,61 @@
 #!/usr/bin/env bash
 
-allow=(
-    "./btdu/btdu.spec"
-    "./cliphist/cliphist.spec"
-    "./git-graph/git-graph.spec"
-    "./hwatch/hwatch.spec"
-    "./iamb/iamb.spec"
-    "./klassy/klassy.spec"
-    "./kwin-effects/kwin-effects-sliding-notifications.spec"
-    "./mergerfs/mergerfs.spec"
-    "./onefetch/onefetch.spec"
-    "./par2cmdline-turbo/par2cmdline-turbo.spec"
-    "./prismlauncher/prismlauncher.spec"
-    "./ripdrag/ripdrag.spec"
-    "./satty/satty.spec"
-    "./stylua/stylua.spec"
-    "./swaync/swaync.spec"
-    "./try/try.spec"
-    "./vesktop/vesktop.spec"
-    "./yazi/yazi.spec"
+declare -A package_ids=(
+    ["7zip/7zip.spec"]=372314
+    ["btdu/btdu.spec"]=372783
+    ["cliphist/cliphist.spec"]=242870
+    ["git-graph/git-graph.spec"]=372785
+    ["hwatch/hwatch.spec"]=372787
+    ["iamb/iamb.spec"]=372778
+    ["klassy/klassy.spec"]=372810
+    ["kwin-effects/kwin-effects-sliding-notifications.spec"]=372805
+    ["mergerfs/mergerfs.spec"]=372789
+    ["onefetch/onefetch.spec"]=141703
+    ["par2cmdline-turbo/par2cmdline-turbo.spec"]=372791
+    ["prismlauncher/prismlauncher.spec"]=301949
+    ["ripdrag/ripdrag.spec"]=372793
+    ["satty/satty.spec"]=372795
+    ["swaylock-effects/swaylock-effects.spec"]=312399
+    ["swaync/swaync.spec"]=242061
+    ["try/try.spec"]=372797
+    ["vesktop/vesktop.spec"]=372800
+    ["wallust/wallust.spec"]=372803
+    ["yazi/yazi.spec"]=370571
 )
-modified=false
 
-for file in $(find . -type f -name "*.spec"); do
-    if [[ ! " ${allow[*]} " =~ " ${file} " ]]; then continue; fi
+for package_file in "${!package_ids[@]}"; do
+    package_name=$(echo "$package_file" | cut -d"/" -f1)
+    echo "> querying versions for $package_name ($package_file)..."
 
-    url=$(sed -n "s|^URL:\s\+\(.*\)$|\1|p" "$file")
-    repository=$(echo "$url" | sed -n 's|.*github.com/\(.*\)$|\1|p')
-    api_response=$(curl -s "https://api.github.com/repos/$repository/releases/latest")
-    if [[ $? -ne 0 ]]; then
-        echo "[!] failed to request latest version for $repository!"
-        echo -e "api response:\n$api_response"
+    api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${package_ids[$package_file]}")
+    if [[ ! $? -eq 0 ]] || [[ -z "$api_response" ]]; then
+        echo -e "couldn't query api for $package_name! api response: $api_response"
         continue
     fi
 
-    latest_version=$(echo "$api_response" | grep tag_name | sed -n 's|.*".*": "\(.*\)".*|\1|p' | sed 's|^v||')
-    if [[ -z "$latest_version" ]]; then
-        echo "[!] failed to request latest version for $repository!"
-        echo -e "api response:\n$api_response"
+    latest_version=$(echo "$api_response" | jq -r .latest_version)
+    if [[ ! $? -eq 0 ]] || [[ -z "$latest_version" ]]; then
+        echo -e "couldn't parse versions for $package_name! api response: $api_response"
         continue
     fi
-    version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$file")
 
-    if [[ "$version" != "$latest_version" ]]; then
-        echo "[!] $file is not up-to-date ($version -> $latest_version)"
+    latest_version=$(echo "$latest_version" | sed "s|-|~|g")
+    current_version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$package_file")
 
-        echo "modifying attributes in file..."
-        sed -i "s|^Version:\(\s\+\)$version|Version:\1$latest_version|" "$file"
-        sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
+    if [[ "$current_version" != "$latest_version" ]]; then
+        echo "$package_name is not up-to-date ($current_version -> $latest_version)! modifying attributes..."
 
-        echo "running git add && git commit..."
-        git add "$file"
-        git commit -m "$repository: $version -> $latest_version"
+        sed -i "s|^Version:\(\s\+\)$current_version|Version:\1$latest_version|" "$package_file"
+        sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$package_file"
 
-        modified=true
-        echo "successfully updated $file ($version -> $latest_version)"
-    else
-        echo "$file is up-to-date ($latest_version)"
+        git add "$package_file"
+        git commit -m "$package_name: $current_version -> $latest_version"
     fi
 done
 
 echo "updating submodules..."
 git submodule update --remote --recursive
-if [[ $(git status -z) ]]; then
+if [[ "$(git status -z)" ]]; then
     echo "running git add && git commit..."
     git add .
     git commit -m "treewide: update submodules"
@@ -70,7 +63,4 @@ if [[ $(git status -z) ]]; then
     modified=true
 fi
 
-if [[ $modified = true ]]; then
-    echo "running git push..."
-    git push
-fi
+git push
