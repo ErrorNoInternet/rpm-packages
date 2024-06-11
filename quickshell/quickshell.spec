@@ -1,9 +1,9 @@
-%global commit      b5b9c1f6c352f5e495f580618f5d176497f7814b
-%global snapdate    20240607
+%global commit      67783ec24c61030abff8ba5008a5bbd2822c6eca
+%global snapdate    20240609
 
 Name:               quickshell
 Version:            0^%{snapdate}
-Release:            2%{?dist}
+Release:            1%{?dist}
 Summary:            Simple and flexbile QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
