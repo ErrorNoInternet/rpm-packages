@@ -2,7 +2,7 @@
 
 Name:           vesktop
 Version:        1.5.2
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Vesktop is a custom Discord desktop app
 
 License:        GPL-3.0-only
@@ -30,8 +30,8 @@ pnpm i
 pnpm package:dir
 
 %install
-mkdir -p %{buildroot}%{_prefix}/lib
-cp -pr dist/linux*-unpacked %{buildroot}%{_prefix}/lib/vesktop
+mkdir -p %{buildroot}%{_libdir}
+cp -pr dist/linux*-unpacked %{buildroot}%{_libdir}/vesktop
 install -Dm755 %{SOURCE1} %{buildroot}%{_bindir}/vesktop
 install -Dm644 %{SOURCE2} %{buildroot}%{_datarootdir}/applications/vesktop.desktop
 install -Dm644 static/icon.png %{buildroot}%{_datarootdir}/pixmaps/vesktop.png
@@ -40,7 +40,7 @@ install -Dm644 static/icon.png %{buildroot}%{_datarootdir}/pixmaps/vesktop.png
 %doc README.md
 %license LICENSE
 %{_bindir}/vesktop
-%{_prefix}/lib/vesktop
+%{_libdir}/vesktop
 %{_datarootdir}/applications/vesktop.desktop
 %{_datarootdir}/pixmaps/vesktop.png
 
