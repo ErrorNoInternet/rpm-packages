@@ -1,30 +1,40 @@
 [submodule "btrfs-progs/upstream"]
 	path = btrfs-progs/upstream
     url = https://src.fedoraproject.org/rpms/btrfs-progs
+	branch = f40
 [submodule "rsync/upstream"]
 	path = rsync/upstream
 	url = https://src.fedoraproject.org/rpms/rsync
+	branch = f40
 [submodule "rust-eza/upstream"]
 	path = rust-eza/upstream
 	url = https://src.fedoraproject.org/rpms/rust-eza
+	branch = f40
 [submodule "kitty/upstream"]
 	path = kitty/upstream
 	url = https://src.fedoraproject.org/rpms/kitty
+	branch = f40
 [submodule "kernel/upstream"]
 	path = kernel/upstream
     url = https://src.fedoraproject.org/rpms/kernel
+	branch = f40
 [submodule "neovim/upstream"]
 	path = neovim/upstream
 	url = https://src.fedoraproject.org/rpms/neovim
+	branch = f40
 [submodule "openrgb/upstream"]
 	path = openrgb/upstream
 	url = https://src.fedoraproject.org/rpms/openrgb
+	branch = f40
 [submodule "strace/upstream"]
 	path = strace/upstream
 	url = https://src.fedoraproject.org/rpms/strace
+	branch = f40
 [submodule "btop/upstream"]
 	path = btop/upstream
 	url = https://src.fedoraproject.org/rpms/btop
+	branch = f40
 [submodule "uboot-tools/upstream"]
 	path = uboot-tools/upstream
 	url = https://src.fedoraproject.org/rpms/uboot-tools
+	branch = f40
