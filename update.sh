@@ -55,7 +55,7 @@ for package_file in "${!package_ids[@]}"; do
 done
 
 echo "updating submodules..."
-git submodule update --remote --recursive
+git submodule update --recursive --remote --init
 if [[ "$(git status -s)" ]]; then
     git add .
     git commit -m "treewide: update submodules"
