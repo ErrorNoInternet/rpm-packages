@@ -57,8 +57,20 @@ done
 echo "updating submodules..."
 git submodule update --recursive --remote --init
 if [[ "$(git status -s)" ]]; then
+    modified_submodules=$(git show --name-status | rg "^M" | cut -f2 | cut -d'/' -f1)
     git add .
     git commit -m "treewide: update submodules"
 fi
 
 git push
+
+if [[ ! -z "$COPR_API_CREDENTIALS" ]] && [[ ! -z "$modified_submodules" ]]; then
+    echo "triggering copr builds..."
+
+    pip install copr-cli
+    echo -e "$COPR_API_CREDENTIALS" > ~/.config/copr
+
+    for package in $modified_submodules; do
+        copr build-package errornointernet/packages --nowait --name "$package"
+    done
+fi
