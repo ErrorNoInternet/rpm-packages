@@ -10,6 +10,7 @@ declare -A package_ids=(
     ["klassy/klassy.spec"]=372810
     ["kwin-effects/kwin-effects-sliding-notifications.spec"]=372805
     ["mergerfs/mergerfs.spec"]=372789
+    ["niri/niri.spec"]=372826
     ["onefetch/onefetch.spec"]=141703
     ["par2cmdline-turbo/par2cmdline-turbo.spec"]=372791
     ["prismlauncher/prismlauncher.spec"]=301949
