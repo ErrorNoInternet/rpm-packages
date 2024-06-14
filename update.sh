@@ -54,7 +54,7 @@ for package_file in "${!package_ids[@]}"; do
 	fi
 done
 
-echo "updating submodules..."
+echo "> updating submodules..."
 git submodule update --recursive --remote --init
 if [[ "$(git status -s)" ]]; then
 	modified_submodules=$(git show --name-status | grep "^M" | cut -f2 | cut -d'/' -f1)
@@ -65,7 +65,7 @@ fi
 git push
 
 if [[ ! -z "$modified_submodules" ]] && [[ ! -z "$COPR_API_CREDENTIALS" ]]; then
-	echo "triggering copr builds..."
+	echo "> triggering copr builds..."
 
 	pip install copr-cli
 	echo -e "$COPR_API_CREDENTIALS" >~/.config/copr
