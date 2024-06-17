@@ -71,6 +71,6 @@ if [[ ! -z "$modified_submodules" ]] && [[ ! -z "$COPR_API_CREDENTIALS" ]]; then
 	echo -e "$COPR_API_CREDENTIALS" >~/.config/copr
 
 	for package in $modified_submodules; do
-		copr build-package errornointernet/packages --nowait --name "$package"
+		~/.local/bin/copr-cli build-package errornointernet/packages --nowait --name "$package"
 	done
 fi
