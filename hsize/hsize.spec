@@ -30,6 +30,39 @@ Convert file sizes to and from human-readable units.}
 
 %description %{_description}
 
+%package bash-completion
+BuildArch:      noarch
+Summary:        Bash completion files for %{name}
+Provides:       %{name}-bash-completion = %{version}-%{release}
+
+Requires:       bash-completion
+Requires:       %{name} = %{version}-%{release}
+
+%description bash-completion
+This package installs Bash completion files for %{name}
+
+%package fish-completion
+BuildArch:      noarch
+Summary:        Fish completion files for %{name}
+Provides:       %{name}-fish-completion = %{version}-%{release}
+
+Requires:       fish
+Requires:       %{name} = %{version}-%{release}
+
+%description fish-completion
+This package installs Fish completion files for %{name}
+
+%package zsh-completion
+BuildArch:      noarch
+Summary:        Zsh completion files for %{name}
+Provides:       %{name}-zsh-completion = %{version}-%{release}
+
+Requires:       zsh
+Requires:       %{name} = %{version}-%{release}
+
+%description zsh-completion
+This package installs Zsh completion files for %{name}
+
 %prep
 %autosetup -n %{crate}-%{commit} -p1
 %cargo_prep
@@ -45,6 +78,12 @@ Convert file sizes to and from human-readable units.}
 %install
 %cargo_install
 
+mkdir -p %{buildroot}%{_mandir}/man1
+cp man/hsize* %{buildroot}%{_mandir}/man1
+install -Dm644 completions/hsize.bash %{buildroot}%{_datadir}/bash-completion/completions/hsize
+install -Dm644 completions/hsize.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/hsize.fish
+install -Dm644 completions/hsize.zsh %{buildroot}%{_datadir}/zsh/site-functions/_hsize
+
 %if %{with check}
 %check
 %cargo_test
@@ -55,6 +94,16 @@ Convert file sizes to and from human-readable units.}
 %license LICENSE.dependencies
 %doc README.md
 %{_bindir}/hsize
+%{_mandir}/man1/hsize*.1*
+
+%files bash-completion
+%{_datadir}/bash-completion/completions/hsize
+
+%files zsh-completion
+%{_datadir}/zsh/site-functions/_hsize
+
+%files fish-completion
+%{_datadir}/fish/vendor_completions.d/hsize.fish
 
 %changelog
 %autochangelog
