@@ -1,6 +1,6 @@
 [submodule "btrfs-progs/upstream"]
 	path = btrfs-progs/upstream
-    url = https://src.fedoraproject.org/rpms/btrfs-progs
+	url = https://src.fedoraproject.org/rpms/btrfs-progs
 	branch = f40
 [submodule "rsync/upstream"]
 	path = rsync/upstream
@@ -16,7 +16,7 @@
 	branch = f40
 [submodule "kernel/upstream"]
 	path = kernel/upstream
-    url = https://src.fedoraproject.org/rpms/kernel
+	url = https://src.fedoraproject.org/rpms/kernel
 	branch = f40
 [submodule "neovim/upstream"]
 	path = neovim/upstream
