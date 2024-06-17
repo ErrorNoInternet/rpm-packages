@@ -78,8 +78,9 @@ This package installs Zsh completion files for %{name}
 %install
 %cargo_install
 
-mkdir -p %{buildroot}%{_mandir}/man1
-cp man/hsize* %{buildroot}%{_mandir}/man1
+install -Dm644 man/hsize-replace.1 %{buildroot}%{_mandir}/man1/hsize-replace.1
+install -Dm644 man/hsize.1 %{buildroot}%{_mandir}/man1/hsize.1
+
 install -Dm644 completions/hsize.bash %{buildroot}%{_datadir}/bash-completion/completions/hsize
 install -Dm644 completions/hsize.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/hsize.fish
 install -Dm644 completions/hsize.zsh %{buildroot}%{_datadir}/zsh/site-functions/_hsize
@@ -94,7 +95,8 @@ install -Dm644 completions/hsize.zsh %{buildroot}%{_datadir}/zsh/site-functions/
 %license LICENSE.dependencies
 %doc README.md
 %{_bindir}/hsize
-%{_mandir}/man1/hsize*.1*
+%{_mandir}/man1/hsize-replace.1*
+%{_mandir}/man1/hsize.1*
 
 %files bash-completion
 %{_datadir}/bash-completion/completions/hsize
