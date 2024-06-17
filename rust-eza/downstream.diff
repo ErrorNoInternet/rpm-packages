@@ -43,14 +43,24 @@ index 0000000..fdab02e
 +             }
 +         } else {
 diff --git a/rust-eza.spec b/rust-eza.spec
-index bcf7205..9c52df4 100644
+index 69b09a7..e55c868 100644
 --- a/rust-eza.spec
 +++ b/rust-eza.spec
-@@ -19,6 +19,7 @@ Patch:          eza-fix-metadata-auto.diff
+@@ -12,13 +12,15 @@ License:        MIT
+ URL:            https://crates.io/crates/eza
+ Source:         %{crates_source}
+ # Automatically generated patch to strip dependencies and normalize metadata
+-Patch:          eza-fix-metadata-auto.diff
++Patch0:         eza-fix-metadata-auto.diff
+ # Manually created patch for downstream crate metadata changes
+ # * drop feature for statically linking with OpenSSL
+ # * drop unused, benchmark-only criterion dev-dependency
  # * drop features that are specific to NixOS packaging
  # * exclude files that are only useful for upstream development
- Patch:          eza-fix-metadata.diff
-+Patch:          filesystem-optimizations.diff
+-Patch:          eza-fix-metadata.diff
++Patch1:         eza-fix-metadata.diff
++
++Patch2:         filesystem-optimizations.diff
  
  BuildRequires:  cargo-rpm-macros >= 24
  
