@@ -28,19 +28,18 @@ for package_file in "${!package_ids[@]}"; do
 	package_name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$package_file" | head -1)
 	echo "> querying versions for $package_name ($package_file)..."
 
-	api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${package_ids[$package_file]}")
-	if [[ ! $? -eq 0 ]] || [[ -z "$api_response" ]]; then
+	if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${package_ids[$package_file]}") ||
+		[[ -z "$api_response" ]]; then
 		echo -e "couldn't query api for $package_name! api response: $api_response"
 		continue
 	fi
 
-	latest_version=$(echo "$api_response" | jq -r .latest_version)
-	if [[ ! $? -eq 0 ]] || [[ -z "$latest_version" ]]; then
+	if ! latest_version=$(echo "$api_response" | jq -r .latest_version) || [[ -z "$latest_version" ]]; then
 		echo -e "couldn't parse versions for $package_name! api response: $api_response"
 		continue
 	fi
 
-	latest_version=$(echo "$latest_version" | sed "s|-|~|g")
+	latest_version=${latest_version//-/\~}
 	current_version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$package_file" | head -1)
 
 	if [[ "$current_version" != "$latest_version" ]]; then
@@ -64,7 +63,7 @@ fi
 
 git push
 
-if [[ ! -z "$modified_submodules" ]] && [[ ! -z "$COPR_API_CREDENTIALS" ]]; then
+if [[ -n "$modified_submodules" ]] && [[ -n "$COPR_API_CREDENTIALS" ]]; then
 	echo "> triggering copr builds..."
 
 	pip install copr-cli
