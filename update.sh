@@ -57,7 +57,7 @@ done
 echo "> updating submodules..."
 git submodule update --recursive --remote --init
 if [[ "$(git status -s)" ]]; then
-	modified_submodules=$(git show --name-status | grep "^M" | cut -f2 | cut -d'/' -f1)
+	modified_submodules=$(git diff --name-status | grep "^M" | cut -f2 | cut -d'/' -f1)
 	git add .
 	git commit -m "treewide: update submodules"
 fi
