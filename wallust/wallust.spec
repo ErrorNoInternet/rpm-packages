@@ -76,9 +76,9 @@ install -Dpm644 man/wallust-theme.1 %{buildroot}%{_mandir}/man1/wallust-theme.1
 install -Dpm644 man/wallust.1 %{buildroot}%{_mandir}/man1/wallust.1
 install -Dpm644 man/wallust.5 %{buildroot}%{_mandir}/man5/wallust.5
 
-install -Dpm644 completions/wallust.bash %{buildroot}%{_datadir}/bash-completion/completions/wallust
-install -Dpm644 completions/wallust.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/wallust.fish
-install -Dpm644 completions/_wallust %{buildroot}%{_datadir}/zsh/site-functions/_wallust
+install -Dpm644 completions/wallust.bash %{buildroot}%{bash_completions_dir}/wallust
+install -Dpm644 completions/wallust.fish %{buildroot}%{fish_completions_dir}/wallust.fish
+install -Dpm644 completions/_wallust %{buildroot}%{zsh_completions_dir}/_wallust
 
 %if %{with check}
 %check
@@ -99,13 +99,13 @@ install -Dpm644 completions/_wallust %{buildroot}%{_datadir}/zsh/site-functions/
 %{_mandir}/man5/wallust.5*
 
 %files bash-completion
-%{_datadir}/bash-completion/completions/wallust
+%{bash_completions_dir}/wallust
 
 %files zsh-completion
-%{_datadir}/zsh/site-functions/_wallust
+%{zsh_completions_dir}/_wallust
 
 %files fish-completion
-%{_datadir}/fish/vendor_completions.d/wallust.fish
+%{fish_completions_dir}/wallust.fish
 
 %changelog
 %autochangelog

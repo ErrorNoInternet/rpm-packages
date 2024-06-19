@@ -45,16 +45,16 @@ swaylock-effects is a screen locking utility for Wayland compositors, with fancy
 %config(noreplace) %{_sysconfdir}/pam.d/%{program_name}
 
 %dir %{_datadir}/bash-completion
-%dir %{_datadir}/bash-completion/completions
-%{_datadir}/bash-completion/completions/%{program_name}
+%dir %{bash_completions_dir}
+%{bash_completions_dir}/%{program_name}
 
 %dir %{_datadir}/zsh
-%dir %{_datadir}/zsh/site-functions
-%{_datadir}/zsh/site-functions/_%{program_name}
+%dir %{zsh_completions_dir}
+%{zsh_completions_dir}/_%{program_name}
 
 %dir %{_datadir}/fish
-%dir %{_datadir}/fish/vendor_completions.d
-%{_datadir}/fish/vendor_completions.d/%{program_name}.fish
+%dir %{fish_completions_dir}
+%{fish_completions_dir}/%{program_name}.fish
 
 %changelog
 %autochangelog

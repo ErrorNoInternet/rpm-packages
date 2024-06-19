@@ -81,9 +81,9 @@ This package installs Zsh completion files for %{name}
 install -Dpm644 man/hsize-replace.1 %{buildroot}%{_mandir}/man1/hsize-replace.1
 install -Dpm644 man/hsize.1 %{buildroot}%{_mandir}/man1/hsize.1
 
-install -Dpm644 completions/hsize.bash %{buildroot}%{_datadir}/bash-completion/completions/hsize
-install -Dpm644 completions/hsize.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/hsize.fish
-install -Dpm644 completions/hsize.zsh %{buildroot}%{_datadir}/zsh/site-functions/_hsize
+install -Dpm644 completions/hsize.bash %{buildroot}%{bash_completions_dir}/hsize
+install -Dpm644 completions/hsize.fish %{buildroot}%{fish_completions_dir}/hsize.fish
+install -Dpm644 completions/hsize.zsh %{buildroot}%{zsh_completions_dir}/_hsize
 
 %if %{with check}
 %check
@@ -99,13 +99,13 @@ install -Dpm644 completions/hsize.zsh %{buildroot}%{_datadir}/zsh/site-functions
 %{_mandir}/man1/hsize.1*
 
 %files bash-completion
-%{_datadir}/bash-completion/completions/hsize
-
-%files zsh-completion
-%{_datadir}/zsh/site-functions/_hsize
+%{bash_completions_dir}/hsize
 
 %files fish-completion
-%{_datadir}/fish/vendor_completions.d/hsize.fish
+%{fish_completions_dir}/hsize.fish
+
+%files zsh-completion
+%{zsh_completions_dir}/_hsize
 
 %changelog
 %autochangelog

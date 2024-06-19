@@ -75,9 +75,9 @@ cargo vendor
 
 install -Dpm644 man/hwatch.1 %{buildroot}%{_mandir}/man1/hwatch.1
 
-install -Dpm644 completion/bash/hwatch-completion.bash %{buildroot}%{_datadir}/bash-completion/completions/hwatch
-install -Dpm644 completion/fish/hwatch.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/hwatch.fish
-install -Dpm644 completion/zsh/_hwatch %{buildroot}%{_datadir}/zsh/site-functions/_hwatch
+install -Dpm644 completion/bash/hwatch-completion.bash %{buildroot}%{bash_completions_dir}/hwatch
+install -Dpm644 completion/fish/hwatch.fish %{buildroot}%{fish_completions_dir}/hwatch.fish
+install -Dpm644 completion/zsh/_hwatch %{buildroot}%{zsh_completions_dir}/_hwatch
 
 %if %{with check}
 %check
@@ -93,13 +93,13 @@ install -Dpm644 completion/zsh/_hwatch %{buildroot}%{_datadir}/zsh/site-function
 %{_mandir}/man1/hwatch.1*
 
 %files bash-completion
-%{_datadir}/bash-completion/completions/hwatch
+%{bash_completions_dir}/hwatch
 
 %files zsh-completion
-%{_datadir}/zsh/site-functions/_hwatch
+%{zsh_completions_dir}/_hwatch
 
 %files fish-completion
-%{_datadir}/fish/vendor_completions.d/hwatch.fish
+%{fish_completions_dir}/hwatch.fish
 
 %changelog
 %autochangelog

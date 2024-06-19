@@ -105,16 +105,16 @@ This package installs Fish completion files for %{name}
 %{_mandir}/man5/swaync.5.gz
 
 %files bash-completion
-%{_datadir}/bash-completion/completions/swaync
-%{_datadir}/bash-completion/completions/swaync-client
+%{bash_completions_dir}/swaync
+%{bash_completions_dir}/swaync-client
 
 %files zsh-completion
-%{_datadir}/zsh/site-functions/_swaync
-%{_datadir}/zsh/site-functions/_swaync-client
+%{zsh_completions_dir}/_swaync
+%{zsh_completions_dir}/_swaync-client
 
 %files fish-completion
-%{_datadir}/fish/vendor_completions.d/swaync-client.fish
-%{_datadir}/fish/vendor_completions.d/swaync.fish
+%{fish_completions_dir}/swaync-client.fish
+%{fish_completions_dir}/swaync.fish
 
 %changelog
 %autochangelog
