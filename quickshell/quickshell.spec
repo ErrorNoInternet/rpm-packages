@@ -3,7 +3,7 @@
 
 Name:               quickshell
 Version:            0^%{snapdate}
-Release:            1%{?dist}
+Release:            2%{?dist}
 Summary:            Simple and flexbile QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
@@ -18,6 +18,7 @@ BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
 BuildRequires:      pipewire-devel
 BuildRequires:      pkgconfig(jemalloc)
+BuildRequires:      pkgconfig(pam)
 BuildRequires:      pkgconfig(wayland-client)
 BuildRequires:      pkgconfig(wayland-protocols)
 BuildRequires:      qt6-qtbase-private-devel
@@ -42,5 +43,4 @@ export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
 %{_bindir}/quickshell
 
 %changelog
-* Mon Jun 03 2024 ErrorNoInternet <errornointernet@envs.net> - 0^20240603-1
-- Initial packaging
+%autorelease
