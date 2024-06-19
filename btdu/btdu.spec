@@ -25,7 +25,7 @@ A sampling disk usage profiler for btrfs.
 dub build -b release
 
 %install
-install -Dm755 btdu %{buildroot}%{_bindir}/btdu
+install -Dpm755 btdu %{buildroot}%{_bindir}/btdu
 
 %files
 %{_bindir}/btdu

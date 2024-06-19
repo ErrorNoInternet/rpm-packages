@@ -74,13 +74,13 @@ cd ../yazi-boot
 %cargo_install
 cd ..
 
-install -Dm644 yazi-cli/completions/ya.bash %{buildroot}%{_datadir}/bash-completion/completions/ya
-install -Dm644 yazi-cli/completions/ya.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/ya.fish
-install -Dm644 yazi-cli/completions/_ya %{buildroot}%{_datadir}/zsh/site-functions/_ya
+install -Dpm644 yazi-cli/completions/ya.bash %{buildroot}%{_datadir}/bash-completion/completions/ya
+install -Dpm644 yazi-cli/completions/ya.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/ya.fish
+install -Dpm644 yazi-cli/completions/_ya %{buildroot}%{_datadir}/zsh/site-functions/_ya
 
-install -Dm644 yazi-boot/completions/yazi.bash %{buildroot}%{_datadir}/bash-completion/completions/yazi
-install -Dm644 yazi-boot/completions/yazi.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/yazi.fish
-install -Dm644 yazi-boot/completions/_yazi %{buildroot}%{_datadir}/zsh/site-functions/_yazi
+install -Dpm644 yazi-boot/completions/yazi.bash %{buildroot}%{_datadir}/bash-completion/completions/yazi
+install -Dpm644 yazi-boot/completions/yazi.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/yazi.fish
+install -Dpm644 yazi-boot/completions/_yazi %{buildroot}%{_datadir}/zsh/site-functions/_yazi
 
 %if %{with check}
 %check

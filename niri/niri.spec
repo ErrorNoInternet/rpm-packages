@@ -129,11 +129,11 @@ fi
 %install
 %cargo_install
 
-install -Dm755 -t %{buildroot}%{_bindir} ./resources/niri-session
-install -Dm644 -t %{buildroot}%{_datadir}/wayland-sessions ./resources/niri.desktop
-install -Dm644 -t %{buildroot}%{_datadir}/xdg-desktop-portal ./resources/niri-portals.conf
-install -Dm644 -t %{buildroot}%{_userunitdir} ./resources/niri.service
-install -Dm644 -t %{buildroot}%{_userunitdir} ./resources/niri-shutdown.target
+install -Dpm755 -t %{buildroot}%{_bindir} ./resources/niri-session
+install -Dpm644 -t %{buildroot}%{_datadir}/wayland-sessions ./resources/niri.desktop
+install -Dpm644 -t %{buildroot}%{_datadir}/xdg-desktop-portal ./resources/niri-portals.conf
+install -Dpm644 -t %{buildroot}%{_userunitdir} ./resources/niri.service
+install -Dpm644 -t %{buildroot}%{_userunitdir} ./resources/niri-shutdown.target
 
 %if %{with check}
 %check

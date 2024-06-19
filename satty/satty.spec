@@ -44,7 +44,7 @@ cargo vendor
 
 %install
 %cargo_install
-install -Dm644 satty.desktop %{buildroot}%{_datarootdir}/applications/satty.desktop
+install -Dpm644 satty.desktop %{buildroot}%{_datarootdir}/applications/satty.desktop
 
 %if %{with check}
 %check

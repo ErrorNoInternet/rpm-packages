@@ -16,6 +16,8 @@ Source:         %{url}/archive/%{crate_version}.tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
 
+Recommends:     imagemagick
+
 %global _description %{expand:
 Generate a 16 color scheme based on an image.}
 
@@ -68,15 +70,15 @@ cargo vendor
 %install
 %cargo_install
 
-install -Dm644 man/wallust-cs.1 %{buildroot}%{_mandir}/man1/wallust-cs.1
-install -Dm644 man/wallust-run.1 %{buildroot}%{_mandir}/man1/wallust-run.1
-install -Dm644 man/wallust-theme.1 %{buildroot}%{_mandir}/man1/wallust-theme.1
-install -Dm644 man/wallust.1 %{buildroot}%{_mandir}/man1/wallust.1
-install -Dm644 man/wallust.5 %{buildroot}%{_mandir}/man5/wallust.5
+install -Dpm644 man/wallust-cs.1 %{buildroot}%{_mandir}/man1/wallust-cs.1
+install -Dpm644 man/wallust-run.1 %{buildroot}%{_mandir}/man1/wallust-run.1
+install -Dpm644 man/wallust-theme.1 %{buildroot}%{_mandir}/man1/wallust-theme.1
+install -Dpm644 man/wallust.1 %{buildroot}%{_mandir}/man1/wallust.1
+install -Dpm644 man/wallust.5 %{buildroot}%{_mandir}/man5/wallust.5
 
-install -Dm644 completions/wallust.bash %{buildroot}%{_datadir}/bash-completion/completions/wallust
-install -Dm644 completions/wallust.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/wallust.fish
-install -Dm644 completions/_wallust %{buildroot}%{_datadir}/zsh/site-functions/_wallust
+install -Dpm644 completions/wallust.bash %{buildroot}%{_datadir}/bash-completion/completions/wallust
+install -Dpm644 completions/wallust.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/wallust.fish
+install -Dpm644 completions/_wallust %{buildroot}%{_datadir}/zsh/site-functions/_wallust
 
 %if %{with check}
 %check
