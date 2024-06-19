@@ -35,6 +35,7 @@ cargo vendor
 
 %install
 %cargo_install
+install -Dpm644 docs/onefetch.1 %{buildroot}%{_mandir}/man1/onefetch.1
 
 %if %{with check}
 %check
@@ -51,6 +52,7 @@ cargo vendor
 %doc CONTRIBUTING.md
 %doc README.md
 %{_bindir}/onefetch
+%{_mandir}/man1/onefetch.1*
 
 %changelog
 %autochangelog
