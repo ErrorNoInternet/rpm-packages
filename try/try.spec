@@ -21,7 +21,7 @@ the overlayfs union filesystem.
 %autosetup -n %{name}-%{version}
 
 %build
-%make -C man
+%make_build -C man
 
 %install
 install -Dpm644 try %{buildroot}%{_bindir}/try
