@@ -26,6 +26,39 @@ execution results and can check this differences at after.}
 
 %description %{_description}
 
+%package bash-completion
+BuildArch:      noarch
+Summary:        Bash completion files for %{name}
+Provides:       %{name}-bash-completion = %{version}-%{release}
+
+Requires:       bash-completion
+Requires:       %{name} = %{version}-%{release}
+
+%description bash-completion
+This package installs Bash completion files for %{name}
+
+%package fish-completion
+BuildArch:      noarch
+Summary:        Fish completion files for %{name}
+Provides:       %{name}-fish-completion = %{version}-%{release}
+
+Requires:       fish
+Requires:       %{name} = %{version}-%{release}
+
+%description fish-completion
+This package installs Fish completion files for %{name}
+
+%package zsh-completion
+BuildArch:      noarch
+Summary:        Zsh completion files for %{name}
+Provides:       %{name}-zsh-completion = %{version}-%{release}
+
+Requires:       zsh
+Requires:       %{name} = %{version}-%{release}
+
+%description zsh-completion
+This package installs Zsh completion files for %{name}
+
 %prep
 %autosetup -n %{crate}-%{version} -p1
 cargo vendor
@@ -40,6 +73,12 @@ cargo vendor
 %install
 %cargo_install
 
+install -Dpm644 man/hwatch.1 %{buildroot}%{_mandir}/man1/hwatch.1
+
+install -Dpm644 completions/bash/hwatch-completion.bash %{buildroot}%{_datadir}/bash-completion/completions/hwatch
+install -Dpm644 completions/fish/hwatch.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/hwatch.fish
+install -Dpm644 completions/zsh/_hwatch %{buildroot}%{_datadir}/zsh/site-functions/_hwatch
+
 %if %{with check}
 %check
 %cargo_test
@@ -51,6 +90,16 @@ cargo vendor
 %license cargo-vendor.txt
 %doc README.md
 %{_bindir}/hwatch
+%{_mandir}/man1/hwatch.1*
+
+%files bash-completion
+%{_datadir}/bash-completion/completions/hwatch
+
+%files zsh-completion
+%{_datadir}/zsh/site-functions/_hwatch
+
+%files fish-completion
+%{_datadir}/fish/vendor_completions.d/hwatch.fish
 
 %changelog
 %autochangelog
