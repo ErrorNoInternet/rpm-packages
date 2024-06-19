@@ -74,6 +74,8 @@ cd ../yazi-fm
 %cargo_install
 cd ..
 
+install -Dpm644 assets/yazi.desktop %{buildroot}%{_datadir}/applications/yazi.desktop
+
 install -Dpm644 yazi-boot/completions/yazi.bash %{buildroot}%{bash_completions_dir}/yazi
 install -Dpm644 yazi-boot/completions/yazi.fish %{buildroot}%{fish_completions_dir}/yazi.fish
 install -Dpm644 yazi-boot/completions/_yazi %{buildroot}%{zsh_completions_dir}/_yazi
@@ -88,6 +90,7 @@ install -Dpm644 yazi-boot/completions/_yazi %{buildroot}%{zsh_completions_dir}/_
 %license LICENSE.dependencies
 %license cargo-vendor.txt
 %doc README.md
+%{_datadir}/applications/yazi.desktop
 %{_bindir}/ya
 %{_bindir}/yazi
 

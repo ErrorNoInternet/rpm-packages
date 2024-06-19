@@ -78,7 +78,7 @@ cargo vendor
 %install
 %cargo_install
 
-install -Dpm644 satty.desktop %{buildroot}%{_datarootdir}/applications/satty.desktop
+install -Dpm644 satty.desktop %{buildroot}%{_datadir}/applications/satty.desktop
 
 install -Dpm644 completions/satty.bash %{buildroot}%{bash_completions_dir}/satty
 install -Dpm644 completions/satty.fish %{buildroot}%{fish_completions_dir}/satty.fish
@@ -95,7 +95,7 @@ install -Dpm644 completions/_satty %{buildroot}%{zsh_completions_dir}/_satty
 %license cargo-vendor.txt
 %doc README.md
 %{_bindir}/satty
-%{_datarootdir}/applications/satty.desktop
+%{_datadir}/applications/satty.desktop
 
 %files bash-completion
 %{bash_completions_dir}/satty
