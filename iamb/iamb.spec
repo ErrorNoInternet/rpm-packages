@@ -56,8 +56,8 @@ install -Dpm644 docs/%{name}.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/
 %license cargo-vendor.txt
 %doc README.md
 %{_bindir}/%{name}
-%{_mandir}/%{name}.1*
-%{_mandir}/%{name}.5*
+%{_mandir}/man1/%{name}.1*
+%{_mandir}/man5/%{name}.5*
 %{_datadir}/icons/hicolor/256x256/apps/%{name}.png
 %{_datadir}/icons/hicolor/512x512/apps/%{name}.png
 %{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
