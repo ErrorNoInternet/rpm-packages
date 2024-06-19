@@ -2,7 +2,7 @@
 
 Name: try
 Version: 0.2.0
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Inspect a command's effects before modifying your live system
 
 License: MIT
@@ -24,7 +24,7 @@ the overlayfs union filesystem.
 %make_build -C man
 
 %install
-install -Dpm644 try %{buildroot}%{_bindir}/try
+install -Dpm755 try %{buildroot}%{_bindir}/try
 install -Dpm644 man/try.1 %{buildroot}%{_mandir}/man1/try.1
 install -Dpm644 completions/try.bash %{buildroot}%{bash_completions_dir}/try
 
