@@ -6,7 +6,7 @@
 
 Name:           yazi
 Version:        0.2.5
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:        Blazing fast terminal file manager
 License:        MIT
 
@@ -22,20 +22,65 @@ Buildrequires:  gcc
 
 %description %{_description}
 
+%package bash-completion
+BuildArch:      noarch
+Summary:        Bash completion files for %{name}
+Provides:       %{name}-bash-completion = %{version}-%{release}
+
+Requires:       bash-completion
+Requires:       %{name} = %{version}-%{release}
+
+%description bash-completion
+This package installs Bash completion files for %{name}
+
+%package fish-completion
+BuildArch:      noarch
+Summary:        Fish completion files for %{name}
+Provides:       %{name}-fish-completion = %{version}-%{release}
+
+Requires:       fish
+Requires:       %{name} = %{version}-%{release}
+
+%description fish-completion
+This package installs Fish completion files for %{name}
+
+%package zsh-completion
+BuildArch:      noarch
+Summary:        Zsh completion files for %{name}
+Provides:       %{name}-zsh-completion = %{version}-%{release}
+
+Requires:       zsh
+Requires:       %{name} = %{version}-%{release}
+
+%description zsh-completion
+This package installs Zsh completion files for %{name}
+
 %prep
 %autosetup -n %{name}-%{version} -p1
 cargo vendor
 %cargo_prep -v vendor
 
 %build
+export YAZI_GEN_COMPLETIONS=1
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
 
 %install
-cargo install --profile rpm --no-track --path yazi-cli
-cargo install --profile rpm --no-track --path yazi-fm
+cd yazi-cli
+%cargo_install
+cd ../yazi-boot
+%cargo_install
+cd ..
+
+install -Dm644 yazi-cli/completions/ya.bash %{buildroot}%{_datadir}/bash-completion/completions/ya
+install -Dm644 yazi-cli/completions/ya.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/ya.fish
+install -Dm644 yazi-cli/completions/_ya %{buildroot}%{_datadir}/zsh/site-functions/_ya
+
+install -Dm644 yazi-boot/completions/yazi.bash %{buildroot}%{_datadir}/bash-completion/completions/yazi
+install -Dm644 yazi-boot/completions/yazi.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/yazi.fish
+install -Dm644 yazi-boot/completions/_yazi %{buildroot}%{_datadir}/zsh/site-functions/_yazi
 
 %if %{with check}
 %check
@@ -49,6 +94,18 @@ cargo install --profile rpm --no-track --path yazi-fm
 %doc README.md
 %{_bindir}/ya
 %{_bindir}/yazi
+
+%files bash-completion
+%{_datadir}/bash-completion/completions/ya
+%{_datadir}/bash-completion/completions/yazi
+
+%files zsh-completion
+%{_datadir}/zsh/site-functions/_ya
+%{_datadir}/zsh/site-functions/_yazi
+
+%files fish-completion
+%{_datadir}/fish/vendor_completions.d/ya.fish
+%{_datadir}/fish/vendor_completions.d/yazi.fish
 
 %changelog
 %autochangelog
