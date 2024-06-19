@@ -61,6 +61,7 @@ if [[ "$(git status -s)" ]]; then
 	git commit -m "treewide: update submodules"
 fi
 
+git pull
 git push
 
 if [[ -n "$modified_submodules" ]] && [[ -n "$COPR_API_CREDENTIALS" ]]; then
