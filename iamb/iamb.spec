@@ -35,6 +35,16 @@ cargo vendor
 %install
 %cargo_install
 
+install -Dpm644 %{name}.desktop %{buildroot}%{_datadir}/applications/%{name}.desktop
+install -Dpm644 config.example.toml %{buildroot}%{_datadir}/%{name}/config.example.toml
+
+install -Dpm644 docs/%{name}.1 %{buildroot}%{_mandir}/man1/%{name}.1
+install -Dpm644 docs/%{name}.5 %{buildroot}%{_mandir}/man5/%{name}.5
+
+install -Dpm644 docs/%{name}-256x256.png %{buildroot}%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
+install -Dpm644 docs/%{name}-512x512.png %{buildroot}%{_datadir}/icons/hicolor/512x512/apps/%{name}.png
+install -Dpm644 docs/%{name}.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
+
 %if %{with check}
 %check
 %cargo_test
@@ -44,10 +54,15 @@ cargo vendor
 %license LICENSE
 %license LICENSE.dependencies
 %license cargo-vendor.txt
-%doc CONTRIBUTING.md
-%doc PACKAGING.md
 %doc README.md
-%{_bindir}/iamb
+%{_bindir}/%{name}
+%{_mandir}/%{name}.1*
+%{_mandir}/%{name}.5*
+%{_datadir}/icons/hicolor/256x256/apps/%{name}.png
+%{_datadir}/icons/hicolor/512x512/apps/%{name}.png
+%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
+%{_datadir}/%{name}/config.example.toml
+%{_datadir}/applications/%{name}.desktop
 
 %changelog
 %autochangelog
