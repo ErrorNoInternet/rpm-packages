@@ -92,15 +92,12 @@ install -Dpm644 yazi-boot/completions/_yazi %{buildroot}%{zsh_completions_dir}/_
 %{_bindir}/yazi
 
 %files bash-completion
-%{bash_completions_dir}/ya
 %{bash_completions_dir}/yazi
 
 %files zsh-completion
-%{zsh_completions_dir}/_ya
 %{zsh_completions_dir}/_yazi
 
 %files fish-completion
-%{fish_completions_dir}/ya.fish
 %{fish_completions_dir}/yazi.fish
 
 %changelog
