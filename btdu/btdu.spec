@@ -26,9 +26,11 @@ dub build -b release
 
 %install
 install -Dpm755 btdu %{buildroot}%{_bindir}/btdu
+install -Dpm644 btdu.1 %{buildroot}%{_mandir}/man1/btdu.1
 
 %files
 %{_bindir}/btdu
+%{_mandir}/man1/btdu.1*
 
 %changelog
 * Fri May 31 2024 ErrorNoInternet <errornointernet@envs.net> - 0.5.1-1
