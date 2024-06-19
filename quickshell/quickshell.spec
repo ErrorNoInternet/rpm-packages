@@ -3,7 +3,7 @@
 
 Name:               quickshell
 Version:            0^%{snapdate}
-Release:            2%{?dist}
+Release:            3%{?dist}
 Summary:            Simple and flexbile QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
@@ -16,8 +16,8 @@ BuildRequires:      cmake(Qt6Qml)
 BuildRequires:      cmake(Qt6WaylandClient)
 BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
-BuildRequires:      pipewire-devel
 BuildRequires:      pkgconfig(jemalloc)
+BuildRequires:      pkgconfig(libpipewire-0.3)
 BuildRequires:      pkgconfig(pam)
 BuildRequires:      pkgconfig(wayland-client)
 BuildRequires:      pkgconfig(wayland-protocols)
@@ -31,7 +31,7 @@ Simple and flexbile QtQuick based desktop shell toolkit for Wayland and X11.
 
 %build
 export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
-%cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF
+%cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo
 %cmake_build
 
 %install
@@ -43,4 +43,4 @@ export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
 %{_bindir}/quickshell
 
 %changelog
-%autorelease
+%autochangelog
