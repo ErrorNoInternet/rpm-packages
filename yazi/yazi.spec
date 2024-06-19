@@ -74,10 +74,6 @@ cd ../yazi-fm
 %cargo_install
 cd ..
 
-install -Dpm644 yazi-cli/completions/ya.bash %{buildroot}%{bash_completions_dir}/ya
-install -Dpm644 yazi-cli/completions/ya.fish %{buildroot}%{fish_completions_dir}/ya.fish
-install -Dpm644 yazi-cli/completions/_ya %{buildroot}%{zsh_completions_dir}/_ya
-
 install -Dpm644 yazi-boot/completions/yazi.bash %{buildroot}%{bash_completions_dir}/yazi
 install -Dpm644 yazi-boot/completions/yazi.fish %{buildroot}%{fish_completions_dir}/yazi.fish
 install -Dpm644 yazi-boot/completions/_yazi %{buildroot}%{zsh_completions_dir}/_yazi
