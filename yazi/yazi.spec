@@ -70,7 +70,7 @@ export YAZI_GEN_COMPLETIONS=1
 %install
 cd yazi-cli
 %cargo_install
-cd ../yazi-boot
+cd ../yazi-fm
 %cargo_install
 cd ..
 
