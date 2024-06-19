@@ -80,7 +80,7 @@ cargo vendor
 
 install -Dpm644 satty.desktop %{buildroot}%{_datarootdir}/applications/satty.desktop
 
-install -Dpm644 completions/satty %{buildroot}%{bash_completions_dir}/satty
+install -Dpm644 completions/satty.bash %{buildroot}%{bash_completions_dir}/satty
 install -Dpm644 completions/satty.fish %{buildroot}%{fish_completions_dir}/satty.fish
 install -Dpm644 completions/_satty %{buildroot}%{zsh_completions_dir}/_satty
 
