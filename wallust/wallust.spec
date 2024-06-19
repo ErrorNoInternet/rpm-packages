@@ -7,7 +7,7 @@
 
 Name:           wallust
 Version:        3.0.0~beta
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:        Generate a 16 color scheme based on an image
 License:        MIT
 
@@ -20,6 +20,39 @@ BuildRequires:  cargo-rpm-macros >= 26
 Generate a 16 color scheme based on an image.}
 
 %description %{_description}
+
+%package bash-completion
+BuildArch:      noarch
+Summary:        Bash completion files for %{name}
+Provides:       %{name}-bash-completion = %{version}-%{release}
+
+Requires:       bash-completion
+Requires:       %{name} = %{version}-%{release}
+
+%description bash-completion
+This package installs Bash completion files for %{name}
+
+%package fish-completion
+BuildArch:      noarch
+Summary:        Fish completion files for %{name}
+Provides:       %{name}-fish-completion = %{version}-%{release}
+
+Requires:       fish
+Requires:       %{name} = %{version}-%{release}
+
+%description fish-completion
+This package installs Fish completion files for %{name}
+
+%package zsh-completion
+BuildArch:      noarch
+Summary:        Zsh completion files for %{name}
+Provides:       %{name}-zsh-completion = %{version}-%{release}
+
+Requires:       zsh
+Requires:       %{name} = %{version}-%{release}
+
+%description zsh-completion
+This package installs Zsh completion files for %{name}
 
 %prep
 %autosetup -n %{crate} -p1
@@ -35,6 +68,16 @@ cargo vendor
 %install
 %cargo_install
 
+install -Dm644 man/wallust-cs.1 %{buildroot}%{_mandir}/man1/wallust-cs.1
+install -Dm644 man/wallust-run.1 %{buildroot}%{_mandir}/man1/wallust-run.1
+install -Dm644 man/wallust-theme.1 %{buildroot}%{_mandir}/man1/wallust-theme.1
+install -Dm644 man/wallust.1 %{buildroot}%{_mandir}/man1/wallust.1
+install -Dm644 man/wallust.5 %{buildroot}%{_mandir}/man5/wallust.5
+
+install -Dm644 completions/wallust.bash %{buildroot}%{_datadir}/bash-completion/completions/wallust
+install -Dm644 completions/wallust.fish %{buildroot}%{_datadir}/fish/vendor_completions.d/wallust.fish
+install -Dm644 completions/_wallust %{buildroot}%{_datadir}/zsh/site-functions/_wallust
+
 %if %{with check}
 %check
 %cargo_test
@@ -47,6 +90,20 @@ cargo vendor
 %doc README.md
 %doc v3.md
 %{_bindir}/wallust
+%{_mandir}/man1/wallust-cs.1*
+%{_mandir}/man1/wallust-run.1*
+%{_mandir}/man1/wallust-theme.1*
+%{_mandir}/man1/wallust.1*
+%{_mandir}/man5/wallust.5*
+
+%files bash-completion
+%{_datadir}/bash-completion/completions/wallust
+
+%files zsh-completion
+%{_datadir}/zsh/site-functions/_wallust
+
+%files fish-completion
+%{_datadir}/fish/vendor_completions.d/wallust.fish
 
 %changelog
 %autochangelog
