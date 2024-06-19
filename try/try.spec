@@ -7,7 +7,7 @@ Summary: Inspect a command's effects before modifying your live system
 
 License: MIT
 URL: https://github.com/binpash/try
-Source0: %{url}/archive/v%{version}.tar.gz
+Source: %{url}/archive/v%{version}.tar.gz
 
 BuildRequires: make pandoc
 Requires: util-linux mergerfs
@@ -26,13 +26,13 @@ the overlayfs union filesystem.
 %install
 install -Dpm644 try %{buildroot}%{_bindir}/try
 install -Dpm644 man/try.1 %{buildroot}%{_mandir}/man1/try.1
-install -Dpm644 completions/try.bash %{bash_completions_dir}/try
+install -Dpm644 completions/try.bash %{buildroot}%{bash_completions_dir}/try
 
 %files
 %license LICENSE
 %doc README.md
-%{_mandir}/man1/try.1.gz
 %{_bindir}/try
+%{_mandir}/man1/try.1*
 %{bash_completions_dir}/try
 
 %changelog
