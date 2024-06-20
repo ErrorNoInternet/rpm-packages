@@ -59,6 +59,7 @@ chmod -R u+w %{gobuilddir}/pkg
 
 %files
 %license LICENSE
+%license vendor/modules.txt
 %doc README.md
 %{_bindir}/*
 %{bash_completions_dir}/croc
