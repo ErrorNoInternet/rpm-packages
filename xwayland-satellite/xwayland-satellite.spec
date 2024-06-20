@@ -3,7 +3,7 @@
 
 Name:               xwayland-satellite
 Version:            0^%{snapdate}
-Release:            1%{?dist}
+Release:            2%{?dist}
 Summary:            Xwayland outside your Wayland.
 
 License:            MPL-2.0-only
@@ -14,10 +14,7 @@ BuildRequires:      cargo-rpm-macros >= 24
 BuildRequires:      clang
 BuildRequires:      pkgconfig(xcb)
 BuildRequires:      pkgconfig(xcb-cursor)
-BuildRequires:      xorg-x11-server-Xwayland
 
-Requires:           pkgconfig(xcb)
-Requires:           pkgconfig(xcb-cursor)
 Requires:           xorg-x11-server-Xwayland
 
 %description
