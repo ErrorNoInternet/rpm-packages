@@ -46,6 +46,8 @@ install -Dpm0644 src/install/bash_autocomplete \
 install -Dpm0644 src/install/zsh_autocomplete \
                  %{buildroot}%{zsh_completions_dir}/_croc
 
+chmod -R u+w %{gobuilddir}/pkg
+
 %post
 %systemd_post croc.service
 
