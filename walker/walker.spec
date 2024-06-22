@@ -9,7 +9,7 @@ Wayland-native application runner.}
 %global golicenses      LICENSE
 %global godocs          README.md
 
-Name:           golang-github-abenz1267-walker
+Name:           walker
 Release:        %autorelease
 Summary:        Wayland-native application runner
 

@@ -12,7 +12,7 @@ files and folders.}
 %global golicenses      LICENSE
 %global godocs          README.md
 
-Name:           golang-github-schollz-croc
+Name:           croc
 Release:        %autorelease
 Summary:        Easily and securely send things from one computer to another
 
