@@ -5,6 +5,7 @@ declare -A package_ids=(
 	["btdu/btdu.spec"]=372783
 	["cliphist/cliphist.spec"]=242870
 	["git-graph/git-graph.spec"]=372785
+	["golang-github-abenz1267-walker/golang-github-abenz1267-walker.spec"]=372963
 	["golang-github-schollz-croc/golang-github-schollz-croc.spec"]=350834
 	["hwatch/hwatch.spec"]=372787
 	["iamb/iamb.spec"]=372778
