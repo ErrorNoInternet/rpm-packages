@@ -46,8 +46,11 @@ go mod vendor
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 
+chmod -R u+w %{gobuilddir}/pkg
+
 %files
 %license LICENSE
+%license vendor/modules.txt
 %doc README.md
 %{_bindir}/*
 
