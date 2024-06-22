@@ -38,3 +38,7 @@
 	path = uboot-tools/upstream
 	url = https://src.fedoraproject.org/rpms/uboot-tools
 	branch = f40
+[submodule "rofi-wayland/upstream"]
+	path = rofi-wayland/upstream
+    url = https://src.fedoraproject.org/rpms/rofi-wayland
+    branch = f40
