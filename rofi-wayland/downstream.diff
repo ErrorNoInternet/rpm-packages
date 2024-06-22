@@ -1,13 +1,14 @@
 diff --git a/rofi-wayland.spec b/rofi-wayland.spec
-index 57cbf81..bb58b71 100644
+index 57cbf81..20b2bbf 100644
 --- a/rofi-wayland.spec
 +++ b/rofi-wayland.spec
-@@ -4,7 +4,7 @@
+@@ -4,7 +4,8 @@
  
  Name:    rofi-wayland
  %global  base_ver 1.7.5
 -Version: %{base_ver}+wayland3
 +Version: %{base_ver}+wayland2
++Epoch:   1
  Release: 1%{?dist}
  Summary: Fork of rofi with Wayland support
  
