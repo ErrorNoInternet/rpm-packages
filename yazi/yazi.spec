@@ -15,7 +15,7 @@ Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 24
 BuildRequires:  make
-Buildrequires:  gcc
+BuildRequires:  gcc
 
 %global _description %{expand:
 %{summary}.}
