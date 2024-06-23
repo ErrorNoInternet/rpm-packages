@@ -2,11 +2,11 @@
 
 Name:           btdu
 Version:        0.5.1
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Sampling disk usage profiler for btrfs
+
 License:        GPL-2.0-only
 URL:            https://github.com/CyberShadow/btdu
-
 Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  dub
@@ -22,7 +22,8 @@ A sampling disk usage profiler for btrfs.
 %autosetup -p1
 
 %build
-dub build -b release
+export DFLAGS="%{_d_optflags}"
+dub build
 
 %install
 install -Dpm755 btdu %{buildroot}%{_bindir}/btdu
@@ -33,5 +34,4 @@ install -Dpm644 btdu.1 %{buildroot}%{_mandir}/man1/btdu.1
 %{_mandir}/man1/btdu.1*
 
 %changelog
-* Fri May 31 2024 ErrorNoInternet <errornointernet@envs.net> - 0.5.1-1
-- Initial packaging.
+%autochangelog
