@@ -5,7 +5,7 @@
 
 Name:           rust-du-dust
 Version:        1.0.0
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:        More intuitive version of du
 
 License:        Apache-2.0
@@ -31,36 +31,36 @@ License:        # FIXME
 
 %package bash-completion
 BuildArch:      noarch
-Summary:        Bash completion files for %{name}
-Provides:       %{name}-bash-completion = %{version}-%{release}
+Summary:        Bash completion files for %{crate}
+Provides:       %{crate}-bash-completion = %{version}-%{release}
 
 Requires:       bash-completion
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{crate} = %{version}-%{release}
 
 %description bash-completion
-This package installs Bash completion files for %{name}
+This package installs Bash completion files for %{crate}
 
 %package fish-completion
 BuildArch:      noarch
-Summary:        Fish completion files for %{name}
-Provides:       %{name}-fish-completion = %{version}-%{release}
+Summary:        Fish completion files for %{crate}
+Provides:       %{crate}-fish-completion = %{version}-%{release}
 
 Requires:       fish
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{crate} = %{version}-%{release}
 
 %description fish-completion
-This package installs Fish completion files for %{name}
+This package installs Fish completion files for %{crate}
 
 %package zsh-completion
 BuildArch:      noarch
-Summary:        Zsh completion files for %{name}
-Provides:       %{name}-zsh-completion = %{version}-%{release}
+Summary:        Zsh completion files for %{crate}
+Provides:       %{crate}-zsh-completion = %{version}-%{release}
 
 Requires:       zsh
-Requires:       %{name} = %{version}-%{release}
+Requires:       %{crate} = %{version}-%{release}
 
 %description zsh-completion
-This package installs Zsh completion files for %{name}
+This package installs Zsh completion files for %{crate}
 
 %files       -n %{crate}
 %license LICENSE
