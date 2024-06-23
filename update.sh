@@ -17,6 +17,7 @@ declare -A package_ids=(
 	["prismlauncher/prismlauncher.spec"]=301949
 	["ripdrag/ripdrag.spec"]=372793
 	["rofi-emoji/rofi-emoji.spec"]=242096
+	["rust-du-dust/rust-du-dust.spec"]=141344
 	["satty/satty.spec"]=372795
 	["swaylock-effects/swaylock-effects.spec"]=312399
 	["swaync/swaync.spec"]=242061
