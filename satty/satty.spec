@@ -8,13 +8,14 @@
 
 Name:           satty
 Version:        0.13.0
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:        Modern Screenshot Annotation
 License:        MPL-2.0
 
 URL:            https://github.com/gabm/satty
 Source:         %{url}/archive/refs/tags/v%{version}.tar.gz
 Patch0:         remove-notifications.diff
+Patch1:         remove-extra-log.diff
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  fontconfig-devel
