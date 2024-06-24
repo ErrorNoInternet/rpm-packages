@@ -11319,7 +11319,7 @@ index 000000000..7fa74ba5a
 + 	/* the internal btrfs device id */
 + 	__le64 devid;
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
-index 39ca621fe..593512115 100644
+index 39ca621fe..56ca23a42 100644
 --- a/kernel-x86_64-fedora.config
 +++ b/kernel-x86_64-fedora.config
 @@ -2861,7 +2861,8 @@ CONFIG_IIO_TIGHTLOOP_TRIGGER=m
@@ -11332,6 +11332,12 @@ index 39ca621fe..593512115 100644
  CONFIG_IKHEADERS=m
  CONFIG_IMA_APPRAISE_BOOTPARAM=y
  # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
+@@ -8956,3 +8957,5 @@ CONFIG_ZSWAP=y
+ # CONFIG_ZSWAP_ZPOOL_DEFAULT_Z3FOLD is not set
+ CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD=y
+ # CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC is not set
++
++CONFIG_RUST=y
 diff --git a/kernel.spec b/kernel.spec
 index e695e27ab..eb736ccb5 100644
 --- a/kernel.spec
