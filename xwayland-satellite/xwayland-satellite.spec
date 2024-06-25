@@ -1,9 +1,9 @@
-%global commit      f261e3feec27da5dcbb07db6abdaf0662d5f0db5
-%global snapdate    20240619
+%global commit      0a5dddacfde337e10943e95b0d5aa5602d3c4e0c
+%global snapdate    20240625
 
 Name:               xwayland-satellite
 Version:            0^%{snapdate}
-Release:            2%{?dist}
+Release:            1%{?dist}
 Summary:            Xwayland outside your Wayland.
 
 License:            MPL-2.0-only
