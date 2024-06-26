@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -A package_ids=(
+declare -A project_ids=(
 	["7zip/7zip.spec"]=368867
 	["btdu/btdu.spec"]=372783
 	["cliphist/cliphist.spec"]=242870
@@ -28,11 +28,11 @@ declare -A package_ids=(
 	["yazi/yazi.spec"]=370571
 )
 
-for package_file in "${!package_ids[@]}"; do
+for package_file in "${!project_ids[@]}"; do
 	package_name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$package_file" | head -1)
 	echo "> querying versions for $package_name ($package_file)..."
 
-	if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${package_ids[$package_file]}") ||
+	if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${project_ids[$package_file]}") ||
 		[[ -z "$api_response" ]]; then
 		echo -e "couldn't query api for $package_name! api response: $api_response"
 		continue
