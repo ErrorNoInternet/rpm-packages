@@ -31,7 +31,7 @@ Simple and flexbile QtQuick based desktop shell toolkit for Wayland and X11.
 
 %build
 export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
-%cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_BUILD_TYPE=RelWithDebInfo
+%cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_BUILD_TYPE=Release
 %cmake_build
 
 %install
