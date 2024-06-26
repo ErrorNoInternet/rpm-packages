@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 declare -A package_ids=(
-	["7zip/7zip.spec"]=372314
+	["7zip/7zip.spec"]=368867
 	["btdu/btdu.spec"]=372783
 	["cliphist/cliphist.spec"]=242870
 	["croc/croc.spec"]=350834
