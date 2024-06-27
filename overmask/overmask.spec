@@ -1,17 +1,17 @@
 %bcond_without check
 
-%global commit d419f2913c4cf52804cdb6063955f5290c4d01a9
+%global commit a54820ac6116fd332d16f142bd5e9f003a43eb4b
 %global snapdate 20240627
 
 %global cargo_install_lib 0
 
 Name:           overmask
 Version:        0^%{snapdate}
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:        Add a writeable overlay on top of read-only files
 
-SourceLicense:  None
-License:        LGPL-3.0-only
+SourceLicense:  LGPL-3.0-only
+License:        LGPL-3.0-only AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR MIT) AND BSD-3-Clause AND MIT AND (MIT OR Apache-2.0) AND (Unlicense OR MIT)
 
 URL:            https://github.com/ErrorNoInternet/overmask
 Source:         %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
