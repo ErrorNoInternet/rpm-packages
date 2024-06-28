@@ -11031,10 +11031,10 @@ index 000000000..2e19b1432
 +
 diff --git a/btrfs-allocator-hints.patch b/btrfs-allocator-hints.patch
 new file mode 100644
-index 000000000..7fa74ba5a
+index 000000000..bd8fc83cd
 --- /dev/null
 +++ b/btrfs-allocator-hints.patch
-@@ -0,0 +1,283 @@
+@@ -0,0 +1,289 @@
 +diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
 +index b1d1ac25237b7a..9246161bfdecc7 100644
 +--- a/fs/btrfs/sysfs.c
@@ -11119,10 +11119,10 @@ index 000000000..7fa74ba5a
 + };
 + ATTRIBUTE_GROUPS(devid);
 +diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-+index b9ef6f54635ca5..959976d34ffa92 100644
++index b9ef6f54635ca5..0e269b3f11185f 100644
 +--- a/fs/btrfs/volumes.c
 ++++ b/fs/btrfs/volumes.c
-+@@ -174,6 +174,19 @@ enum btrfs_raid_types __attribute_const__ btrfs_bg_flags_to_raid_index(u64 flags
++@@ -174,6 +174,20 @@ enum btrfs_raid_types __attribute_const__ btrfs_bg_flags_to_raid_index(u64 flags
 + 	return BTRFS_BG_FLAG_TO_INDEX(profile);
 + }
 + 
@@ -11136,13 +11136,14 @@ index 000000000..7fa74ba5a
 ++	[BTRFS_DEV_ALLOCATION_PREFERRED_DATA] = 0,
 ++	[BTRFS_DEV_ALLOCATION_PREFERRED_METADATA] = 1,
 ++	[BTRFS_DEV_ALLOCATION_METADATA_ONLY] = 2,
+++	[BTRFS_DEV_ALLOCATION_PREFERRED_NONE] = 99,
 ++	/* the other values are set to 0 */
 ++};
 ++
 + const char *btrfs_bg_type_to_raid_name(u64 flags)
 + {
 + 	const int index = btrfs_bg_flags_to_raid_index(flags);
-+@@ -2856,7 +2869,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
++@@ -2856,7 +2870,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
 + 	return ret;
 + }
 + 
@@ -11151,7 +11152,7 @@ index 000000000..7fa74ba5a
 + 					struct btrfs_device *device)
 + {
 + 	int ret;
-+@@ -5034,13 +5047,18 @@ static int btrfs_add_system_chunk(struct btrfs_fs_info *fs_info,
++@@ -5034,13 +5048,18 @@ static int btrfs_add_system_chunk(struct btrfs_fs_info *fs_info,
 + }
 + 
 + /*
@@ -11171,7 +11172,7 @@ index 000000000..7fa74ba5a
 + 	if (di_a->max_avail > di_b->max_avail)
 + 		return -1;
 + 	if (di_a->max_avail < di_b->max_avail)
-+@@ -5193,6 +5211,8 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
++@@ -5193,6 +5212,8 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
 + 	int ndevs = 0;
 + 	u64 max_avail;
 + 	u64 dev_offset;
@@ -11180,7 +11181,7 @@ index 000000000..7fa74ba5a
 + 
 + 	/*
 + 	 * in the first pass through the devices list, we gather information
-+@@ -5245,16 +5265,91 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
++@@ -5245,16 +5266,94 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
 + 		devices_info[ndevs].max_avail = max_avail;
 + 		devices_info[ndevs].total_avail = total_avail;
 + 		devices_info[ndevs].dev = device;
@@ -11220,7 +11221,10 @@ index 000000000..7fa74ba5a
 ++			 * sort also by hint (metadata hint
 ++			 * higher priority)
 ++			 */
-++			devices_info[ndevs].alloc_hint = alloc_hint_map[hint];
+++			if (hint == BTRFS_DEV_ALLOCATION_PREFERRED_NONE)
+++				devices_info[ndevs].alloc_hint = -alloc_hint_map[hint];
+++			else
+++				devices_info[ndevs].alloc_hint = alloc_hint_map[hint];
 ++		}
 ++
 + 		++ndevs;
@@ -11294,10 +11298,10 @@ index 000000000..7fa74ba5a
 + bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr);
 + u8 *btrfs_sb_fsid_ptr(struct btrfs_super_block *sb);
 +diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/btrfs_tree.h
-+index fc3c32186d7eb1..0261ed5f0adabd 100644
++index fc3c32186d7eb1..9946e497dc8367 100644
 +--- a/include/uapi/linux/btrfs_tree.h
 ++++ b/include/uapi/linux/btrfs_tree.h
-+@@ -557,6 +557,20 @@ struct btrfs_node {
++@@ -557,6 +557,22 @@ struct btrfs_node {
 + 	struct btrfs_key_ptr ptrs[];
 + } __attribute__ ((__packed__));
 + 
@@ -11313,6 +11317,8 @@ index 000000000..7fa74ba5a
 ++#define BTRFS_DEV_ALLOCATION_METADATA_ONLY	(2ULL)
 ++/* only data chunk allowed */
 ++#define BTRFS_DEV_ALLOCATION_DATA_ONLY		(3ULL)
+++/* preferred no chunk, but chunks allowed */
+++#define BTRFS_DEV_ALLOCATION_PREFERRED_NONE	(4ULL)
 ++/* 5..7 are unused values */
 ++
 + struct btrfs_dev_item {
@@ -11333,7 +11339,7 @@ index 39ca621fe..593512115 100644
  CONFIG_IMA_APPRAISE_BOOTPARAM=y
  # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
 diff --git a/kernel.spec b/kernel.spec
-index e695e27ab..eb736ccb5 100644
+index 001d35ad2..81c8beab0 100644
 --- a/kernel.spec
 +++ b/kernel.spec
 @@ -976,6 +976,11 @@ Source4002: gating.yaml
