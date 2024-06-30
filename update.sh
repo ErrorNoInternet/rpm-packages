@@ -2,6 +2,7 @@
 
 declare -A project_ids=(
 	["7zip/7zip.spec"]=368867
+	["bandwhich/bandwhich.spec"]=236376
 	["btdu/btdu.spec"]=372783
 	["cliphist/cliphist.spec"]=242870
 	["croc/croc.spec"]=350834
