@@ -4,7 +4,6 @@
 %global __cargo_is_lib() 0
 
 %global crate niri
-%global crate_version 0.1.6
 
 %global commit d96a66ddff1a6b88dbe3e23b049f7075533b216f
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
@@ -59,10 +58,10 @@ License:        ((MIT OR Apache-2.0) AND BSD-3-Clause) AND (0BSD OR MIT OR Apach
 
 URL:            https://github.com/YaLTeR/niri
 %dnl Source:         %{url}/archive/%{commit}.tar.gz
-Source:         %{url}/archive/refs/tags/v%{crate_version}.tar.gz
+Source:         %{url}/archive/refs/tags/v%{version}.tar.gz
 %dnl Source:         niri-%{shortcommit}-vendored-dependencies.tar.xz
-%dnl Source:         niri-%{crate_version}-vendored-dependencies.tar.xz
-Source:         %{url}/releases/download/v%{crate_version}/niri-%{crate_version}-vendored-dependencies.tar.xz
+%dnl Source:         niri-%{version}-vendored-dependencies.tar.xz
+Source:         %{url}/releases/download/v%{version}/niri-%{version}-vendored-dependencies.tar.xz
 
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  pkgconfig(udev)
@@ -103,7 +102,7 @@ Opening a new window never causes existing windows to resize.
 
 %prep
 %dnl %autosetup -n %{crate}-%{commit} -p1 -a1
-%autosetup -n %{crate}-%{crate_version} -p1 -a1
+%autosetup -n %{crate}-%{version} -p1 -a1
 
 # We use vendored sources, but they still need a version rather than a git link in Cargo.toml
 sed -i 's/^git = "https:\/\/github.com\/Smithay\/smithay.git"$/version = "*"/' Cargo.toml
