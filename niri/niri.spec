@@ -28,7 +28,7 @@
 }
 
 Name:           niri
-Version:        0.1.6
+Version:        0.1.7
 Release:        1%{?dist}
 Summary:        Scrollable-tiling Wayland compositor
 
