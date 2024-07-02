@@ -1,10 +1,10 @@
-%global commit      d8b900ed0b6c3a52a9fee121580e2904d0969ab6
-%global snapdate    20240628
+%global commit      ec362637b879baa817e4df7c96e27adef35b89a0
+%global snapdate    20240701
 
 Name:               quickshell
 Version:            0^%{snapdate}
 Release:            1%{?dist}
-Summary:            Simple and flexbile QtQuick based desktop shell toolkit
+Summary:            Flexible QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
 URL:                https://github.com/outfoxxed/quickshell
@@ -24,7 +24,7 @@ BuildRequires:      pkgconfig(wayland-protocols)
 BuildRequires:      qt6-qtbase-private-devel
 
 %description
-Simple and flexbile QtQuick based desktop shell toolkit for Wayland and X11.
+Flexible QtQuick based desktop shell toolkit for Wayland and X11.
 
 %prep
 %autosetup -n %{name}-%{commit} -p1
