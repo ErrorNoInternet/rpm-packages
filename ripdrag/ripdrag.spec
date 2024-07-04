@@ -5,7 +5,7 @@
 %global cargo_install_lib 0
 
 Name:           ripdrag
-Version:        0.4.8
+Version:        0.4.9
 Release:        %autorelease
 Summary:        Drag and Drop files to and from the terminal
 License:        GPL-3.0-only
