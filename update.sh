@@ -6,6 +6,7 @@ declare -A project_ids=(
 	["btdu/btdu.spec"]=372783
 	["cliphist/cliphist.spec"]=242870
 	["croc/croc.spec"]=350834
+	["doggo/doggo.spec"]=373317
 	["git-graph/git-graph.spec"]=372785
 	["hwatch/hwatch.spec"]=372787
 	["iamb/iamb.spec"]=372778
