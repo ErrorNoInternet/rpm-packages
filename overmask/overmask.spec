@@ -1,13 +1,13 @@
 %bcond_without check
 
-%global commit a54820ac6116fd332d16f142bd5e9f003a43eb4b
-%global snapdate 20240627
+%global commit 6936f192cd74263b9cd4beb4e340fbe328e32a8f
+%global snapdate 20240707
 
 %global cargo_install_lib 0
 
 Name:           overmask
 Version:        0^%{snapdate}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Add a writeable overlay on top of read-only files
 
 SourceLicense:  LGPL-3.0-only
