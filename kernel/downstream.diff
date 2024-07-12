@@ -11326,12 +11326,12 @@ index 000000000..bd8fc83cd
 + 	__le64 devid;
 diff --git a/btrfs-block-group-reclaim.patch b/btrfs-block-group-reclaim.patch
 new file mode 100644
-index 000000000..640fe7282
+index 000000000..0ad3db7c7
 --- /dev/null
 +++ b/btrfs-block-group-reclaim.patch
-@@ -0,0 +1,635 @@
+@@ -0,0 +1,650 @@
 +diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-+index 1a66be33bb04..dd1795c01342 100644
++index 60066822b532..f9d0594eccae 100644
 +--- a/fs/btrfs/block-group.c
 ++++ b/fs/btrfs/block-group.c
 +@@ -1757,24 +1757,21 @@ static inline bool btrfs_should_reclaim(struct btrfs_fs_info *fs_info)
@@ -11435,9 +11435,9 @@ index 000000000..640fe7282
 +-		if (ret) {
 ++		if (ret && !READ_ONCE(space_info->periodic_reclaim)) {
 + 			/* Refcount held by the reclaim_bgs list after splice. */
-+ 			btrfs_get_block_group(bg);
-+ 			list_add_tail(&bg->bg_list, &retry_list);
-+@@ -1955,6 +1969,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
++ 			spin_lock(&fs_info->unused_bgs_lock);
++ 			/*
++@@ -1964,6 +1978,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
 + 
 + void btrfs_reclaim_bgs(struct btrfs_fs_info *fs_info)
 + {
@@ -11445,7 +11445,7 @@ index 000000000..640fe7282
 + 	spin_lock(&fs_info->unused_bgs_lock);
 + 	if (!list_empty(&fs_info->reclaim_bgs))
 + 		queue_work(system_unbound_wq, &fs_info->reclaim_bgs_work);
-+@@ -3653,9 +3668,12 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
++@@ -3662,9 +3677,12 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
 + 		old_val += num_bytes;
 + 		cache->used = old_val;
 + 		cache->reserved -= num_bytes;
@@ -11458,7 +11458,7 @@ index 000000000..640fe7282
 + 		spin_unlock(&cache->lock);
 + 		spin_unlock(&space_info->lock);
 + 	} else {
-+@@ -3665,8 +3683,10 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
++@@ -3674,8 +3692,10 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
 + 		btrfs_space_info_update_bytes_pinned(info, space_info, num_bytes);
 + 		space_info->bytes_used -= num_bytes;
 + 		space_info->disk_used -= num_bytes * factor;
@@ -11484,7 +11484,7 @@ index 000000000..640fe7282
 + 
 + static inline u64 btrfs_block_group_end(struct btrfs_block_group *block_group)
 +diff --git a/fs/btrfs/space-info.c b/fs/btrfs/space-info.c
-+index d620323d08ea..fa42668d3fc3 100644
++index ae8c56442549..aba4b59dbff5 100644
 +--- a/fs/btrfs/space-info.c
 ++++ b/fs/btrfs/space-info.c
 +@@ -1,5 +1,7 @@
@@ -11512,7 +11512,7 @@ index 000000000..640fe7282
 + 	for (i = 0; i < BTRFS_NR_RAID_TYPES; i++)
 + 		INIT_LIST_HEAD(&space_info->block_groups[i]);
 + 	init_rwsem(&space_info->groups_sem);
-+@@ -340,11 +345,27 @@ struct btrfs_space_info *btrfs_find_space_info(struct btrfs_fs_info *info,
++@@ -340,11 +345,34 @@ struct btrfs_space_info *btrfs_find_space_info(struct btrfs_fs_info *info,
 + 	return NULL;
 + }
 + 
@@ -11525,10 +11525,17 @@ index 000000000..640fe7282
 ++	 * "optimal" chunk size based on the fs size.  However when we actually
 ++	 * allocate the chunk we will strip this down further, making it no more
 ++	 * than 10% of the disk or 1G, whichever is smaller.
+++	 *
+++	 * On the zoned mode, we need to use zone_size (=
+++	 * data_sinfo->chunk_size) as it is.
 ++	 */
 ++	data_sinfo = btrfs_find_space_info(fs_info, BTRFS_BLOCK_GROUP_DATA);
-++	data_chunk_size = min(data_sinfo->chunk_size,
-++			      mult_perc(fs_info->fs_devices->total_rw_bytes, 10));
+++	if (!btrfs_is_zoned(fs_info)) {
+++		data_chunk_size = min(data_sinfo->chunk_size,
+++				      mult_perc(fs_info->fs_devices->total_rw_bytes, 10));
+++	} else {
+++		data_chunk_size = data_sinfo->chunk_size;
+++	}
 ++	return min_t(u64, data_chunk_size, SZ_1G);
 ++
 ++}
@@ -11541,7 +11548,7 @@ index 000000000..640fe7282
 + 	u64 profile;
 + 	u64 avail;
 + 	u64 data_chunk_size;
-+@@ -368,16 +389,7 @@ static u64 calc_available_free_space(struct btrfs_fs_info *fs_info,
++@@ -368,23 +396,7 @@ static u64 calc_available_free_space(struct btrfs_fs_info *fs_info,
 + 	if (avail == 0)
 + 		return 0;
 + 
@@ -11550,16 +11557,23 @@ index 000000000..640fe7282
 +-	 * "optimal" chunk size based on the fs size.  However when we actually
 +-	 * allocate the chunk we will strip this down further, making it no more
 +-	 * than 10% of the disk or 1G, whichever is smaller.
++-	 *
++-	 * On the zoned mode, we need to use zone_size (=
++-	 * data_sinfo->chunk_size) as it is.
 +-	 */
 +-	data_sinfo = btrfs_find_space_info(fs_info, BTRFS_BLOCK_GROUP_DATA);
-+-	data_chunk_size = min(data_sinfo->chunk_size,
-+-			      mult_perc(fs_info->fs_devices->total_rw_bytes, 10));
-+-	data_chunk_size = min_t(u64, data_chunk_size, SZ_1G);
++-	if (!btrfs_is_zoned(fs_info)) {
++-		data_chunk_size = min(data_sinfo->chunk_size,
++-				      mult_perc(fs_info->fs_devices->total_rw_bytes, 10));
++-		data_chunk_size = min_t(u64, data_chunk_size, SZ_1G);
++-	} else {
++-		data_chunk_size = data_sinfo->chunk_size;
++-	}
 ++	data_chunk_size = calc_effective_data_chunk_size(fs_info);
 + 
 + 	/*
 + 	 * Since data allocations immediately use block groups as part of the
-+@@ -1868,3 +1880,209 @@ u64 btrfs_account_ro_block_groups_free_space(struct btrfs_space_info *sinfo)
++@@ -1886,3 +1898,209 @@ u64 btrfs_account_ro_block_groups_free_space(struct btrfs_space_info *sinfo)
 + 
 + 	return free_bytes;
 + }
@@ -11965,6 +11979,7 @@ index 000000000..640fe7282
 + #ifdef CONFIG_BTRFS_DEBUG
 + 	BTRFS_ATTR_PTR(space_info, force_chunk_alloc),
 + #endif
++
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
 index 7d19e5b04..9d2e980d6 100644
 --- a/kernel-x86_64-fedora.config
@@ -11980,7 +11995,7 @@ index 7d19e5b04..9d2e980d6 100644
  CONFIG_IMA_APPRAISE_BOOTPARAM=y
  # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
 diff --git a/kernel.spec b/kernel.spec
-index 216780ae5..20c74b943 100644
+index a475d3059..4580b67c5 100644
 --- a/kernel.spec
 +++ b/kernel.spec
 @@ -976,6 +976,12 @@ Source4002: gating.yaml
