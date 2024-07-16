@@ -167,7 +167,7 @@ index 7d2741250..a7ff8efd8 100644
 +          <item>
 +           <widget class="QCheckBox" name="useBMCLAPI">
 +            <property name="text">
-+             <string>Use &amp;BMCLAPI as aseets and libraries download source</string>
++             <string>Use &amp;BMCLAPI as assets and libraries download source</string>
 +            </property>
 +           </widget>
 +          </item>
