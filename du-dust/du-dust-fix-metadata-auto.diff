@@ -1,0 +1,18 @@
+--- du-dust-1.1.1/Cargo.toml	2024-07-19T04:09:29.639979+00:00
++++ du-dust-1.1.1/Cargo.toml	2024-07-19T04:25:03.863692+00:00
+@@ -44,10 +44,6 @@
+ ctrlc = "3.4"
+ chrono = "0.4"
+ 
+-[target.'cfg(windows)'.dependencies]
+-winapi-util = "0.1"
+-filesize = "0.2.0"
+-
+ [dev-dependencies]
+ assert_cmd = "2"
+ tempfile = "=3"
+@@ -89,3 +85,4 @@
+ disk space without requiring sort or head. Dust will print a maximum of one
+ 'Did not have permissions message'.
+ """
++
