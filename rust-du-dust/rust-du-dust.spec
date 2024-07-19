@@ -4,8 +4,8 @@
 %global crate du-dust
 
 Name:           rust-du-dust
-Version:        1.0.0
-Release:        2%{?dist}
+Version:        1.1.1
+Release:        1%{?dist}
 Summary:        More intuitive version of du
 
 License:        Apache-2.0
