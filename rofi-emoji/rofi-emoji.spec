@@ -1,5 +1,5 @@
 Name:           rofi-emoji
-Version:        3.3.0
+Version:        3.4.0
 Release:        %autorelease
 Summary:        Emoji selector plugin for Rofi
 
