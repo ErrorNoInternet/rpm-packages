@@ -49,7 +49,7 @@ for package_file in "${!project_ids[@]}"; do
 	current_version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$package_file" | head -1)
 
 	if [[ "$current_version" != "$latest_version" ]]; then
-		if (git log -1 --pretty="format:%B" "$package_file" | grep -qE "^update.sh: override $latest_version$"); then
+		if (git log -1 --pretty="format:%B" "$package_file" | grep -qE "^update.sh: override.*$latest_version.*$"); then
 			echo "ignoring $latest_version for $package_name as it has been manually overridden"
 			continue
 		fi
