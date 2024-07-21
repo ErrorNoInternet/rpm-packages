@@ -12,6 +12,8 @@ Summary:        Simple library for animation in Rust
 License:        MIT
 URL:            https://crates.io/crates/keyframe
 Source:         %{crates_source}
+# Manually created patch for downstream crate metadata changes
+Patch:          keyframe-fix-metadata.diff
 
 BuildRequires:  cargo-rpm-macros >= 24
 
@@ -84,6 +86,11 @@ use the "mint_types" feature of the "%{crate}" crate.
 
 %prep
 %autosetup -n %{crate}-%{version} -p1
+
+# Remove examples/ since those aren't going to be used,
+# and they include an extra `ggez` dependency.
+rm -rf examples
+
 %cargo_prep
 
 %generate_buildrequires
