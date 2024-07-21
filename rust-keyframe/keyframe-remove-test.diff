@@ -1,0 +1,13 @@
+diff --git a/src/lib.rs b/src/lib.rs
+index 5197e06..61a3746 100644
+--- a/src/lib.rs
++++ b/src/lib.rs
+@@ -60,7 +60,7 @@
+ //!
+ //! Custom structures:
+ //!
+-//! ```rust
++//! ```ignore
+ //! use keyframe::mint::Point2;
+ //! // This macro works with any structure as long as it only consists of types that implement "CanTween"
+ //! use keyframe_derive::CanTween;

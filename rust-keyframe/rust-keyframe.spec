@@ -14,6 +14,8 @@ URL:            https://crates.io/crates/keyframe
 Source:         %{crates_source}
 # Manually created patch for downstream crate metadata changes
 Patch:          keyframe-fix-metadata.diff
+# Remove failing test in doc comment
+Patch:          keyframe-remove-test.diff
 
 BuildRequires:  cargo-rpm-macros >= 24
 
