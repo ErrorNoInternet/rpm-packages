@@ -22,6 +22,7 @@ declare -A project_ids=(
 	["rofi-emoji/rofi-emoji.spec"]=242096
 	["rust-keyframe/rust-keyframe.spec"]=373513
 	["rust-keyframe_derive/rust-keyframe_derive.spec"]=373520
+	["rust-libvips/rust-libvips.spec"]=373523
 	["rust-spin_sleep/rust-spin_sleep.spec"]=242190
 	["satty/satty.spec"]=372795
 	["swaylock-effects/swaylock-effects.spec"]=312399
