@@ -27,6 +27,7 @@ declare -A project_ids=(
 	["vesktop/vesktop.spec"]=372800
 	["walker/walker.spec"]=372963
 	["wallust/wallust.spec"]=372803
+	["wl-restart/wl-restart.spec"]=373511
 	["yazi/yazi.spec"]=370571
 )
 
