@@ -20,6 +20,7 @@ declare -A project_ids=(
 	["prismlauncher/prismlauncher.spec"]=301949
 	["ripdrag/ripdrag.spec"]=372793
 	["rofi-emoji/rofi-emoji.spec"]=242096
+	["rust-keyframe/rust-keyframe.spec"]=373513
 	["satty/satty.spec"]=372795
 	["swaylock-effects/swaylock-effects.spec"]=312399
 	["swaync/swaync.spec"]=242061
