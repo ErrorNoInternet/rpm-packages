@@ -39,7 +39,7 @@ export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
 
 %files
 %license LICENSE LICENSE-GPL
-%doc README.md
+%doc README.md CONTRIBUTING.md
 %{_bindir}/quickshell
 
 %changelog
