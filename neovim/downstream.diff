@@ -1,23 +1,24 @@
 diff --git a/neovim.spec b/neovim.spec
-index 374531d..5168e7c 100644
+index ad8983e..4e5c270 100644
 --- a/neovim.spec
 +++ b/neovim.spec
-@@ -46,6 +46,7 @@ Source1:        sysinit.vim
- Source2:        spec-template
+@@ -49,6 +49,7 @@ Source3:        %{name}-%{version}-vendor.tar.gz
+ Source4:        neovim-bundled-licenses.txt
  
  Patch1000:      neovim-lua-bit32.patch
 +Patch0:         remove-fold-numbers.diff
  
  BuildRequires:  gcc-c++
  BuildRequires:  cmake
-@@ -106,6 +107,7 @@ parts of Vim, without compromise, and more.
- 
- %prep
- %setup -q
-+%patch -P 0 -p1
- 
- %if %{without luajit}
+@@ -116,6 +117,8 @@ cp %{SOURCE4} .
  %patch -P 1000 -p1
+ %endif
+ 
++%patch -P 0 -p1
++
+ %build
+ # set vars to make build reproducible; see config/CMakeLists.txt
+ HOSTNAME=koji
 diff --git a/remove-fold-numbers.diff b/remove-fold-numbers.diff
 new file mode 100644
 index 0000000..9811f55
