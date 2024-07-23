@@ -7,7 +7,15 @@ Release:        %autorelease
 Summary:        High performance screen/audio recorder for wlroots
 
 SourceLicense:  Apache-2.0
-License:        # FIXME
+
+# Apache-2.0 OR MIT
+# Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT
+# ISC
+# MIT
+# MIT OR Apache-2.0
+# Unlicense OR MIT
+# WTFPL
+License:        Apache-2.0 AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND ISC AND MIT AND (MIT OR Apache-2.0) AND (Unlicense OR MIT) and WTFPL
 
 URL:            https://github.com/russelltg/wl-screenrec
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
