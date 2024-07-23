@@ -32,6 +32,7 @@ declare -A project_ids=(
 	["walker/walker.spec"]=372963
 	["wallust/wallust.spec"]=372803
 	["wl-restart/wl-restart.spec"]=373511
+	["wl-screenrec/wl-screenrec.spec"]=373536
 	["yazi/yazi.spec"]=370571
 )
 
