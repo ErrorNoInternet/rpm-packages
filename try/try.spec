@@ -1,16 +1,19 @@
 %global debug_package %{nil}
 
-Name: try
-Version: 0.2.0
-Release: 3%{?dist}
-Summary: Inspect a command's effects before modifying your live system
+Name:           try
+Version:        0.2.0
+Release:        4%{?dist}
+Summary:        Inspect a command's effects before modifying your live system
 
-License: MIT
-URL: https://github.com/binpash/try
-Source: %{url}/archive/v%{version}.tar.gz
+License:        MIT
+URL:            https://github.com/binpash/try
+Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
-BuildRequires: make pandoc
-Requires: util-linux mergerfs
+BuildRequires:  make
+BuildRequires:  pandoc
+
+Requires:       mergerfs
+Requires:       util-linux
 
 %description
 `try` lets you run a command and inspect its effects before changing
@@ -18,10 +21,13 @@ your live system. `try` uses Linux's namespaces (via `unshare`) and
 the overlayfs union filesystem.
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup
 
 %build
 %make_build -C man
+
+%check
+make lint
 
 %install
 install -Dpm755 try %{buildroot}%{_bindir}/try
@@ -30,7 +36,7 @@ install -Dpm644 completions/try.bash %{buildroot}%{bash_completions_dir}/try
 
 %files
 %license LICENSE
-%doc README.md
+%doc README.md STYLE.md
 %{_bindir}/try
 %{_mandir}/man1/try.1*
 %{bash_completions_dir}/try
