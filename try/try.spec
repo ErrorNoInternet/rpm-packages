@@ -38,7 +38,7 @@ This package installs Bash completion files for %{name}
 %make_build -C man
 
 %check
-make lint
+./scripts/lint.sh
 
 %install
 install -Dpm755 try %{buildroot}%{_bindir}/try
