@@ -20,6 +20,17 @@ Requires:       util-linux
 your live system. `try` uses Linux's namespaces (via `unshare`) and
 the overlayfs union filesystem.
 
+%package bash-completion
+BuildArch:      noarch
+Summary:        Bash completion files for %{name}
+Provides:       %{name}-bash-completion = %{version}-%{release}
+
+Requires:       bash-completion
+Requires:       %{name} = %{version}-%{release}
+
+%description bash-completion
+This package installs Bash completion files for %{name}
+
 %prep
 %autosetup
 
@@ -39,6 +50,8 @@ install -Dpm644 completions/try.bash %{buildroot}%{bash_completions_dir}/try
 %doc README.md STYLE.md
 %{_bindir}/try
 %{_mandir}/man1/try.1*
+
+%files bash-completion
 %{bash_completions_dir}/try
 
 %changelog
