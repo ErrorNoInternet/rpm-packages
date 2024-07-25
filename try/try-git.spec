@@ -12,6 +12,8 @@ License:        MIT
 URL:            https://github.com/binpash/try
 Source:         %{url}/archive/%{commit}/try-%{commit}.tar.gz
 
+Obsoletes:      try <= 0.2.0
+
 BuildRequires:  attr
 BuildRequires:  autoconf
 BuildRequires:  gcc
