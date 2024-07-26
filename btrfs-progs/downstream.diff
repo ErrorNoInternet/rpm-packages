@@ -351,20 +351,20 @@ index 0000000..871c121
 + #define BTRFS_BCONF_QUIET	 0
 + /*
 diff --git a/btrfs-progs.spec b/btrfs-progs.spec
-index 7cd095d..057e005 100644
+index 0685728..3a77441 100644
 --- a/btrfs-progs.spec
 +++ b/btrfs-progs.spec
-@@ -12,6 +12,9 @@ Source0:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{n
- Source1:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{name}-v%{version_no_tilde}.tar.sign
- Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
+@@ -15,6 +15,9 @@ Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
+ # From: https://lore.kernel.org/linux-btrfs/fbbb792fa299bfdfa818f6e0790fa545297dc1cf.1721949827.git.osandov@fb.com/
+ Patch0:         btrfs-progs-6.10-fix-python3.13.patch
  
-+Patch0:         add-dump-csum.diff
-+Patch1:         remove-receive-errors.diff
++Patch1:         add-dump-csum.diff
++Patch2:         remove-receive-errors.diff
 +
  BuildRequires:  gnupg2
  BuildRequires:  gcc, autoconf, automake, make
  BuildRequires:  git-core
-@@ -89,11 +92,11 @@ btrfs filesystem-specific programs in Python.
+@@ -92,11 +95,11 @@ btrfs filesystem-specific programs in Python.
  
  %prep
  xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data=-
