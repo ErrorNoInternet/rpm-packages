@@ -1,0 +1,52 @@
+diff --git a/add-date-variable.diff b/add-date-variable.diff
+new file mode 100644
+index 0000000..6f89604
+--- /dev/null
++++ b/add-date-variable.diff
+@@ -0,0 +1,33 @@
++diff --git a/src/renderer/widgets/IWidget.cpp b/src/renderer/widgets/IWidget.cpp
++index 776fb1c..651c6fb 100644
++--- a/src/renderer/widgets/IWidget.cpp
+++++ b/src/renderer/widgets/IWidget.cpp
++@@ -111,6 +111,15 @@ static std::string getTime() {
++     return (HRS < 10 ? "0" : "") + std::to_string(HRS) + ":" + (MINS < 10 ? "0" : "") + std::to_string(MINS);
++ }
++ 
+++static std::string getDate() {
+++    std::time_t t = std::time(nullptr);
+++    char        buffer[50];
+++    strftime(buffer, sizeof(buffer), "%A, %B %d, %Y", std::localtime(&t));
+++    std::stringstream ss;
+++    ss << buffer;
+++    return ss.str();
+++}
+++
++ IWidget::SFormatResult IWidget::formatString(std::string in) {
++ 
++     auto  uidPassword = getpwuid(getuid());
++@@ -133,6 +142,11 @@ IWidget::SFormatResult IWidget::formatString(std::string in) {
++         result.updateEveryMs = result.updateEveryMs != 0 && result.updateEveryMs < 1000 ? result.updateEveryMs : 1000;
++     }
++ 
+++    if (in.contains("$DATE")) {
+++        replaceAll(in, "$DATE", getDate());
+++        result.updateEveryMs = result.updateEveryMs != 0 && result.updateEveryMs < 1000 ? result.updateEveryMs : 1000;
+++    }
+++
++     if (in.contains("$FAIL")) {
++         const auto FAIL = g_pAuth->getLastFailText();
++         replaceAll(in, "$FAIL", FAIL.has_value() ? FAIL.value() : "");
++
+diff --git a/hyprlock.spec b/hyprlock.spec
+index 4691bef..5ecc5f5 100644
+--- a/hyprlock.spec
++++ b/hyprlock.spec
+@@ -6,6 +6,8 @@ License:        BSD-3-Clause
+ URL:            https://github.com/hyprwm/hyprlock
+ Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+ 
++Patch:          add-date-variable.diff
++
+ # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
+ ExcludeArch:    %{ix86}
+ 

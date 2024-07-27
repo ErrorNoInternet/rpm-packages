@@ -42,3 +42,7 @@
 	path = rofi-wayland/upstream
 	url = https://src.fedoraproject.org/rpms/rofi-wayland
 	branch = f40
+[submodule "hyprlock/upstream"]
+	path = hyprlock/upstream
+	url = https://src.fedoraproject.org/rpms/hyprlock
+	branch = f40
