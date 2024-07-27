@@ -1,5 +1,5 @@
-%global commit      54350277beafaa0d1e400cf6f74c5322971dbdac
-%global snapdate    20240725
+%global commit      18563b1273166f6e5795e892642fd11f6b66e69a
+%global snapdate    20240727
 
 Name:               quickshell
 Version:            0^%{snapdate}
