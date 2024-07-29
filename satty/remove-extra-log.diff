@@ -1,12 +1,15 @@
 diff --git a/src/sketch_board.rs b/src/sketch_board.rs
-index 437d224..79a7afa 100644
+index d68996a..6c3b222 100644
 --- a/src/sketch_board.rs
 +++ b/src/sketch_board.rs
-@@ -250,8 +250,6 @@ impl SketchBoard {
+@@ -259,11 +259,6 @@ impl SketchBoard {
          match result {
              Err(e) => println!("Error saving {e}"),
              Ok(()) => {
--                log_result("Copied to clipboard.");
+-                log_result(
+-                    "Copied to clipboard.",
+-                    !APP_CONFIG.read().disable_notifications(),
+-                );
 -
                  // TODO: rethink order and messaging patterns
                  if APP_CONFIG.read().save_after_copy() {
