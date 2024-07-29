@@ -11981,7 +11981,7 @@ index 000000000..0ad3db7c7
 + #endif
 +
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
-index 7d19e5b04..9d2e980d6 100644
+index 7d19e5b04..8d4376f5d 100644
 --- a/kernel-x86_64-fedora.config
 +++ b/kernel-x86_64-fedora.config
 @@ -2861,7 +2861,8 @@ CONFIG_IIO_TIGHTLOOP_TRIGGER=m
@@ -11994,8 +11994,17 @@ index 7d19e5b04..9d2e980d6 100644
  CONFIG_IKHEADERS=m
  CONFIG_IMA_APPRAISE_BOOTPARAM=y
  # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
+@@ -4205,7 +4206,7 @@ CONFIG_MODULE_COMPRESS_NONE=y
+ # CONFIG_MODULE_COMPRESS_ZSTD is not set
+ # CONFIG_MODULE_DEBUG is not set
+ # CONFIG_MODULE_FORCE_LOAD is not set
+-# CONFIG_MODULE_FORCE_UNLOAD is not set
++CONFIG_MODULE_FORCE_UNLOAD=y
+ CONFIG_MODULE_SIG_ALL=y
+ # CONFIG_MODULE_SIG_FORCE is not set
+ CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
 diff --git a/kernel.spec b/kernel.spec
-index a475d3059..4580b67c5 100644
+index ed40d6c32..f070751d4 100644
 --- a/kernel.spec
 +++ b/kernel.spec
 @@ -976,6 +976,12 @@ Source4002: gating.yaml
