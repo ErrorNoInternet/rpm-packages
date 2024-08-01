@@ -5,8 +5,8 @@
 %global cargo_install_lib 0
 
 Name:           yazi
-Version:        0.2.5
-Release:        2%{?dist}
+Version:        0.3.0
+Release:        1%{?dist}
 Summary:        Blazing fast terminal file manager
 License:        MIT
 
