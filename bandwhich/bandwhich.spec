@@ -61,7 +61,7 @@ This package installs Zsh completion files for %{name}
 %autosetup -n %{name}-%{version} -N
 %autopatch 0
 cargo vendor
-%autopatch -m 1
+%autopatch -m1 -p1
 ln -s vendor/packet-builder packet-builder
 %cargo_prep -v vendor
 
