@@ -7,7 +7,7 @@
 
 Name:           yazi
 Version:        0.3.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Blazing fast terminal file manager
 
 # BSD OR MIT OR Apache-2.0
@@ -39,8 +39,9 @@ Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 Patch:          yazi-replace-git-deps.diff
 
 BuildRequires:  cargo-rpm-macros >= 24
-BuildRequires:  make
 BuildRequires:  gcc
+BuildRequires:  ImageMagick
+BuildRequires:  make
 
 Recommends:     7zip
 Recommends:     chafa
@@ -111,6 +112,11 @@ install -Dpm644 yazi-boot/completions/yazi.bash %{buildroot}%{bash_completions_d
 install -Dpm644 yazi-boot/completions/yazi.fish %{buildroot}%{fish_completions_dir}/yazi.fish
 install -Dpm644 yazi-boot/completions/_yazi %{buildroot}%{zsh_completions_dir}/_yazi
 
+for size in {1024,512,256,128,64,32,16}; do
+    mkdir -p %{buildroot}%{_datadir}/icons/hicolor/"$size"x"$size"/apps
+    magick assets/logo.png -resize "$size"x"$size"\! %{buildroot}%{_datadir}/icons/hicolor/"$size"x"$size"/apps/%{name}.png
+done
+
 %if %{with check}
 %check
 %cargo_test
@@ -124,6 +130,7 @@ install -Dpm644 yazi-boot/completions/_yazi %{buildroot}%{zsh_completions_dir}/_
 %{_bindir}/ya
 %{_bindir}/yazi
 %{_datadir}/applications/yazi.desktop
+%{_datadir}/icons/hicolor/*/apps/%{name}.png
 
 %files bash-completion
 %{bash_completions_dir}/yazi
