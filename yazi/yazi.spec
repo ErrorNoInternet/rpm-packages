@@ -9,7 +9,30 @@ Name:           yazi
 Version:        0.3.0
 Release:        1%{?dist}
 Summary:        Blazing fast terminal file manager
-License:        MIT
+
+# BSD OR MIT OR Apache-2.0
+# Apache-2.0
+# Apache-2.0 OR BSL-1.0
+# Apache-2.0 OR MIT
+# Apache-2.0 WITH LLVM-exception
+# Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT
+# BSD-2-Clause
+# BSD-2-Clause OR Apache-2.0 OR MIT
+# BSD-3-Clause
+# BSL-1.0
+# CC0-1.0
+# CC0-1.0 OR Apache-2.0
+# ISC
+# MIT
+# MIT OR Apache-2.0
+# MIT OR Apache-2.0 OR NCSA
+# MIT OR Apache-2.0 OR Zlib
+# MIT OR Zlib OR Apache-2.0
+# MPL-2.0
+# Unlicense OR MIT
+# Zlib OR Apache-2.0 OR MIT
+License: Apache-2.0 AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND BSD-2-Clause AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND BSD-3-Clause AND (BSD OR MIT OR Apache-2.0) AND BSL-1.0 AND CC0-1.0 AND (CC0-1.0 OR Apache-2.0) AND ISC AND MIT AND (MIT OR Apache-2.0) AND (MIT OR Apache-2.0 OR NCSA) AND (MIT OR Apache-2.0 OR Zlib) AND (MIT OR Zlib OR Apache-2.0) AND MPL-2.0 AND (Unlicense OR MIT) AND (Zlib OR Apache-2.0 OR MIT)
+SourceLicense:  MIT
 
 URL:            https://github.com/sxyazi/yazi
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
