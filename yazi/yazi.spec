@@ -42,6 +42,10 @@ BuildRequires:  cargo-rpm-macros >= 24
 BuildRequires:  make
 BuildRequires:  gcc
 
+Recommends:     7zip
+Recommends:     chafa
+Recommends:     ImageMagick
+
 %global _description %{expand:
 %{summary}.}
 
