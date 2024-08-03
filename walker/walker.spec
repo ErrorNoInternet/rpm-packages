@@ -1,5 +1,5 @@
 %global goipath         github.com/abenz1267/walker
-Version:                0.5.5
+Version:                0.5.6
 
 %gometa -L -f
 
