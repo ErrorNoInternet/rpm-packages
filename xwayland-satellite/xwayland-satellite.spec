@@ -3,7 +3,7 @@
 
 Name:               xwayland-satellite
 Version:            0^%{snapdate}
-Release:            1%{?dist}
+Release:            %autorelease
 Summary:            Xwayland outside your Wayland.
 
 License:            MPL-2.0-only
