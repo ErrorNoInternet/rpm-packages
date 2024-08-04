@@ -7,7 +7,7 @@
 
 Name:           overmask
 Version:        0^%{snapdate}
-Release:        1%{?dist}
+Release:        %autorelease
 Summary:        Add a writeable overlay on top of read-only files
 
 SourceLicense:  LGPL-3.0-only
