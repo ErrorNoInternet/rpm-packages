@@ -107,14 +107,13 @@ for file in "${!git_forges[@]}"; do
 		fi
 
 		if [[ "$current_commit" != "$latest_commit" ]]; then
-			update_message="$current_commit @ $current_snapdate -> $latest_commit @ $latest_snapdate"
-			echo "$name is not up-to-date ($update_message)! modifying attributes..."
+			echo "$name is not up-to-date ($current_commit @ $current_snapdate -> $latest_commit @ $latest_snapdate)! modifying attributes..."
 
 			sed -i "s|^%global\(\s\+\)commit\(\s\+\)$current_commit$|%global\1commit\2$latest_commit|" "$file"
 			sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
 
 			git add "$file"
-			git commit -m "$name: update" -m "$update_message"
+			git commit -F<(echo -e "$name: update\n\n< $current_commit @ $current_snapdate\n> $latest_commit @ $latest_snapdate")
 		fi
 		;;
 	esac
