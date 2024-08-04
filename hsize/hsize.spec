@@ -9,7 +9,7 @@
 
 Name:           hsize
 Version:        0^%{snapdate}
-Release:        2%{?dist}
+Release:        %autorelease
 Summary:        Convert file sizes to and from human-readable units
 License:        LGPL-3-only
 
