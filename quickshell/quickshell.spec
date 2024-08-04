@@ -3,7 +3,7 @@
 
 Name:               quickshell
 Version:            0^%{snapdate}
-Release:            1%{?dist}
+Release:            2%{?dist}
 Summary:            Flexible QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
@@ -31,7 +31,10 @@ Flexible QtQuick based desktop shell toolkit for Wayland and X11.
 
 %build
 export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
-%cmake -GNinja -DBUILD_SHARED_LIBS:BOOL=OFF -DCMAKE_BUILD_TYPE=Release
+%cmake  -GNinja \
+        -DBUILD_SHARED_LIBS:BOOL=OFF \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DGIT_REVISION=%{commit}
 %cmake_build
 
 %install
