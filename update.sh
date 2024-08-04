@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -A project_ids=(
+declare -A anitya_ids=(
 	["7zip/7zip.spec"]=368867
 	["bandwhich/bandwhich.spec"]=236376
 	["btdu/btdu.spec"]=372783
@@ -36,35 +36,35 @@ declare -A project_ids=(
 	["yazi/yazi.spec"]=370571
 )
 
-for package_file in "${!project_ids[@]}"; do
-	package_name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$package_file" | head -1)
-	echo "> querying versions for $package_name ($package_file)..."
+for file in "${!anitya_ids[@]}"; do
+	name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$file" | head -1)
+	echo "> querying versions for $name ($file)..."
 
-	if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${project_ids[$package_file]}") ||
+	if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${anitya_ids[$file]}") ||
 		[[ -z "$api_response" ]]; then
-		echo -e "couldn't query api for $package_name! api response: $api_response"
+		echo -e "couldn't query api for $name! api response: $api_response"
 		continue
 	fi
 
 	if ! latest_version=$(echo "$api_response" | jq -r .latest_version) || [[ -z "$latest_version" ]]; then
-		echo -e "couldn't parse versions for $package_name! api response: $api_response"
+		echo -e "couldn't parse versions for $name! api response: $api_response"
 		continue
 	fi
 
 	latest_version=${latest_version//-/\~}
-	current_version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$package_file" | head -1)
+	current_version=$(sed -n "s|^Version:\s\+\(.*\)$|\1|p" "$file" | head -1)
 
 	if [[ "$current_version" != "$latest_version" ]]; then
-		if (git log -1 --pretty="format:%B" "$package_file" | grep -qE "^update.sh: override.*$latest_version.*$"); then
+		if (git log -1 --pretty="format:%B" "$file" | grep -qE "^update.sh: override.*$latest_version.*$"); then
 			echo "ignoring $latest_version for $package_name as it has been manually overridden"
 			continue
 		fi
 
 		echo "$package_name is not up-to-date ($current_version -> $latest_version)! modifying attributes..."
-		sed -i "s|^Version:\(\s\+\)$current_version$|Version:\1$latest_version|" "$package_file"
-		sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$package_file"
+		sed -i "s|^Version:\(\s\+\)$current_version$|Version:\1$latest_version|" "$file"
+		sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
 
-		git add "$package_file"
+		git add "$file"
 		git commit -m "$package_name: $current_version -> $latest_version"
 	fi
 done
