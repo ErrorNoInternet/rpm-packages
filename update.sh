@@ -36,13 +36,21 @@ declare -A anitya_ids=(
 	["yazi/yazi.spec"]=370571
 )
 
+declare -A git_forges=(
+	["hsize/hsize.spec"]=github
+	["overmask/overmask.spec"]=github
+	["quickshell/quickshell.spec"]=github
+	["try/try-git.spec"]=github
+	["xwayland-satellite/xwayland-satellite.spec"]=github
+)
+
 for file in "${!anitya_ids[@]}"; do
 	name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$file" | head -1)
 	echo "> querying versions for $name ($file)..."
 
 	if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${anitya_ids[$file]}") ||
 		[[ -z "$api_response" ]]; then
-		echo -e "couldn't query api for $name! api response: $api_response"
+		echo -e "couldn't query anitya api for $name! api response: $api_response"
 		continue
 	fi
 
@@ -56,17 +64,60 @@ for file in "${!anitya_ids[@]}"; do
 
 	if [[ "$current_version" != "$latest_version" ]]; then
 		if (git log -1 --pretty="format:%B" "$file" | grep -qE "^update.sh: override.*$latest_version.*$"); then
-			echo "ignoring $latest_version for $package_name as it has been manually overridden"
+			echo "ignoring $latest_version for $name as it has been manually overridden"
 			continue
 		fi
 
-		echo "$package_name is not up-to-date ($current_version -> $latest_version)! modifying attributes..."
+		echo "$name is not up-to-date ($current_version -> $latest_version)! modifying attributes..."
 		sed -i "s|^Version:\(\s\+\)$current_version$|Version:\1$latest_version|" "$file"
 		sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
 
 		git add "$file"
-		git commit -m "$package_name: $current_version -> $latest_version"
+		git commit -m "$name: $current_version -> $latest_version"
 	fi
+done
+
+for file in "${!git_forges[@]}"; do
+	name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$file" | head -1)
+	echo "> querying commits for $name ($file)..."
+
+	current_commit=$(sed -n "s|^%global\s\+commit\s\+\(.*\)$|\1|p" "$file" | head -1)
+	current_snapdate=$(sed -n "s|^%global\s\+snapdate\s\+\(.*\)$|\1|p" "$file" | head -1)
+
+	case ${git_forges[$file]} in
+	github)
+		url=$(sed -n "s|^URL:\s\+\(.*\)$|\1|p" "$file" | head -1)
+		owner_repo=$(echo "$url" | sed -n "s|^https://github.com/\(.*\)$|\1|p")
+
+		if ! api_response=$(curl -fsSL "https://api.github.com/repos/$owner_repo/commits") ||
+			[[ -z "$api_response" ]]; then
+			echo -e "couldn't query github api for $name! api response: $api_response"
+			continue
+		fi
+
+		if ! latest_commit=$(echo "$api_response" | jq -r ".[0].sha") || [[ -z "$latest_commit" ]]; then
+			echo -e "couldn't parse commit hash for $name! api response: $api_response"
+			continue
+		fi
+
+		if ! latest_snapdate=$(date +"%Y%m%d" -d"$(echo "$api_response" | jq -r ".[0].commit.committer.date")") ||
+			[[ -z "$latest_snapdate" ]]; then
+			echo -e "couldn't parse commit date for $name! api response: $api_response"
+			continue
+		fi
+
+		if [[ "$current_commit" != "$latest_commit" ]]; then
+			update_message="$current_commit @ $current_snapdate -> $latest_commit @ $latest_snapdate"
+			echo "$name is not up-to-date ($update_message)! modifying attributes..."
+
+			sed -i "s|^%global\(\s\+\)commit\(\s\+\)$current_commit$|%global\1commit\2$latest_commit|" "$file"
+			sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
+
+			git add "$file"
+			git commit -m "$name: update" -m "$update_message"
+		fi
+		;;
+	esac
 done
 
 echo "> updating submodules..."
