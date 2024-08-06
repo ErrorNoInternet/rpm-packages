@@ -46,3 +46,7 @@
 	path = hyprlock/upstream
 	url = https://src.fedoraproject.org/rpms/hyprlock
 	branch = f40
+[submodule "coreutils/upstream"]
+	path = coreutils/upstream
+	url = https://src.fedoraproject.org/rpms/coreutils
+	branch = f40
