@@ -6,8 +6,8 @@
 %global crate_version 3.0.0-beta
 
 Name:           wallust
-Version:        3.0.0~beta
-Release:        2%{?dist}
+Version:        3.0.0
+Release:        1%{?dist}
 Summary:        Generate a 16 color scheme based on an image
 License:        MIT
 
