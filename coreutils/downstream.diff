@@ -1,9 +1,9 @@
 diff --git a/coreutils-selinux-and-advcpmv.patch b/coreutils-selinux-and-advcpmv.patch
 new file mode 100644
-index 0000000..1c102e1
+index 0000000..8329f3a
 --- /dev/null
 +++ b/coreutils-selinux-and-advcpmv.patch
-@@ -0,0 +1,1021 @@
+@@ -0,0 +1,1009 @@
 +diff --git a/src/copy.c b/src/copy.c
 +index b9fff03..9f0a137 100644
 +--- a/src/copy.c
@@ -593,7 +593,7 @@ index 0000000..1c102e1
 ++
 + #endif
 +diff --git a/src/cp.c b/src/cp.c
-+index 04a5cbe..4106033 100644
++index 04a5cbe..7a3a4b3 100644
 +--- a/src/cp.c
 ++++ b/src/cp.c
 +@@ -140,6 +140,7 @@ static struct option const long_opts[] =
@@ -604,17 +604,15 @@ index 0000000..1c102e1
 +   {"verbose", no_argument, nullptr, 'v'},
 +   {GETOPT_SELINUX_CONTEXT_OPTION_DECL},
 +   {GETOPT_HELP_OPTION_DECL},
-+@@ -182,6 +183,9 @@ Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.\n\
++@@ -182,6 +183,7 @@ Copy SOURCE to DEST, or multiple SOURCE(s) to DIRECTORY.\n\
 +   -f, --force                  if an existing destination file cannot be\n\
 +                                  opened, remove it and try again (this option\n\
 +                                  is ignored when the -n option is also used)\n\
-++  -g, --progress-bar           add a progress bar.\n\
-++                                 Note that this doesn't work with reflink,\n\
-++                                 reflink will be automatically disabled\n\
+++  -g, --progress-bar           add a progress bar\n\
 +   -i, --interactive            prompt before overwrite (overrides a previous -n\
 + \n\
 +                                   option)\n\
-+@@ -676,6 +680,82 @@ do_copy (int n_files, char **file, char const *target_directory,
++@@ -676,6 +678,82 @@ do_copy (int n_files, char **file, char const *target_directory,
 +         }
 +     }
 + 
@@ -697,7 +695,7 @@ index 0000000..1c102e1
 +   if (target_directory)
 +     {
 +       /* cp file1...filen edir
-+@@ -816,6 +896,56 @@ do_copy (int n_files, char **file, char const *target_directory,
++@@ -816,6 +894,56 @@ do_copy (int n_files, char **file, char const *target_directory,
 +       ok = copy (source, dest, AT_FDCWD, dest, -new_dst, x, &unused, nullptr);
 +     }
 + 
@@ -754,7 +752,7 @@ index 0000000..1c102e1
 +   return ok;
 + }
 + 
-+@@ -851,6 +981,7 @@ cp_option_init (struct cp_options *x)
++@@ -851,6 +979,7 @@ cp_option_init (struct cp_options *x)
 +   x->recursive = false;
 +   x->sparse_mode = SPARSE_AUTO;
 +   x->symbolic_link = false;
@@ -762,7 +760,7 @@ index 0000000..1c102e1
 +   x->set_mode = false;
 +   x->mode = 0;
 + 
-+@@ -989,7 +1120,8 @@ main (int argc, char **argv)
++@@ -989,7 +1118,8 @@ main (int argc, char **argv)
 +   selinux_enabled = (0 < is_selinux_enabled ());
 +   cp_option_init (&x);
 + 
@@ -772,7 +770,7 @@ index 0000000..1c102e1
 +                            long_opts, nullptr))
 +          != -1)
 +     {
-+@@ -1041,6 +1173,23 @@ main (int argc, char **argv)
++@@ -1041,6 +1171,23 @@ main (int argc, char **argv)
 +           copy_contents = true;
 +           break;
 + 
@@ -796,7 +794,7 @@ index 0000000..1c102e1
 +         case 'd':
 +           x.preserve_links = true;
 +           x.dereference = DEREF_NEVER;
-+@@ -1050,6 +1199,10 @@ main (int argc, char **argv)
++@@ -1050,6 +1197,10 @@ main (int argc, char **argv)
 +           x.unlink_dest_after_failed_open = true;
 +           break;
 + 
@@ -807,16 +805,6 @@ index 0000000..1c102e1
 +         case 'H':
 +           x.dereference = DEREF_COMMAND_LINE_ARGUMENTS;
 +           break;
-+@@ -1230,6 +1383,9 @@ main (int argc, char **argv)
-+       usage (EXIT_FAILURE);
-+     }
-+ 
-++  if (progress)
-++    x.reflink_mode = REFLINK_NEVER;
-++
-+   x.backup_type = (make_backups
-+                    ? xget_version (_("backup type"),
-+                                    version_control_string)
 +diff --git a/src/install.c b/src/install.c
 +index 31a48f1..ce9fa2d 100644
 +--- a/src/install.c
@@ -855,7 +843,7 @@ index 0000000..1c102e1
 +           use_default_selinux_context = false;
 +           break;
 +diff --git a/src/mv.c b/src/mv.c
-+index 4fac6ea..2fd3222 100644
++index 4fac6ea..d49357b 100644
 +--- a/src/mv.c
 ++++ b/src/mv.c
 +@@ -78,6 +78,7 @@ static struct option const long_options[] =
@@ -1001,7 +989,7 @@ index 0000000..1c102e1
 + "), stdout);
 +       fputs (_("\
 +   -f, --force                  do not prompt before overwriting\n\
-++  -g, --progress-bar           add progress-bar\n\
+++  -g, --progress-bar           add a progress bar\n\
 +   -i, --interactive            prompt before overwrite\n\
 +   -n, --no-clobber             do not overwrite an existing file\n\
 + If you specify more than one of -i, -f, -n, only the final one takes effect.\n\
