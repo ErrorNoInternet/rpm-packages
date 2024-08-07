@@ -10597,7 +10597,7 @@ index 000000000..0ad3db7c7
 + #endif
 +
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
-index cdf04d26d..0776c2d32 100644
+index cdf04d26d..e2b843e84 100644
 --- a/kernel-x86_64-fedora.config
 +++ b/kernel-x86_64-fedora.config
 @@ -2882,7 +2882,8 @@ CONFIG_IIO_TIGHTLOOP_TRIGGER=m
@@ -10619,6 +10619,13 @@ index cdf04d26d..0776c2d32 100644
  CONFIG_MODULE_SIG_ALL=y
  # CONFIG_MODULE_SIG_FORCE is not set
  CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
+@@ -9001,3 +9002,6 @@ CONFIG_ZSWAP=y
+ # CONFIG_ZSWAP_ZPOOL_DEFAULT_Z3FOLD is not set
+ CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD=y
+ # CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC is not set
++
++CONFIG_ACPI_CALL=y
++CONFIG_NTSYNC=y
 diff --git a/kernel.spec b/kernel.spec
 index af26d4aa9..394154029 100644
 --- a/kernel.spec
