@@ -113,7 +113,7 @@ for file in "${!git_forges[@]}"; do
 			sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
 
 			git add "$file"
-			git commit -F<(echo -e "$name: update\n\n< $current_commit @ $current_snapdate\n> $latest_commit @ $latest_snapdate")
+			git commit -F<(echo -e "$name: $current_snapdate -> $latest_snapdate\n\n$url\n< $current_commit\n> $latest_commit")
 		fi
 		;;
 	esac
