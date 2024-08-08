@@ -1,4 +1,4 @@
-%global commit      38ba3fff242c41a7f648d1fede4cf9a36b2b7e61
+%global commit      8364e94d266bbde6e1a13f901e60e62fdbfefed2
 %global snapdate    20240807
 
 Name:               quickshell
