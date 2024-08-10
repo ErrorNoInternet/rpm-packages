@@ -81,9 +81,6 @@ for file in "${!git_forges[@]}"; do
 	name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$file" | head -1)
 	echo "> querying commits for $name ($file)..."
 
-	current_commit=$(sed -n "s|^%global\s\+commit\s\+\(.*\)$|\1|p" "$file" | head -1)
-	current_snapdate=$(sed -n "s|^%global\s\+snapdate\s\+\(.*\)$|\1|p" "$file" | head -1)
-
 	case ${git_forges[$file]} in
 	github)
 		url=$(sed -n "s|^URL:\s\+\(.*\)$|\1|p" "$file" | head -1)
@@ -105,18 +102,21 @@ for file in "${!git_forges[@]}"; do
 			echo -e "couldn't parse commit date for $name! api response: $api_response"
 			continue
 		fi
-
-		if [[ "$current_commit" != "$latest_commit" ]]; then
-			echo "$name is not up-to-date ($current_commit @ $current_snapdate -> $latest_commit @ $latest_snapdate)! modifying attributes..."
-
-			sed -i "s|^%global\(\s\+\)commit\(\s\+\)$current_commit$|%global\1commit\2$latest_commit|" "$file"
-			sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
-
-			git add "$file"
-			git commit -F<(echo -e "$name: $current_snapdate -> $latest_snapdate\n\n$url\n< $current_commit\n> $latest_commit")
-		fi
 		;;
 	esac
+
+	current_commit=$(sed -n "s|^%global\s\+commit\s\+\(.*\)$|\1|p" "$file" | head -1)
+	current_snapdate=$(sed -n "s|^%global\s\+snapdate\s\+\(.*\)$|\1|p" "$file" | head -1)
+
+	if [[ "$current_commit" != "$latest_commit" ]]; then
+		echo "$name is not up-to-date ($current_commit @ $current_snapdate -> $latest_commit @ $latest_snapdate)! modifying attributes..."
+
+		sed -i "s|^%global\(\s\+\)commit\(\s\+\)$current_commit$|%global\1commit\2$latest_commit|" "$file"
+		sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
+
+		git add "$file"
+		git commit -F<(echo -e "$name: ${current_snapdate}g${current_commit:0:7} -> ${latest_snapdate}g${latest_commit:0:7}\n\n$url\n< $current_commit\n> $latest_commit")
+	fi
 done
 
 echo "> updating submodules..."
