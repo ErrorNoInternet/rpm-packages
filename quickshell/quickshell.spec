@@ -1,5 +1,5 @@
-%global commit      bdbf5b9af998000773d49bfe00c3b52aa259229a
-%global snapdate    20240809
+%global commit      0fc98652a85303cef54766c096286b90f401048a
+%global snapdate    20240810
 
 Name:               quickshell
 Version:            0^%{snapdate}
@@ -16,6 +16,7 @@ BuildRequires:      cmake(Qt6Qml)
 BuildRequires:      cmake(Qt6WaylandClient)
 BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
+BuildRequires:      pkgconfig(CLI11)
 BuildRequires:      pkgconfig(jemalloc)
 BuildRequires:      pkgconfig(libpipewire-0.3)
 BuildRequires:      pkgconfig(pam)
@@ -32,7 +33,7 @@ Flexible QtQuick based desktop shell toolkit for Wayland and X11.
 %build
 export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
 %cmake  -GNinja \
-        -DBUILD_SHARED_LIBS:BOOL=OFF \
+        -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_BUILD_TYPE=Release \
         -DGIT_REVISION=%{commit}
 %cmake_build
