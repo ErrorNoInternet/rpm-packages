@@ -2,7 +2,7 @@
 %global snapdate    20240810
 
 Name:               quickshell
-Version:            0^%{snapdate}
+Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
 Release:            %autorelease
 Summary:            Flexible QtQuick based desktop shell toolkit
 
