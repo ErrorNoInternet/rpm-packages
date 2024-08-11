@@ -1450,11 +1450,962 @@ index 000000000..0bcf73b77
 +-- 
 +2.45.1
 +
-diff --git a/aes-crypto-updates.patch b/aes-crypto-updates.patch
+diff --git a/btrfs-allocator-hints.patch b/btrfs-allocator-hints.patch
+new file mode 100644
+index 000000000..bd8fc83cd
+--- /dev/null
++++ b/btrfs-allocator-hints.patch
+@@ -0,0 +1,289 @@
++diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
++index b1d1ac25237b7a..9246161bfdecc7 100644
++--- a/fs/btrfs/sysfs.c
+++++ b/fs/btrfs/sysfs.c
++@@ -1817,6 +1817,70 @@ static ssize_t btrfs_devinfo_error_stats_show(struct kobject *kobj,
++ }
++ BTRFS_ATTR(devid, error_stats, btrfs_devinfo_error_stats_show);
++ 
+++static ssize_t btrfs_devinfo_type_show(struct kobject *kobj,
+++					    struct kobj_attribute *a, char *buf)
+++{
+++	struct btrfs_device *device = container_of(kobj, struct btrfs_device,
+++						   devid_kobj);
+++
+++	return scnprintf(buf, PAGE_SIZE, "0x%08llx\n", device->type);
+++}
+++
+++static ssize_t btrfs_devinfo_type_store(struct kobject *kobj,
+++				 struct kobj_attribute *a,
+++				 const char *buf, size_t len)
+++{
+++	struct btrfs_fs_info *fs_info;
+++	struct btrfs_root *root;
+++	struct btrfs_device *device;
+++	int ret;
+++	struct btrfs_trans_handle *trans;
+++
+++	u64 type, prev_type;
+++
+++	device = container_of(kobj, struct btrfs_device, devid_kobj);
+++	fs_info = device->fs_info;
+++	if (!fs_info)
+++		return -EPERM;
+++
+++	root = fs_info->chunk_root;
+++	if (sb_rdonly(fs_info->sb))
+++		return -EROFS;
+++
+++	ret = kstrtou64(buf, 0, &type);
+++	if (ret < 0)
+++		return -EINVAL;
+++
+++	/* for now, allow to touch only the 'allocation hint' bits */
+++	if (type & ~((1 << BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT) - 1))
+++		return -EINVAL;
+++
+++	trans = btrfs_start_transaction(root, 1);
+++	if (IS_ERR(trans))
+++		return PTR_ERR(trans);
+++
+++	prev_type = device->type;
+++	device->type = type;
+++
+++	ret = btrfs_update_device(trans, device);
+++
+++	if (ret < 0) {
+++		btrfs_abort_transaction(trans, ret);
+++		btrfs_end_transaction(trans);
+++		goto abort;
+++	}
+++
+++	ret = btrfs_commit_transaction(trans);
+++	if (ret < 0)
+++		goto abort;
+++
+++	return len;
+++abort:
+++	device->type = prev_type;
+++	return  ret;
+++}
+++BTRFS_ATTR_RW(devid, type, btrfs_devinfo_type_show, btrfs_devinfo_type_store);
+++
++ /*
++  * Information about one device.
++  *
++@@ -1830,6 +1894,7 @@ static struct attribute *devid_attrs[] = {
++ 	BTRFS_ATTR_PTR(devid, replace_target),
++ 	BTRFS_ATTR_PTR(devid, scrub_speed_max),
++ 	BTRFS_ATTR_PTR(devid, writeable),
+++	BTRFS_ATTR_PTR(devid, type),
++ 	NULL
++ };
++ ATTRIBUTE_GROUPS(devid);
++diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
++index b9ef6f54635ca5..0e269b3f11185f 100644
++--- a/fs/btrfs/volumes.c
+++++ b/fs/btrfs/volumes.c
++@@ -174,6 +174,20 @@ enum btrfs_raid_types __attribute_const__ btrfs_bg_flags_to_raid_index(u64 flags
++ 	return BTRFS_BG_FLAG_TO_INDEX(profile);
++ }
++ 
+++#define BTRFS_DEV_ALLOCATION_MASK ((1ULL << \
+++		BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT) - 1)
+++#define BTRFS_DEV_ALLOCATION_MASK_COUNT (1ULL << \
+++		BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT)
+++
+++static const char alloc_hint_map[BTRFS_DEV_ALLOCATION_MASK_COUNT] = {
+++	[BTRFS_DEV_ALLOCATION_DATA_ONLY] = -1,
+++	[BTRFS_DEV_ALLOCATION_PREFERRED_DATA] = 0,
+++	[BTRFS_DEV_ALLOCATION_PREFERRED_METADATA] = 1,
+++	[BTRFS_DEV_ALLOCATION_METADATA_ONLY] = 2,
+++	[BTRFS_DEV_ALLOCATION_PREFERRED_NONE] = 99,
+++	/* the other values are set to 0 */
+++};
+++
++ const char *btrfs_bg_type_to_raid_name(u64 flags)
++ {
++ 	const int index = btrfs_bg_flags_to_raid_index(flags);
++@@ -2856,7 +2870,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
++ 	return ret;
++ }
++ 
++-static noinline int btrfs_update_device(struct btrfs_trans_handle *trans,
+++noinline int btrfs_update_device(struct btrfs_trans_handle *trans,
++ 					struct btrfs_device *device)
++ {
++ 	int ret;
++@@ -5034,13 +5048,18 @@ static int btrfs_add_system_chunk(struct btrfs_fs_info *fs_info,
++ }
++ 
++ /*
++- * sort the devices in descending order by max_avail, total_avail
+++ * sort the devices in descending order by alloc_hint,
+++ * max_avail, total_avail
++  */
++ static int btrfs_cmp_device_info(const void *a, const void *b)
++ {
++ 	const struct btrfs_device_info *di_a = a;
++ 	const struct btrfs_device_info *di_b = b;
++ 
+++	if (di_a->alloc_hint > di_b->alloc_hint)
+++		return -1;
+++	if (di_a->alloc_hint < di_b->alloc_hint)
+++		return 1;
++ 	if (di_a->max_avail > di_b->max_avail)
++ 		return -1;
++ 	if (di_a->max_avail < di_b->max_avail)
++@@ -5193,6 +5212,8 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
++ 	int ndevs = 0;
++ 	u64 max_avail;
++ 	u64 dev_offset;
+++	int hint;
+++	int i;
++ 
++ 	/*
++ 	 * in the first pass through the devices list, we gather information
++@@ -5245,16 +5266,94 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
++ 		devices_info[ndevs].max_avail = max_avail;
++ 		devices_info[ndevs].total_avail = total_avail;
++ 		devices_info[ndevs].dev = device;
+++
+++		if ((ctl->type & BTRFS_BLOCK_GROUP_DATA) &&
+++		     (ctl->type & BTRFS_BLOCK_GROUP_METADATA)) {
+++			/*
+++			 * if mixed bg set all the alloc_hint
+++			 * fields to the same value, so the sorting
+++			 * is not affected
+++			 */
+++			devices_info[ndevs].alloc_hint = 0;
+++		} else if (ctl->type & BTRFS_BLOCK_GROUP_DATA) {
+++			hint = device->type & BTRFS_DEV_ALLOCATION_MASK;
+++
+++			/*
+++			 * skip BTRFS_DEV_METADATA_ONLY disks
+++			 */
+++			if (hint == BTRFS_DEV_ALLOCATION_METADATA_ONLY)
+++				continue;
+++			/*
+++			 * if a data chunk must be allocated,
+++			 * sort also by hint (data disk
+++			 * higher priority)
+++			 */
+++			devices_info[ndevs].alloc_hint = -alloc_hint_map[hint];
+++		} else { /* BTRFS_BLOCK_GROUP_METADATA */
+++			hint = device->type & BTRFS_DEV_ALLOCATION_MASK;
+++
+++			/*
+++			 * skip BTRFS_DEV_DATA_ONLY disks
+++			 */
+++			if (hint == BTRFS_DEV_ALLOCATION_DATA_ONLY)
+++				continue;
+++			/*
+++			 * if a data chunk must be allocated,
+++			 * sort also by hint (metadata hint
+++			 * higher priority)
+++			 */
+++			if (hint == BTRFS_DEV_ALLOCATION_PREFERRED_NONE)
+++				devices_info[ndevs].alloc_hint = -alloc_hint_map[hint];
+++			else
+++				devices_info[ndevs].alloc_hint = alloc_hint_map[hint];
+++		}
+++
++ 		++ndevs;
++ 	}
++ 	ctl->ndevs = ndevs;
++ 
+++	/*
+++	 * no devices available
+++	 */
+++	if (!ndevs)
+++		return 0;
+++
++ 	/*
++ 	 * now sort the devices by hole size / available space
++ 	 */
++ 	sort(devices_info, ndevs, sizeof(struct btrfs_device_info),
++ 	     btrfs_cmp_device_info, NULL);
++ 
+++	/*
+++	 * select the minimum set of disks grouped by hint that
+++	 * can host the chunk
+++	 */
+++	ndevs = 0;
+++	while (ndevs < ctl->ndevs) {
+++		hint = devices_info[ndevs++].alloc_hint;
+++		while (ndevs < ctl->ndevs &&
+++		       devices_info[ndevs].alloc_hint == hint)
+++				ndevs++;
+++		if (ndevs >= ctl->devs_min)
+++			break;
+++	}
+++
+++	BUG_ON(ndevs > ctl->ndevs);
+++	ctl->ndevs = ndevs;
+++
+++	/*
+++	 * the next layers require the devices_info ordered by
+++	 * max_avail. If we are returing two (or more) different
+++	 * group of alloc_hint, this is not always true. So sort
+++	 * these gain.
+++	 */
+++
+++	for (i = 0 ; i < ndevs ; i++)
+++		devices_info[i].alloc_hint = 0;
+++
+++	sort(devices_info, ndevs, sizeof(struct btrfs_device_info),
+++	     btrfs_cmp_device_info, NULL);
+++
++ 	return 0;
++ }
++ 
++diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
++index 2128a032c3b74d..12777e8e2769c8 100644
++--- a/fs/btrfs/volumes.h
+++++ b/fs/btrfs/volumes.h
++@@ -493,6 +493,7 @@ struct btrfs_device_info {
++ 	u64 dev_offset;
++ 	u64 max_avail;
++ 	u64 total_avail;
+++	int alloc_hint;
++ };
++ 
++ struct btrfs_raid_attr {
++@@ -745,6 +746,8 @@ int btrfs_bg_type_to_factor(u64 flags);
++ const char *btrfs_bg_type_to_raid_name(u64 flags);
++ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info);
++ bool btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical);
+++int btrfs_update_device(struct btrfs_trans_handle *trans,
+++                                       struct btrfs_device *device);
++ 
++ bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr);
++ u8 *btrfs_sb_fsid_ptr(struct btrfs_super_block *sb);
++diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/btrfs_tree.h
++index fc3c32186d7eb1..9946e497dc8367 100644
++--- a/include/uapi/linux/btrfs_tree.h
+++++ b/include/uapi/linux/btrfs_tree.h
++@@ -557,6 +557,22 @@ struct btrfs_node {
++ 	struct btrfs_key_ptr ptrs[];
++ } __attribute__ ((__packed__));
++ 
+++/* dev_item.type */
+++
+++/* btrfs chunk allocation hints */
+++#define BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT	3
+++/* preferred data chunk, but metadata chunk allowed */
+++#define BTRFS_DEV_ALLOCATION_PREFERRED_DATA	(0ULL)
+++/* preferred metadata chunk, but data chunk allowed */
+++#define BTRFS_DEV_ALLOCATION_PREFERRED_METADATA	(1ULL)
+++/* only metadata chunk are allowed */
+++#define BTRFS_DEV_ALLOCATION_METADATA_ONLY	(2ULL)
+++/* only data chunk allowed */
+++#define BTRFS_DEV_ALLOCATION_DATA_ONLY		(3ULL)
+++/* preferred no chunk, but chunks allowed */
+++#define BTRFS_DEV_ALLOCATION_PREFERRED_NONE	(4ULL)
+++/* 5..7 are unused values */
+++
++ struct btrfs_dev_item {
++ 	/* the internal btrfs device id */
++ 	__le64 devid;
+diff --git a/btrfs-block-group-reclaim.patch b/btrfs-block-group-reclaim.patch
+new file mode 100644
+index 000000000..0ad3db7c7
+--- /dev/null
++++ b/btrfs-block-group-reclaim.patch
+@@ -0,0 +1,650 @@
++diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
++index 60066822b532..f9d0594eccae 100644
++--- a/fs/btrfs/block-group.c
+++++ b/fs/btrfs/block-group.c
++@@ -1757,24 +1757,21 @@ static inline bool btrfs_should_reclaim(struct btrfs_fs_info *fs_info)
++ 
++ static bool should_reclaim_block_group(struct btrfs_block_group *bg, u64 bytes_freed)
++ {
++-	const struct btrfs_space_info *space_info = bg->space_info;
++-	const int reclaim_thresh = READ_ONCE(space_info->bg_reclaim_threshold);
+++	const int thresh_pct = btrfs_calc_reclaim_threshold(bg->space_info);
+++	u64 thresh_bytes = mult_perc(bg->length, thresh_pct);
++ 	const u64 new_val = bg->used;
++ 	const u64 old_val = new_val + bytes_freed;
++-	u64 thresh;
++ 
++-	if (reclaim_thresh == 0)
+++	if (thresh_bytes == 0)
++ 		return false;
++ 
++-	thresh = mult_perc(bg->length, reclaim_thresh);
++-
++ 	/*
++ 	 * If we were below the threshold before don't reclaim, we are likely a
++ 	 * brand new block group and we don't want to relocate new block groups.
++ 	 */
++-	if (old_val < thresh)
+++	if (old_val < thresh_bytes)
++ 		return false;
++-	if (new_val >= thresh)
+++	if (new_val >= thresh_bytes)
++ 		return false;
++ 	return true;
++ }
++@@ -1822,6 +1819,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
++ 	list_sort(NULL, &fs_info->reclaim_bgs, reclaim_bgs_cmp);
++ 	while (!list_empty(&fs_info->reclaim_bgs)) {
++ 		u64 zone_unusable;
+++		u64 reclaimed;
++ 		int ret = 0;
++ 
++ 		bg = list_first_entry(&fs_info->reclaim_bgs,
++@@ -1835,6 +1833,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
++ 		/* Don't race with allocators so take the groups_sem */
++ 		down_write(&space_info->groups_sem);
++ 
+++		spin_lock(&space_info->lock);
++ 		spin_lock(&bg->lock);
++ 		if (bg->reserved || bg->pinned || bg->ro) {
++ 			/*
++@@ -1844,6 +1843,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
++ 			 * this block group.
++ 			 */
++ 			spin_unlock(&bg->lock);
+++			spin_unlock(&space_info->lock);
++ 			up_write(&space_info->groups_sem);
++ 			goto next;
++ 		}
++@@ -1862,6 +1862,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
++ 			if (!btrfs_test_opt(fs_info, DISCARD_ASYNC))
++ 				btrfs_mark_bg_unused(bg);
++ 			spin_unlock(&bg->lock);
+++			spin_unlock(&space_info->lock);
++ 			up_write(&space_info->groups_sem);
++ 			goto next;
++ 
++@@ -1878,10 +1879,12 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
++ 		 */
++ 		if (!should_reclaim_block_group(bg, bg->length)) {
++ 			spin_unlock(&bg->lock);
+++			spin_unlock(&space_info->lock);
++ 			up_write(&space_info->groups_sem);
++ 			goto next;
++ 		}
++ 		spin_unlock(&bg->lock);
+++		spin_unlock(&space_info->lock);
++ 
++ 		/*
++ 		 * Get out fast, in case we're read-only or unmounting the
++@@ -1914,15 +1917,26 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
++ 				div64_u64(bg->used * 100, bg->length),
++ 				div64_u64(zone_unusable * 100, bg->length));
++ 		trace_btrfs_reclaim_block_group(bg);
+++		reclaimed = bg->used;
++ 		ret = btrfs_relocate_chunk(fs_info, bg->start);
++ 		if (ret) {
++ 			btrfs_dec_block_group_ro(bg);
++ 			btrfs_err(fs_info, "error relocating chunk %llu",
++ 				  bg->start);
+++			reclaimed = 0;
+++			spin_lock(&space_info->lock);
+++			space_info->reclaim_errors++;
+++			if (READ_ONCE(space_info->periodic_reclaim))
+++				space_info->periodic_reclaim_ready = false;
+++			spin_unlock(&space_info->lock);
++ 		}
+++		spin_lock(&space_info->lock);
+++		space_info->reclaim_count++;
+++		space_info->reclaim_bytes += reclaimed;
+++		spin_unlock(&space_info->lock);
++ 
++ next:
++-		if (ret) {
+++		if (ret && !READ_ONCE(space_info->periodic_reclaim)) {
++ 			/* Refcount held by the reclaim_bgs list after splice. */
++ 			spin_lock(&fs_info->unused_bgs_lock);
++ 			/*
++@@ -1964,6 +1978,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
++ 
++ void btrfs_reclaim_bgs(struct btrfs_fs_info *fs_info)
++ {
+++	btrfs_reclaim_sweep(fs_info);
++ 	spin_lock(&fs_info->unused_bgs_lock);
++ 	if (!list_empty(&fs_info->reclaim_bgs))
++ 		queue_work(system_unbound_wq, &fs_info->reclaim_bgs_work);
++@@ -3662,9 +3677,12 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
++ 		old_val += num_bytes;
++ 		cache->used = old_val;
++ 		cache->reserved -= num_bytes;
+++		cache->reclaim_mark = 0;
++ 		space_info->bytes_reserved -= num_bytes;
++ 		space_info->bytes_used += num_bytes;
++ 		space_info->disk_used += num_bytes * factor;
+++		if (READ_ONCE(space_info->periodic_reclaim))
+++			btrfs_space_info_update_reclaimable(space_info, -num_bytes);
++ 		spin_unlock(&cache->lock);
++ 		spin_unlock(&space_info->lock);
++ 	} else {
++@@ -3674,8 +3692,10 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
++ 		btrfs_space_info_update_bytes_pinned(info, space_info, num_bytes);
++ 		space_info->bytes_used -= num_bytes;
++ 		space_info->disk_used -= num_bytes * factor;
++-
++-		reclaim = should_reclaim_block_group(cache, num_bytes);
+++		if (READ_ONCE(space_info->periodic_reclaim))
+++			btrfs_space_info_update_reclaimable(space_info, num_bytes);
+++		else
+++			reclaim = should_reclaim_block_group(cache, num_bytes);
++ 
++ 		spin_unlock(&cache->lock);
++ 		spin_unlock(&space_info->lock);
++diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
++index 85e2d4cd12dc..8656b38f1fa5 100644
++--- a/fs/btrfs/block-group.h
+++++ b/fs/btrfs/block-group.h
++@@ -263,6 +263,7 @@ struct btrfs_block_group {
++ 	struct work_struct zone_finish_work;
++ 	struct extent_buffer *last_eb;
++ 	enum btrfs_block_group_size_class size_class;
+++	u64 reclaim_mark;
++ };
++ 
++ static inline u64 btrfs_block_group_end(struct btrfs_block_group *block_group)
++diff --git a/fs/btrfs/space-info.c b/fs/btrfs/space-info.c
++index ae8c56442549..aba4b59dbff5 100644
++--- a/fs/btrfs/space-info.c
+++++ b/fs/btrfs/space-info.c
++@@ -1,5 +1,7 @@
++ // SPDX-License-Identifier: GPL-2.0
++ 
+++#include "linux/spinlock.h"
+++#include <linux/minmax.h>
++ #include "misc.h"
++ #include "ctree.h"
++ #include "space-info.h"
++@@ -190,6 +192,8 @@ void btrfs_clear_space_info_full(struct btrfs_fs_info *info)
++  */
++ #define BTRFS_DEFAULT_ZONED_RECLAIM_THRESH			(75)
++ 
+++#define BTRFS_UNALLOC_BLOCK_GROUP_TARGET			(10ULL)
+++
++ /*
++  * Calculate chunk size depending on volume type (regular or zoned).
++  */
++@@ -232,6 +236,7 @@ static int create_space_info(struct btrfs_fs_info *info, u64 flags)
++ 	if (!space_info)
++ 		return -ENOMEM;
++ 
+++	space_info->fs_info = info;
++ 	for (i = 0; i < BTRFS_NR_RAID_TYPES; i++)
++ 		INIT_LIST_HEAD(&space_info->block_groups[i]);
++ 	init_rwsem(&space_info->groups_sem);
++@@ -340,11 +345,34 @@ struct btrfs_space_info *btrfs_find_space_info(struct btrfs_fs_info *info,
++ 	return NULL;
++ }
++ 
+++static u64 calc_effective_data_chunk_size(struct btrfs_fs_info *fs_info)
+++{
+++	struct btrfs_space_info *data_sinfo;
+++	u64 data_chunk_size;
+++	/*
+++	 * Calculate the data_chunk_size, space_info->chunk_size is the
+++	 * "optimal" chunk size based on the fs size.  However when we actually
+++	 * allocate the chunk we will strip this down further, making it no more
+++	 * than 10% of the disk or 1G, whichever is smaller.
+++	 *
+++	 * On the zoned mode, we need to use zone_size (=
+++	 * data_sinfo->chunk_size) as it is.
+++	 */
+++	data_sinfo = btrfs_find_space_info(fs_info, BTRFS_BLOCK_GROUP_DATA);
+++	if (!btrfs_is_zoned(fs_info)) {
+++		data_chunk_size = min(data_sinfo->chunk_size,
+++				      mult_perc(fs_info->fs_devices->total_rw_bytes, 10));
+++	} else {
+++		data_chunk_size = data_sinfo->chunk_size;
+++	}
+++	return min_t(u64, data_chunk_size, SZ_1G);
+++
+++}
+++
++ static u64 calc_available_free_space(struct btrfs_fs_info *fs_info,
++ 			  struct btrfs_space_info *space_info,
++ 			  enum btrfs_reserve_flush_enum flush)
++ {
++-	struct btrfs_space_info *data_sinfo;
++ 	u64 profile;
++ 	u64 avail;
++ 	u64 data_chunk_size;
++@@ -368,23 +396,7 @@ static u64 calc_available_free_space(struct btrfs_fs_info *fs_info,
++ 	if (avail == 0)
++ 		return 0;
++ 
++-	/*
++-	 * Calculate the data_chunk_size, space_info->chunk_size is the
++-	 * "optimal" chunk size based on the fs size.  However when we actually
++-	 * allocate the chunk we will strip this down further, making it no more
++-	 * than 10% of the disk or 1G, whichever is smaller.
++-	 *
++-	 * On the zoned mode, we need to use zone_size (=
++-	 * data_sinfo->chunk_size) as it is.
++-	 */
++-	data_sinfo = btrfs_find_space_info(fs_info, BTRFS_BLOCK_GROUP_DATA);
++-	if (!btrfs_is_zoned(fs_info)) {
++-		data_chunk_size = min(data_sinfo->chunk_size,
++-				      mult_perc(fs_info->fs_devices->total_rw_bytes, 10));
++-		data_chunk_size = min_t(u64, data_chunk_size, SZ_1G);
++-	} else {
++-		data_chunk_size = data_sinfo->chunk_size;
++-	}
+++	data_chunk_size = calc_effective_data_chunk_size(fs_info);
++ 
++ 	/*
++ 	 * Since data allocations immediately use block groups as part of the
++@@ -1886,3 +1898,209 @@ u64 btrfs_account_ro_block_groups_free_space(struct btrfs_space_info *sinfo)
++ 
++ 	return free_bytes;
++ }
+++
+++static u64 calc_pct_ratio(u64 x, u64 y)
+++{
+++	int err;
+++
+++	if (!y)
+++		return 0;
+++again:
+++	err = check_mul_overflow(100, x, &x);
+++	if (err)
+++		goto lose_precision;
+++	return div64_u64(x, y);
+++lose_precision:
+++	x >>= 10;
+++	y >>= 10;
+++	if (!y)
+++		y = 1;
+++	goto again;
+++}
+++
+++/*
+++ * A reasonable buffer for unallocated space is 10 data block_groups.
+++ * If we claw this back repeatedly, we can still achieve efficient
+++ * utilization when near full, and not do too much reclaim while
+++ * always maintaining a solid buffer for workloads that quickly
+++ * allocate and pressure the unallocated space.
+++ */
+++static u64 calc_unalloc_target(struct btrfs_fs_info *fs_info)
+++{
+++	u64 chunk_sz = calc_effective_data_chunk_size(fs_info);
+++
+++	return BTRFS_UNALLOC_BLOCK_GROUP_TARGET * chunk_sz;
+++}
+++
+++/*
+++ * The fundamental goal of automatic reclaim is to protect the filesystem's
+++ * unallocated space and thus minimize the probability of the filesystem going
+++ * read only when a metadata allocation failure causes a transaction abort.
+++ *
+++ * However, relocations happen into the space_info's unused space, therefore
+++ * automatic reclaim must also back off as that space runs low. There is no
+++ * value in doing trivial "relocations" of re-writing the same block group
+++ * into a fresh one.
+++ *
+++ * Furthermore, we want to avoid doing too much reclaim even if there are good
+++ * candidates. This is because the allocator is pretty good at filling up the
+++ * holes with writes. So we want to do just enough reclaim to try and stay
+++ * safe from running out of unallocated space but not be wasteful about it.
+++ *
+++ * Therefore, the dynamic reclaim threshold is calculated as follows:
+++ * - calculate a target unallocated amount of 5 block group sized chunks
+++ * - ratchet up the intensity of reclaim depending on how far we are from
+++ *   that target by using a formula of unalloc / target to set the threshold.
+++ *
+++ * Typically with 10 block groups as the target, the discrete values this comes
+++ * out to are 0, 10, 20, ... , 80, 90, and 99.
+++ */
+++static int calc_dynamic_reclaim_threshold(struct btrfs_space_info *space_info)
+++{
+++	struct btrfs_fs_info *fs_info = space_info->fs_info;
+++	u64 unalloc = atomic64_read(&fs_info->free_chunk_space);
+++	u64 target = calc_unalloc_target(fs_info);
+++	u64 alloc = space_info->total_bytes;
+++	u64 used = btrfs_space_info_used(space_info, false);
+++	u64 unused = alloc - used;
+++	u64 want = target > unalloc ? target - unalloc : 0;
+++	u64 data_chunk_size = calc_effective_data_chunk_size(fs_info);
+++
+++	/* If we have no unused space, don't bother, it won't work anyway. */
+++	if (unused < data_chunk_size)
+++		return 0;
+++
+++	/* Cast to int is OK because want <= target. */
+++	return calc_pct_ratio(want, target);
+++}
+++
+++int btrfs_calc_reclaim_threshold(struct btrfs_space_info *space_info)
+++{
+++	lockdep_assert_held(&space_info->lock);
+++
+++	if (READ_ONCE(space_info->dynamic_reclaim))
+++		return calc_dynamic_reclaim_threshold(space_info);
+++	return READ_ONCE(space_info->bg_reclaim_threshold);
+++}
+++
+++/*
+++ * Under "urgent" reclaim, we will reclaim even fresh block groups that have
+++ * recently seen successful allocations, as we are desperate to reclaim
+++ * whatever we can to avoid ENOSPC in a transaction leading to a readonly fs.
+++ */
+++static bool is_reclaim_urgent(struct btrfs_space_info *space_info)
+++{
+++	struct btrfs_fs_info *fs_info = space_info->fs_info;
+++	u64 unalloc = atomic64_read(&fs_info->free_chunk_space);
+++	u64 data_chunk_size = calc_effective_data_chunk_size(fs_info);
+++
+++	return unalloc < data_chunk_size;
+++}
+++
+++static int do_reclaim_sweep(struct btrfs_fs_info *fs_info,
+++			    struct btrfs_space_info *space_info, int raid)
+++{
+++	struct btrfs_block_group *bg;
+++	int thresh_pct;
+++	bool try_again = true;
+++	bool urgent;
+++
+++	spin_lock(&space_info->lock);
+++	urgent = is_reclaim_urgent(space_info);
+++	thresh_pct = btrfs_calc_reclaim_threshold(space_info);
+++	spin_unlock(&space_info->lock);
+++
+++	down_read(&space_info->groups_sem);
+++again:
+++	list_for_each_entry(bg, &space_info->block_groups[raid], list) {
+++		u64 thresh;
+++		bool reclaim = false;
+++
+++		btrfs_get_block_group(bg);
+++		spin_lock(&bg->lock);
+++		thresh = mult_perc(bg->length, thresh_pct);
+++		if (bg->used < thresh && bg->reclaim_mark) {
+++			try_again = false;
+++			reclaim = true;
+++		}
+++		bg->reclaim_mark++;
+++		spin_unlock(&bg->lock);
+++		if (reclaim)
+++			btrfs_mark_bg_to_reclaim(bg);
+++		btrfs_put_block_group(bg);
+++	}
+++
+++	/*
+++	 * In situations where we are very motivated to reclaim (low unalloc)
+++	 * use two passes to make the reclaim mark check best effort.
+++	 *
+++	 * If we have any staler groups, we don't touch the fresher ones, but if we
+++	 * really need a block group, do take a fresh one.
+++	 */
+++	if (try_again && urgent) {
+++		try_again = false;
+++		goto again;
+++	}
+++
+++	up_read(&space_info->groups_sem);
+++	return 0;
+++}
+++
+++void btrfs_space_info_update_reclaimable(struct btrfs_space_info *space_info, s64 bytes)
+++{
+++	u64 chunk_sz = calc_effective_data_chunk_size(space_info->fs_info);
+++
+++	assert_spin_locked(&space_info->lock);
+++	space_info->reclaimable_bytes += bytes;
+++
+++	if (space_info->reclaimable_bytes >= chunk_sz)
+++		btrfs_set_periodic_reclaim_ready(space_info, true);
+++}
+++
+++void btrfs_set_periodic_reclaim_ready(struct btrfs_space_info *space_info, bool ready)
+++{
+++	assert_spin_locked(&space_info->lock);
+++	if (!READ_ONCE(space_info->periodic_reclaim))
+++		return;
+++	if (ready != space_info->periodic_reclaim_ready) {
+++		space_info->periodic_reclaim_ready = ready;
+++		if (!ready)
+++			space_info->reclaimable_bytes = 0;
+++	}
+++}
+++
+++bool btrfs_should_periodic_reclaim(struct btrfs_space_info *space_info)
+++{
+++	bool ret;
+++
+++	if (space_info->flags & BTRFS_BLOCK_GROUP_SYSTEM)
+++		return false;
+++	if (!READ_ONCE(space_info->periodic_reclaim))
+++		return false;
+++
+++	spin_lock(&space_info->lock);
+++	ret = space_info->periodic_reclaim_ready;
+++	btrfs_set_periodic_reclaim_ready(space_info, false);
+++	spin_unlock(&space_info->lock);
+++
+++	return ret;
+++}
+++
+++int btrfs_reclaim_sweep(struct btrfs_fs_info *fs_info)
+++{
+++	int ret;
+++	int raid;
+++	struct btrfs_space_info *space_info;
+++
+++	list_for_each_entry(space_info, &fs_info->space_info, list) {
+++		if (!btrfs_should_periodic_reclaim(space_info))
+++			continue;
+++		for (raid = 0; raid < BTRFS_NR_RAID_TYPES; raid++) {
+++			ret = do_reclaim_sweep(fs_info, space_info, raid);
+++			if (ret)
+++				return ret;
+++		}
+++	}
+++
+++	return ret;
+++}
++diff --git a/fs/btrfs/space-info.h b/fs/btrfs/space-info.h
++index a733458fd13b..4db8a0267c16 100644
++--- a/fs/btrfs/space-info.h
+++++ b/fs/btrfs/space-info.h
++@@ -94,6 +94,7 @@ enum btrfs_flush_state {
++ };
++ 
++ struct btrfs_space_info {
+++	struct btrfs_fs_info *fs_info;
++ 	spinlock_t lock;
++ 
++ 	u64 total_bytes;	/* total bytes in the space,
++@@ -165,6 +166,47 @@ struct btrfs_space_info {
++ 
++ 	struct kobject kobj;
++ 	struct kobject *block_group_kobjs[BTRFS_NR_RAID_TYPES];
+++
+++	/*
+++	 * Monotonically increasing counter of block group reclaim attempts
+++	 * Exposed in /sys/fs/<uuid>/allocation/<type>/reclaim_count
+++	 */
+++	u64 reclaim_count;
+++
+++	/*
+++	 * Monotonically increasing counter of reclaimed bytes
+++	 * Exposed in /sys/fs/<uuid>/allocation/<type>/reclaim_bytes
+++	 */
+++	u64 reclaim_bytes;
+++
+++	/*
+++	 * Monotonically increasing counter of reclaim errors
+++	 * Exposed in /sys/fs/<uuid>/allocation/<type>/reclaim_errors
+++	 */
+++	u64 reclaim_errors;
+++
+++	/*
+++	 * If true, use the dynamic relocation threshold, instead of the
+++	 * fixed bg_reclaim_threshold.
+++	 */
+++	bool dynamic_reclaim;
+++
+++	/*
+++	 * Periodically check all block groups against the reclaim
+++	 * threshold in the cleaner thread.
+++	 */
+++	bool periodic_reclaim;
+++
+++	/*
+++	 * Periodic reclaim should be a no-op if a space_info hasn't
+++	 * freed any space since the last time we tried.
+++	 */
+++	bool periodic_reclaim_ready;
+++
+++	/*
+++	 * Net bytes freed or allocated since the last reclaim pass.
+++	 */
+++	s64 reclaimable_bytes;
++ };
++ 
++ struct reserve_ticket {
++@@ -247,4 +289,10 @@ void btrfs_dump_space_info_for_trans_abort(struct btrfs_fs_info *fs_info);
++ void btrfs_init_async_reclaim_work(struct btrfs_fs_info *fs_info);
++ u64 btrfs_account_ro_block_groups_free_space(struct btrfs_space_info *sinfo);
++ 
+++void btrfs_space_info_update_reclaimable(struct btrfs_space_info *space_info, s64 bytes);
+++void btrfs_set_periodic_reclaim_ready(struct btrfs_space_info *space_info, bool ready);
+++bool btrfs_should_periodic_reclaim(struct btrfs_space_info *space_info);
+++int btrfs_calc_reclaim_threshold(struct btrfs_space_info *space_info);
+++int btrfs_reclaim_sweep(struct btrfs_fs_info *fs_info);
+++
++ #endif /* BTRFS_SPACE_INFO_H */
++diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
++index c6387a8ddb94..3e9e91df6ef2 100644
++--- a/fs/btrfs/sysfs.c
+++++ b/fs/btrfs/sysfs.c
++@@ -894,6 +894,9 @@ SPACE_INFO_ATTR(bytes_readonly);
++ SPACE_INFO_ATTR(bytes_zone_unusable);
++ SPACE_INFO_ATTR(disk_used);
++ SPACE_INFO_ATTR(disk_total);
+++SPACE_INFO_ATTR(reclaim_count);
+++SPACE_INFO_ATTR(reclaim_bytes);
+++SPACE_INFO_ATTR(reclaim_errors);
++ BTRFS_ATTR_RW(space_info, chunk_size, btrfs_chunk_size_show, btrfs_chunk_size_store);
++ BTRFS_ATTR(space_info, size_classes, btrfs_size_classes_show);
++ 
++@@ -902,8 +905,12 @@ static ssize_t btrfs_sinfo_bg_reclaim_threshold_show(struct kobject *kobj,
++ 						     char *buf)
++ {
++ 	struct btrfs_space_info *space_info = to_space_info(kobj);
+++	ssize_t ret;
++ 
++-	return sysfs_emit(buf, "%d\n", READ_ONCE(space_info->bg_reclaim_threshold));
+++	spin_lock(&space_info->lock);
+++	ret = sysfs_emit(buf, "%d\n", btrfs_calc_reclaim_threshold(space_info));
+++	spin_unlock(&space_info->lock);
+++	return ret;
++ }
++ 
++ static ssize_t btrfs_sinfo_bg_reclaim_threshold_store(struct kobject *kobj,
++@@ -914,6 +921,9 @@ static ssize_t btrfs_sinfo_bg_reclaim_threshold_store(struct kobject *kobj,
++ 	int thresh;
++ 	int ret;
++ 
+++	if (READ_ONCE(space_info->dynamic_reclaim))
+++		return -EINVAL;
+++
++ 	ret = kstrtoint(buf, 10, &thresh);
++ 	if (ret)
++ 		return ret;
++@@ -930,6 +940,72 @@ BTRFS_ATTR_RW(space_info, bg_reclaim_threshold,
++ 	      btrfs_sinfo_bg_reclaim_threshold_show,
++ 	      btrfs_sinfo_bg_reclaim_threshold_store);
++ 
+++static ssize_t btrfs_sinfo_dynamic_reclaim_show(struct kobject *kobj,
+++						struct kobj_attribute *a,
+++						char *buf)
+++{
+++	struct btrfs_space_info *space_info = to_space_info(kobj);
+++
+++	return sysfs_emit(buf, "%d\n", READ_ONCE(space_info->dynamic_reclaim));
+++}
+++
+++static ssize_t btrfs_sinfo_dynamic_reclaim_store(struct kobject *kobj,
+++						 struct kobj_attribute *a,
+++						 const char *buf, size_t len)
+++{
+++	struct btrfs_space_info *space_info = to_space_info(kobj);
+++	int dynamic_reclaim;
+++	int ret;
+++
+++	ret = kstrtoint(buf, 10, &dynamic_reclaim);
+++	if (ret)
+++		return ret;
+++
+++	if (dynamic_reclaim < 0)
+++		return -EINVAL;
+++
+++	WRITE_ONCE(space_info->dynamic_reclaim, dynamic_reclaim != 0);
+++
+++	return len;
+++}
+++
+++BTRFS_ATTR_RW(space_info, dynamic_reclaim,
+++	      btrfs_sinfo_dynamic_reclaim_show,
+++	      btrfs_sinfo_dynamic_reclaim_store);
+++
+++static ssize_t btrfs_sinfo_periodic_reclaim_show(struct kobject *kobj,
+++						struct kobj_attribute *a,
+++						char *buf)
+++{
+++	struct btrfs_space_info *space_info = to_space_info(kobj);
+++
+++	return sysfs_emit(buf, "%d\n", READ_ONCE(space_info->periodic_reclaim));
+++}
+++
+++static ssize_t btrfs_sinfo_periodic_reclaim_store(struct kobject *kobj,
+++						 struct kobj_attribute *a,
+++						 const char *buf, size_t len)
+++{
+++	struct btrfs_space_info *space_info = to_space_info(kobj);
+++	int periodic_reclaim;
+++	int ret;
+++
+++	ret = kstrtoint(buf, 10, &periodic_reclaim);
+++	if (ret)
+++		return ret;
+++
+++	if (periodic_reclaim < 0)
+++		return -EINVAL;
+++
+++	WRITE_ONCE(space_info->periodic_reclaim, periodic_reclaim != 0);
+++
+++	return len;
+++}
+++
+++BTRFS_ATTR_RW(space_info, periodic_reclaim,
+++	      btrfs_sinfo_periodic_reclaim_show,
+++	      btrfs_sinfo_periodic_reclaim_store);
+++
++ /*
++  * Allocation information about block group types.
++  *
++@@ -947,8 +1023,13 @@ static struct attribute *space_info_attrs[] = {
++ 	BTRFS_ATTR_PTR(space_info, disk_used),
++ 	BTRFS_ATTR_PTR(space_info, disk_total),
++ 	BTRFS_ATTR_PTR(space_info, bg_reclaim_threshold),
+++	BTRFS_ATTR_PTR(space_info, dynamic_reclaim),
++ 	BTRFS_ATTR_PTR(space_info, chunk_size),
++ 	BTRFS_ATTR_PTR(space_info, size_classes),
+++	BTRFS_ATTR_PTR(space_info, reclaim_count),
+++	BTRFS_ATTR_PTR(space_info, reclaim_bytes),
+++	BTRFS_ATTR_PTR(space_info, reclaim_errors),
+++	BTRFS_ATTR_PTR(space_info, periodic_reclaim),
++ #ifdef CONFIG_BTRFS_DEBUG
++ 	BTRFS_ATTR_PTR(space_info, force_chunk_alloc),
++ #endif
++
+diff --git a/crypto-updates.patch b/crypto-updates.patch
 new file mode 100644
 index 000000000..2c28f8837
 --- /dev/null
-+++ b/aes-crypto-updates.patch
++++ b/crypto-updates.patch
 @@ -0,0 +1,8189 @@
 +From b15809173a8ed3743d527f7407008a25d21a95cb Mon Sep 17 00:00:00 2001
 +From: Peter Jung <admin@ptr1337.dev>
@@ -9645,957 +10596,6 @@ index 000000000..2c28f8837
 +-- 
 +2.46.0.rc1
 +
-diff --git a/btrfs-allocator-hints.patch b/btrfs-allocator-hints.patch
-new file mode 100644
-index 000000000..bd8fc83cd
---- /dev/null
-+++ b/btrfs-allocator-hints.patch
-@@ -0,0 +1,289 @@
-+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
-+index b1d1ac25237b7a..9246161bfdecc7 100644
-+--- a/fs/btrfs/sysfs.c
-++++ b/fs/btrfs/sysfs.c
-+@@ -1817,6 +1817,70 @@ static ssize_t btrfs_devinfo_error_stats_show(struct kobject *kobj,
-+ }
-+ BTRFS_ATTR(devid, error_stats, btrfs_devinfo_error_stats_show);
-+ 
-++static ssize_t btrfs_devinfo_type_show(struct kobject *kobj,
-++					    struct kobj_attribute *a, char *buf)
-++{
-++	struct btrfs_device *device = container_of(kobj, struct btrfs_device,
-++						   devid_kobj);
-++
-++	return scnprintf(buf, PAGE_SIZE, "0x%08llx\n", device->type);
-++}
-++
-++static ssize_t btrfs_devinfo_type_store(struct kobject *kobj,
-++				 struct kobj_attribute *a,
-++				 const char *buf, size_t len)
-++{
-++	struct btrfs_fs_info *fs_info;
-++	struct btrfs_root *root;
-++	struct btrfs_device *device;
-++	int ret;
-++	struct btrfs_trans_handle *trans;
-++
-++	u64 type, prev_type;
-++
-++	device = container_of(kobj, struct btrfs_device, devid_kobj);
-++	fs_info = device->fs_info;
-++	if (!fs_info)
-++		return -EPERM;
-++
-++	root = fs_info->chunk_root;
-++	if (sb_rdonly(fs_info->sb))
-++		return -EROFS;
-++
-++	ret = kstrtou64(buf, 0, &type);
-++	if (ret < 0)
-++		return -EINVAL;
-++
-++	/* for now, allow to touch only the 'allocation hint' bits */
-++	if (type & ~((1 << BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT) - 1))
-++		return -EINVAL;
-++
-++	trans = btrfs_start_transaction(root, 1);
-++	if (IS_ERR(trans))
-++		return PTR_ERR(trans);
-++
-++	prev_type = device->type;
-++	device->type = type;
-++
-++	ret = btrfs_update_device(trans, device);
-++
-++	if (ret < 0) {
-++		btrfs_abort_transaction(trans, ret);
-++		btrfs_end_transaction(trans);
-++		goto abort;
-++	}
-++
-++	ret = btrfs_commit_transaction(trans);
-++	if (ret < 0)
-++		goto abort;
-++
-++	return len;
-++abort:
-++	device->type = prev_type;
-++	return  ret;
-++}
-++BTRFS_ATTR_RW(devid, type, btrfs_devinfo_type_show, btrfs_devinfo_type_store);
-++
-+ /*
-+  * Information about one device.
-+  *
-+@@ -1830,6 +1894,7 @@ static struct attribute *devid_attrs[] = {
-+ 	BTRFS_ATTR_PTR(devid, replace_target),
-+ 	BTRFS_ATTR_PTR(devid, scrub_speed_max),
-+ 	BTRFS_ATTR_PTR(devid, writeable),
-++	BTRFS_ATTR_PTR(devid, type),
-+ 	NULL
-+ };
-+ ATTRIBUTE_GROUPS(devid);
-+diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-+index b9ef6f54635ca5..0e269b3f11185f 100644
-+--- a/fs/btrfs/volumes.c
-++++ b/fs/btrfs/volumes.c
-+@@ -174,6 +174,20 @@ enum btrfs_raid_types __attribute_const__ btrfs_bg_flags_to_raid_index(u64 flags
-+ 	return BTRFS_BG_FLAG_TO_INDEX(profile);
-+ }
-+ 
-++#define BTRFS_DEV_ALLOCATION_MASK ((1ULL << \
-++		BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT) - 1)
-++#define BTRFS_DEV_ALLOCATION_MASK_COUNT (1ULL << \
-++		BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT)
-++
-++static const char alloc_hint_map[BTRFS_DEV_ALLOCATION_MASK_COUNT] = {
-++	[BTRFS_DEV_ALLOCATION_DATA_ONLY] = -1,
-++	[BTRFS_DEV_ALLOCATION_PREFERRED_DATA] = 0,
-++	[BTRFS_DEV_ALLOCATION_PREFERRED_METADATA] = 1,
-++	[BTRFS_DEV_ALLOCATION_METADATA_ONLY] = 2,
-++	[BTRFS_DEV_ALLOCATION_PREFERRED_NONE] = 99,
-++	/* the other values are set to 0 */
-++};
-++
-+ const char *btrfs_bg_type_to_raid_name(u64 flags)
-+ {
-+ 	const int index = btrfs_bg_flags_to_raid_index(flags);
-+@@ -2856,7 +2870,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
-+ 	return ret;
-+ }
-+ 
-+-static noinline int btrfs_update_device(struct btrfs_trans_handle *trans,
-++noinline int btrfs_update_device(struct btrfs_trans_handle *trans,
-+ 					struct btrfs_device *device)
-+ {
-+ 	int ret;
-+@@ -5034,13 +5048,18 @@ static int btrfs_add_system_chunk(struct btrfs_fs_info *fs_info,
-+ }
-+ 
-+ /*
-+- * sort the devices in descending order by max_avail, total_avail
-++ * sort the devices in descending order by alloc_hint,
-++ * max_avail, total_avail
-+  */
-+ static int btrfs_cmp_device_info(const void *a, const void *b)
-+ {
-+ 	const struct btrfs_device_info *di_a = a;
-+ 	const struct btrfs_device_info *di_b = b;
-+ 
-++	if (di_a->alloc_hint > di_b->alloc_hint)
-++		return -1;
-++	if (di_a->alloc_hint < di_b->alloc_hint)
-++		return 1;
-+ 	if (di_a->max_avail > di_b->max_avail)
-+ 		return -1;
-+ 	if (di_a->max_avail < di_b->max_avail)
-+@@ -5193,6 +5212,8 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
-+ 	int ndevs = 0;
-+ 	u64 max_avail;
-+ 	u64 dev_offset;
-++	int hint;
-++	int i;
-+ 
-+ 	/*
-+ 	 * in the first pass through the devices list, we gather information
-+@@ -5245,16 +5266,94 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
-+ 		devices_info[ndevs].max_avail = max_avail;
-+ 		devices_info[ndevs].total_avail = total_avail;
-+ 		devices_info[ndevs].dev = device;
-++
-++		if ((ctl->type & BTRFS_BLOCK_GROUP_DATA) &&
-++		     (ctl->type & BTRFS_BLOCK_GROUP_METADATA)) {
-++			/*
-++			 * if mixed bg set all the alloc_hint
-++			 * fields to the same value, so the sorting
-++			 * is not affected
-++			 */
-++			devices_info[ndevs].alloc_hint = 0;
-++		} else if (ctl->type & BTRFS_BLOCK_GROUP_DATA) {
-++			hint = device->type & BTRFS_DEV_ALLOCATION_MASK;
-++
-++			/*
-++			 * skip BTRFS_DEV_METADATA_ONLY disks
-++			 */
-++			if (hint == BTRFS_DEV_ALLOCATION_METADATA_ONLY)
-++				continue;
-++			/*
-++			 * if a data chunk must be allocated,
-++			 * sort also by hint (data disk
-++			 * higher priority)
-++			 */
-++			devices_info[ndevs].alloc_hint = -alloc_hint_map[hint];
-++		} else { /* BTRFS_BLOCK_GROUP_METADATA */
-++			hint = device->type & BTRFS_DEV_ALLOCATION_MASK;
-++
-++			/*
-++			 * skip BTRFS_DEV_DATA_ONLY disks
-++			 */
-++			if (hint == BTRFS_DEV_ALLOCATION_DATA_ONLY)
-++				continue;
-++			/*
-++			 * if a data chunk must be allocated,
-++			 * sort also by hint (metadata hint
-++			 * higher priority)
-++			 */
-++			if (hint == BTRFS_DEV_ALLOCATION_PREFERRED_NONE)
-++				devices_info[ndevs].alloc_hint = -alloc_hint_map[hint];
-++			else
-++				devices_info[ndevs].alloc_hint = alloc_hint_map[hint];
-++		}
-++
-+ 		++ndevs;
-+ 	}
-+ 	ctl->ndevs = ndevs;
-+ 
-++	/*
-++	 * no devices available
-++	 */
-++	if (!ndevs)
-++		return 0;
-++
-+ 	/*
-+ 	 * now sort the devices by hole size / available space
-+ 	 */
-+ 	sort(devices_info, ndevs, sizeof(struct btrfs_device_info),
-+ 	     btrfs_cmp_device_info, NULL);
-+ 
-++	/*
-++	 * select the minimum set of disks grouped by hint that
-++	 * can host the chunk
-++	 */
-++	ndevs = 0;
-++	while (ndevs < ctl->ndevs) {
-++		hint = devices_info[ndevs++].alloc_hint;
-++		while (ndevs < ctl->ndevs &&
-++		       devices_info[ndevs].alloc_hint == hint)
-++				ndevs++;
-++		if (ndevs >= ctl->devs_min)
-++			break;
-++	}
-++
-++	BUG_ON(ndevs > ctl->ndevs);
-++	ctl->ndevs = ndevs;
-++
-++	/*
-++	 * the next layers require the devices_info ordered by
-++	 * max_avail. If we are returing two (or more) different
-++	 * group of alloc_hint, this is not always true. So sort
-++	 * these gain.
-++	 */
-++
-++	for (i = 0 ; i < ndevs ; i++)
-++		devices_info[i].alloc_hint = 0;
-++
-++	sort(devices_info, ndevs, sizeof(struct btrfs_device_info),
-++	     btrfs_cmp_device_info, NULL);
-++
-+ 	return 0;
-+ }
-+ 
-+diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-+index 2128a032c3b74d..12777e8e2769c8 100644
-+--- a/fs/btrfs/volumes.h
-++++ b/fs/btrfs/volumes.h
-+@@ -493,6 +493,7 @@ struct btrfs_device_info {
-+ 	u64 dev_offset;
-+ 	u64 max_avail;
-+ 	u64 total_avail;
-++	int alloc_hint;
-+ };
-+ 
-+ struct btrfs_raid_attr {
-+@@ -745,6 +746,8 @@ int btrfs_bg_type_to_factor(u64 flags);
-+ const char *btrfs_bg_type_to_raid_name(u64 flags);
-+ int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info);
-+ bool btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical);
-++int btrfs_update_device(struct btrfs_trans_handle *trans,
-++                                       struct btrfs_device *device);
-+ 
-+ bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr);
-+ u8 *btrfs_sb_fsid_ptr(struct btrfs_super_block *sb);
-+diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/btrfs_tree.h
-+index fc3c32186d7eb1..9946e497dc8367 100644
-+--- a/include/uapi/linux/btrfs_tree.h
-++++ b/include/uapi/linux/btrfs_tree.h
-+@@ -557,6 +557,22 @@ struct btrfs_node {
-+ 	struct btrfs_key_ptr ptrs[];
-+ } __attribute__ ((__packed__));
-+ 
-++/* dev_item.type */
-++
-++/* btrfs chunk allocation hints */
-++#define BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT	3
-++/* preferred data chunk, but metadata chunk allowed */
-++#define BTRFS_DEV_ALLOCATION_PREFERRED_DATA	(0ULL)
-++/* preferred metadata chunk, but data chunk allowed */
-++#define BTRFS_DEV_ALLOCATION_PREFERRED_METADATA	(1ULL)
-++/* only metadata chunk are allowed */
-++#define BTRFS_DEV_ALLOCATION_METADATA_ONLY	(2ULL)
-++/* only data chunk allowed */
-++#define BTRFS_DEV_ALLOCATION_DATA_ONLY		(3ULL)
-++/* preferred no chunk, but chunks allowed */
-++#define BTRFS_DEV_ALLOCATION_PREFERRED_NONE	(4ULL)
-++/* 5..7 are unused values */
-++
-+ struct btrfs_dev_item {
-+ 	/* the internal btrfs device id */
-+ 	__le64 devid;
-diff --git a/btrfs-block-group-reclaim.patch b/btrfs-block-group-reclaim.patch
-new file mode 100644
-index 000000000..0ad3db7c7
---- /dev/null
-+++ b/btrfs-block-group-reclaim.patch
-@@ -0,0 +1,650 @@
-+diff --git a/fs/btrfs/block-group.c b/fs/btrfs/block-group.c
-+index 60066822b532..f9d0594eccae 100644
-+--- a/fs/btrfs/block-group.c
-++++ b/fs/btrfs/block-group.c
-+@@ -1757,24 +1757,21 @@ static inline bool btrfs_should_reclaim(struct btrfs_fs_info *fs_info)
-+ 
-+ static bool should_reclaim_block_group(struct btrfs_block_group *bg, u64 bytes_freed)
-+ {
-+-	const struct btrfs_space_info *space_info = bg->space_info;
-+-	const int reclaim_thresh = READ_ONCE(space_info->bg_reclaim_threshold);
-++	const int thresh_pct = btrfs_calc_reclaim_threshold(bg->space_info);
-++	u64 thresh_bytes = mult_perc(bg->length, thresh_pct);
-+ 	const u64 new_val = bg->used;
-+ 	const u64 old_val = new_val + bytes_freed;
-+-	u64 thresh;
-+ 
-+-	if (reclaim_thresh == 0)
-++	if (thresh_bytes == 0)
-+ 		return false;
-+ 
-+-	thresh = mult_perc(bg->length, reclaim_thresh);
-+-
-+ 	/*
-+ 	 * If we were below the threshold before don't reclaim, we are likely a
-+ 	 * brand new block group and we don't want to relocate new block groups.
-+ 	 */
-+-	if (old_val < thresh)
-++	if (old_val < thresh_bytes)
-+ 		return false;
-+-	if (new_val >= thresh)
-++	if (new_val >= thresh_bytes)
-+ 		return false;
-+ 	return true;
-+ }
-+@@ -1822,6 +1819,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
-+ 	list_sort(NULL, &fs_info->reclaim_bgs, reclaim_bgs_cmp);
-+ 	while (!list_empty(&fs_info->reclaim_bgs)) {
-+ 		u64 zone_unusable;
-++		u64 reclaimed;
-+ 		int ret = 0;
-+ 
-+ 		bg = list_first_entry(&fs_info->reclaim_bgs,
-+@@ -1835,6 +1833,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
-+ 		/* Don't race with allocators so take the groups_sem */
-+ 		down_write(&space_info->groups_sem);
-+ 
-++		spin_lock(&space_info->lock);
-+ 		spin_lock(&bg->lock);
-+ 		if (bg->reserved || bg->pinned || bg->ro) {
-+ 			/*
-+@@ -1844,6 +1843,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
-+ 			 * this block group.
-+ 			 */
-+ 			spin_unlock(&bg->lock);
-++			spin_unlock(&space_info->lock);
-+ 			up_write(&space_info->groups_sem);
-+ 			goto next;
-+ 		}
-+@@ -1862,6 +1862,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
-+ 			if (!btrfs_test_opt(fs_info, DISCARD_ASYNC))
-+ 				btrfs_mark_bg_unused(bg);
-+ 			spin_unlock(&bg->lock);
-++			spin_unlock(&space_info->lock);
-+ 			up_write(&space_info->groups_sem);
-+ 			goto next;
-+ 
-+@@ -1878,10 +1879,12 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
-+ 		 */
-+ 		if (!should_reclaim_block_group(bg, bg->length)) {
-+ 			spin_unlock(&bg->lock);
-++			spin_unlock(&space_info->lock);
-+ 			up_write(&space_info->groups_sem);
-+ 			goto next;
-+ 		}
-+ 		spin_unlock(&bg->lock);
-++		spin_unlock(&space_info->lock);
-+ 
-+ 		/*
-+ 		 * Get out fast, in case we're read-only or unmounting the
-+@@ -1914,15 +1917,26 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
-+ 				div64_u64(bg->used * 100, bg->length),
-+ 				div64_u64(zone_unusable * 100, bg->length));
-+ 		trace_btrfs_reclaim_block_group(bg);
-++		reclaimed = bg->used;
-+ 		ret = btrfs_relocate_chunk(fs_info, bg->start);
-+ 		if (ret) {
-+ 			btrfs_dec_block_group_ro(bg);
-+ 			btrfs_err(fs_info, "error relocating chunk %llu",
-+ 				  bg->start);
-++			reclaimed = 0;
-++			spin_lock(&space_info->lock);
-++			space_info->reclaim_errors++;
-++			if (READ_ONCE(space_info->periodic_reclaim))
-++				space_info->periodic_reclaim_ready = false;
-++			spin_unlock(&space_info->lock);
-+ 		}
-++		spin_lock(&space_info->lock);
-++		space_info->reclaim_count++;
-++		space_info->reclaim_bytes += reclaimed;
-++		spin_unlock(&space_info->lock);
-+ 
-+ next:
-+-		if (ret) {
-++		if (ret && !READ_ONCE(space_info->periodic_reclaim)) {
-+ 			/* Refcount held by the reclaim_bgs list after splice. */
-+ 			spin_lock(&fs_info->unused_bgs_lock);
-+ 			/*
-+@@ -1964,6 +1978,7 @@ void btrfs_reclaim_bgs_work(struct work_struct *work)
-+ 
-+ void btrfs_reclaim_bgs(struct btrfs_fs_info *fs_info)
-+ {
-++	btrfs_reclaim_sweep(fs_info);
-+ 	spin_lock(&fs_info->unused_bgs_lock);
-+ 	if (!list_empty(&fs_info->reclaim_bgs))
-+ 		queue_work(system_unbound_wq, &fs_info->reclaim_bgs_work);
-+@@ -3662,9 +3677,12 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
-+ 		old_val += num_bytes;
-+ 		cache->used = old_val;
-+ 		cache->reserved -= num_bytes;
-++		cache->reclaim_mark = 0;
-+ 		space_info->bytes_reserved -= num_bytes;
-+ 		space_info->bytes_used += num_bytes;
-+ 		space_info->disk_used += num_bytes * factor;
-++		if (READ_ONCE(space_info->periodic_reclaim))
-++			btrfs_space_info_update_reclaimable(space_info, -num_bytes);
-+ 		spin_unlock(&cache->lock);
-+ 		spin_unlock(&space_info->lock);
-+ 	} else {
-+@@ -3674,8 +3692,10 @@ int btrfs_update_block_group(struct btrfs_trans_handle *trans,
-+ 		btrfs_space_info_update_bytes_pinned(info, space_info, num_bytes);
-+ 		space_info->bytes_used -= num_bytes;
-+ 		space_info->disk_used -= num_bytes * factor;
-+-
-+-		reclaim = should_reclaim_block_group(cache, num_bytes);
-++		if (READ_ONCE(space_info->periodic_reclaim))
-++			btrfs_space_info_update_reclaimable(space_info, num_bytes);
-++		else
-++			reclaim = should_reclaim_block_group(cache, num_bytes);
-+ 
-+ 		spin_unlock(&cache->lock);
-+ 		spin_unlock(&space_info->lock);
-+diff --git a/fs/btrfs/block-group.h b/fs/btrfs/block-group.h
-+index 85e2d4cd12dc..8656b38f1fa5 100644
-+--- a/fs/btrfs/block-group.h
-++++ b/fs/btrfs/block-group.h
-+@@ -263,6 +263,7 @@ struct btrfs_block_group {
-+ 	struct work_struct zone_finish_work;
-+ 	struct extent_buffer *last_eb;
-+ 	enum btrfs_block_group_size_class size_class;
-++	u64 reclaim_mark;
-+ };
-+ 
-+ static inline u64 btrfs_block_group_end(struct btrfs_block_group *block_group)
-+diff --git a/fs/btrfs/space-info.c b/fs/btrfs/space-info.c
-+index ae8c56442549..aba4b59dbff5 100644
-+--- a/fs/btrfs/space-info.c
-++++ b/fs/btrfs/space-info.c
-+@@ -1,5 +1,7 @@
-+ // SPDX-License-Identifier: GPL-2.0
-+ 
-++#include "linux/spinlock.h"
-++#include <linux/minmax.h>
-+ #include "misc.h"
-+ #include "ctree.h"
-+ #include "space-info.h"
-+@@ -190,6 +192,8 @@ void btrfs_clear_space_info_full(struct btrfs_fs_info *info)
-+  */
-+ #define BTRFS_DEFAULT_ZONED_RECLAIM_THRESH			(75)
-+ 
-++#define BTRFS_UNALLOC_BLOCK_GROUP_TARGET			(10ULL)
-++
-+ /*
-+  * Calculate chunk size depending on volume type (regular or zoned).
-+  */
-+@@ -232,6 +236,7 @@ static int create_space_info(struct btrfs_fs_info *info, u64 flags)
-+ 	if (!space_info)
-+ 		return -ENOMEM;
-+ 
-++	space_info->fs_info = info;
-+ 	for (i = 0; i < BTRFS_NR_RAID_TYPES; i++)
-+ 		INIT_LIST_HEAD(&space_info->block_groups[i]);
-+ 	init_rwsem(&space_info->groups_sem);
-+@@ -340,11 +345,34 @@ struct btrfs_space_info *btrfs_find_space_info(struct btrfs_fs_info *info,
-+ 	return NULL;
-+ }
-+ 
-++static u64 calc_effective_data_chunk_size(struct btrfs_fs_info *fs_info)
-++{
-++	struct btrfs_space_info *data_sinfo;
-++	u64 data_chunk_size;
-++	/*
-++	 * Calculate the data_chunk_size, space_info->chunk_size is the
-++	 * "optimal" chunk size based on the fs size.  However when we actually
-++	 * allocate the chunk we will strip this down further, making it no more
-++	 * than 10% of the disk or 1G, whichever is smaller.
-++	 *
-++	 * On the zoned mode, we need to use zone_size (=
-++	 * data_sinfo->chunk_size) as it is.
-++	 */
-++	data_sinfo = btrfs_find_space_info(fs_info, BTRFS_BLOCK_GROUP_DATA);
-++	if (!btrfs_is_zoned(fs_info)) {
-++		data_chunk_size = min(data_sinfo->chunk_size,
-++				      mult_perc(fs_info->fs_devices->total_rw_bytes, 10));
-++	} else {
-++		data_chunk_size = data_sinfo->chunk_size;
-++	}
-++	return min_t(u64, data_chunk_size, SZ_1G);
-++
-++}
-++
-+ static u64 calc_available_free_space(struct btrfs_fs_info *fs_info,
-+ 			  struct btrfs_space_info *space_info,
-+ 			  enum btrfs_reserve_flush_enum flush)
-+ {
-+-	struct btrfs_space_info *data_sinfo;
-+ 	u64 profile;
-+ 	u64 avail;
-+ 	u64 data_chunk_size;
-+@@ -368,23 +396,7 @@ static u64 calc_available_free_space(struct btrfs_fs_info *fs_info,
-+ 	if (avail == 0)
-+ 		return 0;
-+ 
-+-	/*
-+-	 * Calculate the data_chunk_size, space_info->chunk_size is the
-+-	 * "optimal" chunk size based on the fs size.  However when we actually
-+-	 * allocate the chunk we will strip this down further, making it no more
-+-	 * than 10% of the disk or 1G, whichever is smaller.
-+-	 *
-+-	 * On the zoned mode, we need to use zone_size (=
-+-	 * data_sinfo->chunk_size) as it is.
-+-	 */
-+-	data_sinfo = btrfs_find_space_info(fs_info, BTRFS_BLOCK_GROUP_DATA);
-+-	if (!btrfs_is_zoned(fs_info)) {
-+-		data_chunk_size = min(data_sinfo->chunk_size,
-+-				      mult_perc(fs_info->fs_devices->total_rw_bytes, 10));
-+-		data_chunk_size = min_t(u64, data_chunk_size, SZ_1G);
-+-	} else {
-+-		data_chunk_size = data_sinfo->chunk_size;
-+-	}
-++	data_chunk_size = calc_effective_data_chunk_size(fs_info);
-+ 
-+ 	/*
-+ 	 * Since data allocations immediately use block groups as part of the
-+@@ -1886,3 +1898,209 @@ u64 btrfs_account_ro_block_groups_free_space(struct btrfs_space_info *sinfo)
-+ 
-+ 	return free_bytes;
-+ }
-++
-++static u64 calc_pct_ratio(u64 x, u64 y)
-++{
-++	int err;
-++
-++	if (!y)
-++		return 0;
-++again:
-++	err = check_mul_overflow(100, x, &x);
-++	if (err)
-++		goto lose_precision;
-++	return div64_u64(x, y);
-++lose_precision:
-++	x >>= 10;
-++	y >>= 10;
-++	if (!y)
-++		y = 1;
-++	goto again;
-++}
-++
-++/*
-++ * A reasonable buffer for unallocated space is 10 data block_groups.
-++ * If we claw this back repeatedly, we can still achieve efficient
-++ * utilization when near full, and not do too much reclaim while
-++ * always maintaining a solid buffer for workloads that quickly
-++ * allocate and pressure the unallocated space.
-++ */
-++static u64 calc_unalloc_target(struct btrfs_fs_info *fs_info)
-++{
-++	u64 chunk_sz = calc_effective_data_chunk_size(fs_info);
-++
-++	return BTRFS_UNALLOC_BLOCK_GROUP_TARGET * chunk_sz;
-++}
-++
-++/*
-++ * The fundamental goal of automatic reclaim is to protect the filesystem's
-++ * unallocated space and thus minimize the probability of the filesystem going
-++ * read only when a metadata allocation failure causes a transaction abort.
-++ *
-++ * However, relocations happen into the space_info's unused space, therefore
-++ * automatic reclaim must also back off as that space runs low. There is no
-++ * value in doing trivial "relocations" of re-writing the same block group
-++ * into a fresh one.
-++ *
-++ * Furthermore, we want to avoid doing too much reclaim even if there are good
-++ * candidates. This is because the allocator is pretty good at filling up the
-++ * holes with writes. So we want to do just enough reclaim to try and stay
-++ * safe from running out of unallocated space but not be wasteful about it.
-++ *
-++ * Therefore, the dynamic reclaim threshold is calculated as follows:
-++ * - calculate a target unallocated amount of 5 block group sized chunks
-++ * - ratchet up the intensity of reclaim depending on how far we are from
-++ *   that target by using a formula of unalloc / target to set the threshold.
-++ *
-++ * Typically with 10 block groups as the target, the discrete values this comes
-++ * out to are 0, 10, 20, ... , 80, 90, and 99.
-++ */
-++static int calc_dynamic_reclaim_threshold(struct btrfs_space_info *space_info)
-++{
-++	struct btrfs_fs_info *fs_info = space_info->fs_info;
-++	u64 unalloc = atomic64_read(&fs_info->free_chunk_space);
-++	u64 target = calc_unalloc_target(fs_info);
-++	u64 alloc = space_info->total_bytes;
-++	u64 used = btrfs_space_info_used(space_info, false);
-++	u64 unused = alloc - used;
-++	u64 want = target > unalloc ? target - unalloc : 0;
-++	u64 data_chunk_size = calc_effective_data_chunk_size(fs_info);
-++
-++	/* If we have no unused space, don't bother, it won't work anyway. */
-++	if (unused < data_chunk_size)
-++		return 0;
-++
-++	/* Cast to int is OK because want <= target. */
-++	return calc_pct_ratio(want, target);
-++}
-++
-++int btrfs_calc_reclaim_threshold(struct btrfs_space_info *space_info)
-++{
-++	lockdep_assert_held(&space_info->lock);
-++
-++	if (READ_ONCE(space_info->dynamic_reclaim))
-++		return calc_dynamic_reclaim_threshold(space_info);
-++	return READ_ONCE(space_info->bg_reclaim_threshold);
-++}
-++
-++/*
-++ * Under "urgent" reclaim, we will reclaim even fresh block groups that have
-++ * recently seen successful allocations, as we are desperate to reclaim
-++ * whatever we can to avoid ENOSPC in a transaction leading to a readonly fs.
-++ */
-++static bool is_reclaim_urgent(struct btrfs_space_info *space_info)
-++{
-++	struct btrfs_fs_info *fs_info = space_info->fs_info;
-++	u64 unalloc = atomic64_read(&fs_info->free_chunk_space);
-++	u64 data_chunk_size = calc_effective_data_chunk_size(fs_info);
-++
-++	return unalloc < data_chunk_size;
-++}
-++
-++static int do_reclaim_sweep(struct btrfs_fs_info *fs_info,
-++			    struct btrfs_space_info *space_info, int raid)
-++{
-++	struct btrfs_block_group *bg;
-++	int thresh_pct;
-++	bool try_again = true;
-++	bool urgent;
-++
-++	spin_lock(&space_info->lock);
-++	urgent = is_reclaim_urgent(space_info);
-++	thresh_pct = btrfs_calc_reclaim_threshold(space_info);
-++	spin_unlock(&space_info->lock);
-++
-++	down_read(&space_info->groups_sem);
-++again:
-++	list_for_each_entry(bg, &space_info->block_groups[raid], list) {
-++		u64 thresh;
-++		bool reclaim = false;
-++
-++		btrfs_get_block_group(bg);
-++		spin_lock(&bg->lock);
-++		thresh = mult_perc(bg->length, thresh_pct);
-++		if (bg->used < thresh && bg->reclaim_mark) {
-++			try_again = false;
-++			reclaim = true;
-++		}
-++		bg->reclaim_mark++;
-++		spin_unlock(&bg->lock);
-++		if (reclaim)
-++			btrfs_mark_bg_to_reclaim(bg);
-++		btrfs_put_block_group(bg);
-++	}
-++
-++	/*
-++	 * In situations where we are very motivated to reclaim (low unalloc)
-++	 * use two passes to make the reclaim mark check best effort.
-++	 *
-++	 * If we have any staler groups, we don't touch the fresher ones, but if we
-++	 * really need a block group, do take a fresh one.
-++	 */
-++	if (try_again && urgent) {
-++		try_again = false;
-++		goto again;
-++	}
-++
-++	up_read(&space_info->groups_sem);
-++	return 0;
-++}
-++
-++void btrfs_space_info_update_reclaimable(struct btrfs_space_info *space_info, s64 bytes)
-++{
-++	u64 chunk_sz = calc_effective_data_chunk_size(space_info->fs_info);
-++
-++	assert_spin_locked(&space_info->lock);
-++	space_info->reclaimable_bytes += bytes;
-++
-++	if (space_info->reclaimable_bytes >= chunk_sz)
-++		btrfs_set_periodic_reclaim_ready(space_info, true);
-++}
-++
-++void btrfs_set_periodic_reclaim_ready(struct btrfs_space_info *space_info, bool ready)
-++{
-++	assert_spin_locked(&space_info->lock);
-++	if (!READ_ONCE(space_info->periodic_reclaim))
-++		return;
-++	if (ready != space_info->periodic_reclaim_ready) {
-++		space_info->periodic_reclaim_ready = ready;
-++		if (!ready)
-++			space_info->reclaimable_bytes = 0;
-++	}
-++}
-++
-++bool btrfs_should_periodic_reclaim(struct btrfs_space_info *space_info)
-++{
-++	bool ret;
-++
-++	if (space_info->flags & BTRFS_BLOCK_GROUP_SYSTEM)
-++		return false;
-++	if (!READ_ONCE(space_info->periodic_reclaim))
-++		return false;
-++
-++	spin_lock(&space_info->lock);
-++	ret = space_info->periodic_reclaim_ready;
-++	btrfs_set_periodic_reclaim_ready(space_info, false);
-++	spin_unlock(&space_info->lock);
-++
-++	return ret;
-++}
-++
-++int btrfs_reclaim_sweep(struct btrfs_fs_info *fs_info)
-++{
-++	int ret;
-++	int raid;
-++	struct btrfs_space_info *space_info;
-++
-++	list_for_each_entry(space_info, &fs_info->space_info, list) {
-++		if (!btrfs_should_periodic_reclaim(space_info))
-++			continue;
-++		for (raid = 0; raid < BTRFS_NR_RAID_TYPES; raid++) {
-++			ret = do_reclaim_sweep(fs_info, space_info, raid);
-++			if (ret)
-++				return ret;
-++		}
-++	}
-++
-++	return ret;
-++}
-+diff --git a/fs/btrfs/space-info.h b/fs/btrfs/space-info.h
-+index a733458fd13b..4db8a0267c16 100644
-+--- a/fs/btrfs/space-info.h
-++++ b/fs/btrfs/space-info.h
-+@@ -94,6 +94,7 @@ enum btrfs_flush_state {
-+ };
-+ 
-+ struct btrfs_space_info {
-++	struct btrfs_fs_info *fs_info;
-+ 	spinlock_t lock;
-+ 
-+ 	u64 total_bytes;	/* total bytes in the space,
-+@@ -165,6 +166,47 @@ struct btrfs_space_info {
-+ 
-+ 	struct kobject kobj;
-+ 	struct kobject *block_group_kobjs[BTRFS_NR_RAID_TYPES];
-++
-++	/*
-++	 * Monotonically increasing counter of block group reclaim attempts
-++	 * Exposed in /sys/fs/<uuid>/allocation/<type>/reclaim_count
-++	 */
-++	u64 reclaim_count;
-++
-++	/*
-++	 * Monotonically increasing counter of reclaimed bytes
-++	 * Exposed in /sys/fs/<uuid>/allocation/<type>/reclaim_bytes
-++	 */
-++	u64 reclaim_bytes;
-++
-++	/*
-++	 * Monotonically increasing counter of reclaim errors
-++	 * Exposed in /sys/fs/<uuid>/allocation/<type>/reclaim_errors
-++	 */
-++	u64 reclaim_errors;
-++
-++	/*
-++	 * If true, use the dynamic relocation threshold, instead of the
-++	 * fixed bg_reclaim_threshold.
-++	 */
-++	bool dynamic_reclaim;
-++
-++	/*
-++	 * Periodically check all block groups against the reclaim
-++	 * threshold in the cleaner thread.
-++	 */
-++	bool periodic_reclaim;
-++
-++	/*
-++	 * Periodic reclaim should be a no-op if a space_info hasn't
-++	 * freed any space since the last time we tried.
-++	 */
-++	bool periodic_reclaim_ready;
-++
-++	/*
-++	 * Net bytes freed or allocated since the last reclaim pass.
-++	 */
-++	s64 reclaimable_bytes;
-+ };
-+ 
-+ struct reserve_ticket {
-+@@ -247,4 +289,10 @@ void btrfs_dump_space_info_for_trans_abort(struct btrfs_fs_info *fs_info);
-+ void btrfs_init_async_reclaim_work(struct btrfs_fs_info *fs_info);
-+ u64 btrfs_account_ro_block_groups_free_space(struct btrfs_space_info *sinfo);
-+ 
-++void btrfs_space_info_update_reclaimable(struct btrfs_space_info *space_info, s64 bytes);
-++void btrfs_set_periodic_reclaim_ready(struct btrfs_space_info *space_info, bool ready);
-++bool btrfs_should_periodic_reclaim(struct btrfs_space_info *space_info);
-++int btrfs_calc_reclaim_threshold(struct btrfs_space_info *space_info);
-++int btrfs_reclaim_sweep(struct btrfs_fs_info *fs_info);
-++
-+ #endif /* BTRFS_SPACE_INFO_H */
-+diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
-+index c6387a8ddb94..3e9e91df6ef2 100644
-+--- a/fs/btrfs/sysfs.c
-++++ b/fs/btrfs/sysfs.c
-+@@ -894,6 +894,9 @@ SPACE_INFO_ATTR(bytes_readonly);
-+ SPACE_INFO_ATTR(bytes_zone_unusable);
-+ SPACE_INFO_ATTR(disk_used);
-+ SPACE_INFO_ATTR(disk_total);
-++SPACE_INFO_ATTR(reclaim_count);
-++SPACE_INFO_ATTR(reclaim_bytes);
-++SPACE_INFO_ATTR(reclaim_errors);
-+ BTRFS_ATTR_RW(space_info, chunk_size, btrfs_chunk_size_show, btrfs_chunk_size_store);
-+ BTRFS_ATTR(space_info, size_classes, btrfs_size_classes_show);
-+ 
-+@@ -902,8 +905,12 @@ static ssize_t btrfs_sinfo_bg_reclaim_threshold_show(struct kobject *kobj,
-+ 						     char *buf)
-+ {
-+ 	struct btrfs_space_info *space_info = to_space_info(kobj);
-++	ssize_t ret;
-+ 
-+-	return sysfs_emit(buf, "%d\n", READ_ONCE(space_info->bg_reclaim_threshold));
-++	spin_lock(&space_info->lock);
-++	ret = sysfs_emit(buf, "%d\n", btrfs_calc_reclaim_threshold(space_info));
-++	spin_unlock(&space_info->lock);
-++	return ret;
-+ }
-+ 
-+ static ssize_t btrfs_sinfo_bg_reclaim_threshold_store(struct kobject *kobj,
-+@@ -914,6 +921,9 @@ static ssize_t btrfs_sinfo_bg_reclaim_threshold_store(struct kobject *kobj,
-+ 	int thresh;
-+ 	int ret;
-+ 
-++	if (READ_ONCE(space_info->dynamic_reclaim))
-++		return -EINVAL;
-++
-+ 	ret = kstrtoint(buf, 10, &thresh);
-+ 	if (ret)
-+ 		return ret;
-+@@ -930,6 +940,72 @@ BTRFS_ATTR_RW(space_info, bg_reclaim_threshold,
-+ 	      btrfs_sinfo_bg_reclaim_threshold_show,
-+ 	      btrfs_sinfo_bg_reclaim_threshold_store);
-+ 
-++static ssize_t btrfs_sinfo_dynamic_reclaim_show(struct kobject *kobj,
-++						struct kobj_attribute *a,
-++						char *buf)
-++{
-++	struct btrfs_space_info *space_info = to_space_info(kobj);
-++
-++	return sysfs_emit(buf, "%d\n", READ_ONCE(space_info->dynamic_reclaim));
-++}
-++
-++static ssize_t btrfs_sinfo_dynamic_reclaim_store(struct kobject *kobj,
-++						 struct kobj_attribute *a,
-++						 const char *buf, size_t len)
-++{
-++	struct btrfs_space_info *space_info = to_space_info(kobj);
-++	int dynamic_reclaim;
-++	int ret;
-++
-++	ret = kstrtoint(buf, 10, &dynamic_reclaim);
-++	if (ret)
-++		return ret;
-++
-++	if (dynamic_reclaim < 0)
-++		return -EINVAL;
-++
-++	WRITE_ONCE(space_info->dynamic_reclaim, dynamic_reclaim != 0);
-++
-++	return len;
-++}
-++
-++BTRFS_ATTR_RW(space_info, dynamic_reclaim,
-++	      btrfs_sinfo_dynamic_reclaim_show,
-++	      btrfs_sinfo_dynamic_reclaim_store);
-++
-++static ssize_t btrfs_sinfo_periodic_reclaim_show(struct kobject *kobj,
-++						struct kobj_attribute *a,
-++						char *buf)
-++{
-++	struct btrfs_space_info *space_info = to_space_info(kobj);
-++
-++	return sysfs_emit(buf, "%d\n", READ_ONCE(space_info->periodic_reclaim));
-++}
-++
-++static ssize_t btrfs_sinfo_periodic_reclaim_store(struct kobject *kobj,
-++						 struct kobj_attribute *a,
-++						 const char *buf, size_t len)
-++{
-++	struct btrfs_space_info *space_info = to_space_info(kobj);
-++	int periodic_reclaim;
-++	int ret;
-++
-++	ret = kstrtoint(buf, 10, &periodic_reclaim);
-++	if (ret)
-++		return ret;
-++
-++	if (periodic_reclaim < 0)
-++		return -EINVAL;
-++
-++	WRITE_ONCE(space_info->periodic_reclaim, periodic_reclaim != 0);
-++
-++	return len;
-++}
-++
-++BTRFS_ATTR_RW(space_info, periodic_reclaim,
-++	      btrfs_sinfo_periodic_reclaim_show,
-++	      btrfs_sinfo_periodic_reclaim_store);
-++
-+ /*
-+  * Allocation information about block group types.
-+  *
-+@@ -947,8 +1023,13 @@ static struct attribute *space_info_attrs[] = {
-+ 	BTRFS_ATTR_PTR(space_info, disk_used),
-+ 	BTRFS_ATTR_PTR(space_info, disk_total),
-+ 	BTRFS_ATTR_PTR(space_info, bg_reclaim_threshold),
-++	BTRFS_ATTR_PTR(space_info, dynamic_reclaim),
-+ 	BTRFS_ATTR_PTR(space_info, chunk_size),
-+ 	BTRFS_ATTR_PTR(space_info, size_classes),
-++	BTRFS_ATTR_PTR(space_info, reclaim_count),
-++	BTRFS_ATTR_PTR(space_info, reclaim_bytes),
-++	BTRFS_ATTR_PTR(space_info, reclaim_errors),
-++	BTRFS_ATTR_PTR(space_info, periodic_reclaim),
-+ #ifdef CONFIG_BTRFS_DEBUG
-+ 	BTRFS_ATTR_PTR(space_info, force_chunk_alloc),
-+ #endif
-+
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
 index cdf04d26d..e2b843e84 100644
 --- a/kernel-x86_64-fedora.config
@@ -10627,7 +10627,7 @@ index cdf04d26d..e2b843e84 100644
 +CONFIG_ACPI_CALL=y
 +CONFIG_NTSYNC=y
 diff --git a/kernel.spec b/kernel.spec
-index af26d4aa9..394154029 100644
+index af26d4aa9..73ae6e749 100644
 --- a/kernel.spec
 +++ b/kernel.spec
 @@ -994,6 +994,14 @@ Source4002: gating.yaml
@@ -10637,7 +10637,7 @@ index af26d4aa9..394154029 100644
 +Patch2: 6.10.y-bore5.2.8.patch
 +Patch3: btrfs-allocator-hints.patch
 +Patch4: zstd-updates.patch
-+Patch5: aes-crypto-updates.patch
++Patch5: crypto-updates.patch
 +Patch6: btrfs-block-group-reclaim.patch
 +Patch7: ntsync.patch
 +Patch8: acpi-call.patch
@@ -10652,7 +10652,7 @@ index af26d4aa9..394154029 100644
 +ApplyOptionalPatch 6.10.y-bore5.2.8.patch
 +ApplyOptionalPatch btrfs-allocator-hints.patch
 +ApplyOptionalPatch zstd-updates.patch
-+ApplyOptionalPatch aes-crypto-updates.patch
++ApplyOptionalPatch crypto-updates.patch
 +ApplyOptionalPatch btrfs-block-group-reclaim.patch
 +ApplyOptionalPatch ntsync.patch
 +ApplyOptionalPatch acpi-call.patch
@@ -10660,17 +10660,15 @@ index af26d4aa9..394154029 100644
  %{log_msg "End of patch applications"}
  # END OF PATCH APPLICATIONS
  
-@@ -2025,8 +2041,8 @@ cp_vmlinux()
+@@ -2025,7 +2041,7 @@ cp_vmlinux()
  # from redhat-rpm-config assume that host == target so target arch
  # flags cause issues with the host compiler.
  %if !%{with_cross}
 -%define build_hostcflags  %{?build_cflags}
--%define build_hostldflags %{?build_ldflags}
 +%define build_hostcflags  %{?build_cflags} -march=haswell -mtune=haswell
-+%define build_hostldflags %{?build_ldflags} 
+ %define build_hostldflags %{?build_ldflags}
  %endif
  
- %define make %{__make} %{?cross_opts} %{?make_opts} HOSTCFLAGS="%{?build_hostcflags}" HOSTLDFLAGS="%{?build_hostldflags}"
 diff --git a/ntsync.patch b/ntsync.patch
 new file mode 100644
 index 000000000..4a1675814
