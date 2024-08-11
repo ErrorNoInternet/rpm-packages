@@ -10627,10 +10627,19 @@ index cdf04d26d..e2b843e84 100644
 +CONFIG_ACPI_CALL=y
 +CONFIG_NTSYNC=y
 diff --git a/kernel.spec b/kernel.spec
-index af26d4aa9..73ae6e749 100644
+index af26d4aa9..a01274e9e 100644
 --- a/kernel.spec
 +++ b/kernel.spec
-@@ -994,6 +994,14 @@ Source4002: gating.yaml
+@@ -308,8 +308,6 @@ Summary: The Linux kernel
+ 
+ %if %{with_verbose}
+ %define make_opts V=1
+-%else
+-%define make_opts -s
+ %endif
+ 
+ %if %{with toolchain_clang}
+@@ -994,6 +992,14 @@ Source4002: gating.yaml
  Patch1: patch-%{patchversion}-redhat.patch
  %endif
  
@@ -10645,7 +10654,7 @@ index af26d4aa9..73ae6e749 100644
  # empty final patch to facilitate testing of kernel patches
  Patch999999: linux-kernel-test.patch
  
-@@ -1815,6 +1823,14 @@ ApplyOptionalPatch patch-%{patchversion}-redhat.patch
+@@ -1815,6 +1821,14 @@ ApplyOptionalPatch patch-%{patchversion}-redhat.patch
  
  ApplyOptionalPatch linux-kernel-test.patch
  
@@ -10660,7 +10669,7 @@ index af26d4aa9..73ae6e749 100644
  %{log_msg "End of patch applications"}
  # END OF PATCH APPLICATIONS
  
-@@ -2025,7 +2041,7 @@ cp_vmlinux()
+@@ -2025,7 +2039,7 @@ cp_vmlinux()
  # from redhat-rpm-config assume that host == target so target arch
  # flags cause issues with the host compiler.
  %if !%{with_cross}
