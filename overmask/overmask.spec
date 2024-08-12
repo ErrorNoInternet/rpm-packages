@@ -6,7 +6,7 @@
 %global cargo_install_lib 0
 
 Name:           overmask
-Version:        0^%{snapdate}
+Version:        0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
 Release:        %autorelease
 Summary:        Add a writeable overlay on top of read-only files
 
