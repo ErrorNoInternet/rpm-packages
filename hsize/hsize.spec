@@ -8,7 +8,7 @@
 %global cargo_install_lib 0
 
 Name:           hsize
-Version:        0^%{snapdate}
+Version:        0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
 Release:        %autorelease
 Summary:        Convert file sizes to and from human-readable units
 License:        LGPL-3-only
