@@ -11,19 +11,32 @@ Name:           hsize
 Version:        0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
 Release:        %autorelease
 Summary:        Convert file sizes to and from human-readable units
-License:        LGPL-3-only
+
+# (MIT OR Apache-2.0) AND Unicode-DFS-2016: regex-syntax v0.8.4
+# Apache-2.0 OR MIT: utf8parse v0.2.2
+# LGPL-3: hsize v0.1.0
+# MIT OR Apache-2.0: anstream v0.6.15
+# MIT OR Apache-2.0: anstyle v1.0.8
+# MIT OR Apache-2.0: anstyle-parse v0.2.5
+# MIT OR Apache-2.0: anstyle-query v1.1.1
+# MIT OR Apache-2.0: clap v4.5.9
+# MIT OR Apache-2.0: clap_builder v4.5.9
+# MIT OR Apache-2.0: clap_lex v0.7.2
+# MIT OR Apache-2.0: colorchoice v1.0.2
+# MIT OR Apache-2.0: num-traits v0.2.19
+# MIT OR Apache-2.0: regex v1.10.5
+# MIT OR Apache-2.0: regex-automata v0.4.7
+# MIT: oorandom v11.1.4
+# MIT: strsim v0.11.1
+# Unlicense OR MIT: aho-corasick v1.1.3
+# Unlicense OR MIT: memchr v2.7.4
+License:        (Apache-2.0 OR MIT) AND LGPL-3 AND MIT AND (MIT OR Apache-2.0) AND ((MIT OR Apache-2.0) AND Unicode-DFS-2016) AND (Unlicense OR MIT)
+SourceLicense:  LGPL-3.0-or-later
 
 URL:            https://github.com/ErrorNoInternet/hsize
 Source:         %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
-BuildRequires:  (crate(clap/default) >= 4.0.0 with crate(clap/default) < 5.0.0~)
-BuildRequires:  (crate(clap/derive) >= 4.0.0 with crate(clap/derive) < 5.0.0~)
-BuildRequires:  (crate(clap/env) >= 4.0.0 with crate(clap/env) < 5.0.0~)
-BuildRequires:  (crate(num-derive/default) >= 0.0.0 with crate(num-derive/default) < 1.0.0~)
-BuildRequires:  (crate(num-traits/default) >= 0.0.0 with crate(num-traits/default) < 1.0.0~)
-BuildRequires:  (crate(oorandom/default) >= 11.0.0 with crate(oorandom/default) < 12.0.0~)
-BuildRequires:  (crate(regex/default) >= 1.0.0 with crate(regex/default) < 2.0.0~)
 
 %global _description %{expand:
 Convert file sizes to and from human-readable units.}
