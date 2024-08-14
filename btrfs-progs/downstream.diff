@@ -1,14 +1,14 @@
 diff --git a/add-dump-csum.diff b/add-dump-csum.diff
 new file mode 100644
-index 0000000..43ae8c1
+index 0000000..7f3b177
 --- /dev/null
 +++ b/add-dump-csum.diff
 @@ -0,0 +1,347 @@
 +diff --git a/Makefile b/Makefile
-+index 82dfb1b4..98544b16 100644
++index c0428c57..35e26c34 100644
 +--- a/Makefile
 ++++ b/Makefile
-+@@ -257,8 +257,8 @@ cmds_objects = cmds/subvolume.o cmds/subvolume-list.o \
++@@ -258,8 +258,8 @@ cmds_objects = cmds/subvolume.o cmds/subvolume-list.o \
 + 	       cmds/restore.o cmds/rescue.o cmds/rescue-chunk-recover.o \
 + 	       cmds/rescue-super-recover.o \
 + 	       cmds/property.o cmds/filesystem-usage.o cmds/inspect-dump-tree.o \
@@ -304,17 +304,17 @@ index 0000000..43ae8c1
 ++}
 ++DEFINE_SIMPLE_COMMAND(inspect_dump_csum, "dump-csum");
 +diff --git a/cmds/inspect.c b/cmds/inspect.c
-+index 353ed639..731c735a 100644
++index d689e085..188eb526 100644
 +--- a/cmds/inspect.c
 ++++ b/cmds/inspect.c
-+@@ -1621,6 +1621,7 @@ static const struct cmd_group inspect_cmd_group = {
++@@ -1561,6 +1561,7 @@ static const struct cmd_group inspect_cmd_group = {
 + 		&cmd_struct_inspect_min_dev_size,
 + 		&cmd_struct_inspect_dump_tree,
 + 		&cmd_struct_inspect_dump_super,
 ++		&cmd_struct_inspect_dump_csum,
 + 		&cmd_struct_inspect_tree_stats,
-+ #if EXPERIMENTAL
 + 		&cmd_struct_inspect_list_chunks,
++ 		NULL
 +diff --git a/common/utils.c b/common/utils.c
 +index 3ca7cff3..81338b43 100644
 +--- a/common/utils.c
@@ -352,12 +352,12 @@ index 0000000..43ae8c1
 + /*
 +
 diff --git a/btrfs-progs.spec b/btrfs-progs.spec
-index 0685728..3a77441 100644
+index 0d77cbb..3466539 100644
 --- a/btrfs-progs.spec
 +++ b/btrfs-progs.spec
-@@ -15,6 +15,9 @@ Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
- # From: https://lore.kernel.org/linux-btrfs/fbbb792fa299bfdfa818f6e0790fa545297dc1cf.1721949827.git.osandov@fb.com/
- Patch0:         btrfs-progs-6.10-fix-python3.13.patch
+@@ -12,6 +12,9 @@ Source0:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{n
+ Source1:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{name}-v%{version_no_tilde}.tar.sign
+ Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
  
 +Patch1:         add-dump-csum.diff
 +Patch2:         remove-receive-errors.diff
@@ -365,7 +365,7 @@ index 0685728..3a77441 100644
  BuildRequires:  gnupg2
  BuildRequires:  gcc, autoconf, automake, make
  BuildRequires:  git-core
-@@ -92,11 +95,11 @@ btrfs filesystem-specific programs in Python.
+@@ -89,11 +92,11 @@ btrfs filesystem-specific programs in Python.
  
  %prep
  xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data=-
