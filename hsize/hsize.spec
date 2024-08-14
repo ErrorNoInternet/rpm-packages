@@ -14,7 +14,7 @@ Summary:        Convert file sizes to and from human-readable units
 
 # (MIT OR Apache-2.0) AND Unicode-DFS-2016: regex-syntax v0.8.4
 # Apache-2.0 OR MIT: utf8parse v0.2.2
-# LGPL-3: hsize v0.1.0
+# LGPL-3.0-or-later: hsize v0.1.0
 # MIT OR Apache-2.0: anstream v0.6.15
 # MIT OR Apache-2.0: anstyle v1.0.8
 # MIT OR Apache-2.0: anstyle-parse v0.2.5
@@ -30,7 +30,7 @@ Summary:        Convert file sizes to and from human-readable units
 # MIT: strsim v0.11.1
 # Unlicense OR MIT: aho-corasick v1.1.3
 # Unlicense OR MIT: memchr v2.7.4
-License:        (Apache-2.0 OR MIT) AND LGPL-3 AND MIT AND (MIT OR Apache-2.0) AND ((MIT OR Apache-2.0) AND Unicode-DFS-2016) AND (Unlicense OR MIT)
+License:        (Apache-2.0 OR MIT) AND LGPL-3.0-or-later AND MIT AND (MIT OR Apache-2.0) AND ((MIT OR Apache-2.0) AND Unicode-DFS-2016) AND (Unlicense OR MIT)
 SourceLicense:  LGPL-3.0-or-later
 
 URL:            https://github.com/ErrorNoInternet/hsize
