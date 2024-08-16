@@ -36,7 +36,6 @@ SourceLicense:  MIT
 
 URL:            https://github.com/sxyazi/yazi
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
-Patch:          yazi-replace-git-deps.diff
 
 BuildRequires:  cargo-rpm-macros >= 24
 BuildRequires:  gcc
@@ -86,10 +85,8 @@ Requires:       %{name} = %{version}-%{release}
 This package installs Zsh completion files for %{name}
 
 %prep
-%autosetup -n %{name}-%{version} -N
+%autosetup -n %{name}-%{version} -p1
 cargo vendor
-%autopatch 0 -p1
-cargo vendor # vendor `notify` dependencies
 %cargo_prep -v vendor
 
 %build
