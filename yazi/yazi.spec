@@ -6,8 +6,8 @@
 %global cargo_install_lib   0
 
 Name:           yazi
-Version:        0.3.0
-Release:        2%{?dist}
+Version:        0.3.1
+Release:        1%{?dist}
 Summary:        Blazing fast terminal file manager
 
 # BSD OR MIT OR Apache-2.0
