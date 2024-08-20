@@ -57,6 +57,7 @@ rm -rf %{buildroot}%{_docdir}/breakpad-0.1
 %{_bindir}/minidump_upload
 %{_bindir}/pid2md
 %{_bindir}/sym_upload
+%{_libexecdir}/core_handler
 
 %files -n %{name}-devel
 %{_includedir}/breakpad
@@ -64,7 +65,6 @@ rm -rf %{buildroot}%{_docdir}/breakpad-0.1
 %{_libdir}/libbreakpad_client.a
 %{_libdir}/pkgconfig/breakpad-client.pc
 %{_libdir}/pkgconfig/breakpad.pc
-%{_libexecdir}/core_handler
 
 %changelog
 %autochangelog
