@@ -19,8 +19,6 @@ A set of client and server components which implement a crash-reporting system.
 
 %package devel
 Summary: Development files for %{name}
-BuildArch: noarch
-Provides: %{name}-static = %{version}-%{release}
 
 %description devel
 Development files for the Google breakpad crash-reporting system.
