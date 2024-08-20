@@ -17,6 +17,14 @@ BuildRequires:      pkgconfig(zlib)
 %description
 A set of client and server components which implement a crash-reporting system.
 
+%package devel
+Summary: Development files for %{name}
+BuildArch: noarch
+Provides: %{name}-static = %{version}-%{release}
+
+%description devel
+Development files for the Google breakpad crash-reporting system.
+
 %prep
 tar xf %{SOURCE0}
 mkdir -p src/third_party/lss
@@ -51,6 +59,8 @@ rm -rf %{buildroot}%{_docdir}/breakpad-0.1
 %{_bindir}/minidump_upload
 %{_bindir}/pid2md
 %{_bindir}/sym_upload
+
+%files -n %{name}-devel
 %{_includedir}/breakpad
 %{_libdir}/libbreakpad.a
 %{_libdir}/libbreakpad_client.a
