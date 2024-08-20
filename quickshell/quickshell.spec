@@ -1,7 +1,7 @@
 %bcond_with         asan
 
-%global commit      5040f3796cc633ed366a965715376537376e3df9
-%global snapdate    20240819
+%global commit      fe1d15e8f68e66e5f164dea930f15f35402ea9c0
+%global snapdate    20240820
 
 Name:               quickshell
 Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
@@ -18,6 +18,7 @@ BuildRequires:      cmake(Qt6Qml)
 BuildRequires:      cmake(Qt6WaylandClient)
 BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
+BuildRequires:      pkgconfig(breakpad)
 BuildRequires:      pkgconfig(CLI11)
 BuildRequires:      pkgconfig(jemalloc)
 BuildRequires:      pkgconfig(libpipewire-0.3)
