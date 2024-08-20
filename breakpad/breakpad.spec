@@ -41,7 +41,9 @@ rm -rf %{buildroot}%{_docdir}/breakpad-0.1
 %doc README.md AUTHORS ChangeLog INSTALL NEWS
 %{_bindir}/core2md
 %{_bindir}/dump_syms
+%ifarch x86_64 %{ix86}
 %{_bindir}/dump_syms_mac
+%endif
 %{_bindir}/microdump_stackwalk
 %{_bindir}/minidump-2-core
 %{_bindir}/minidump_dump
