@@ -1,13 +1,13 @@
 Name:               breakpad
 Version:            2023.06.01
 Release:            %autorelease
-Summary:            A crash-reporting system
-
+Summary:            Google Breakpad crash-reporting system
 License:            BSD-3-Clause
+
 URL:                https://chromium.googlesource.com/breakpad/breakpad
 Source0:            %{url}/+archive/v%{version}.tar.gz
 Source1:            https://chromium.googlesource.com/linux-syscall-support/+archive/v2024.02.01.tar.gz
-Patch0:             breakpad-fix-missing-include.patch
+Patch:              breakpad-fix-missing-include.patch
 
 BuildRequires:      gcc-c++
 BuildRequires:      pkgconfig(gmock)
@@ -21,10 +21,11 @@ A set of client and server components which implement a crash-reporting system.
 Summary: Development files for %{name}
 
 %description devel
-Development files for the Google breakpad crash-reporting system.
+Development files for the Google Breakpad crash-reporting system.
 
 %prep
 tar xf %{SOURCE0}
+
 mkdir -p src/third_party/lss
 tar xf %{SOURCE1} -C src/third_party/lss
 
