@@ -3,6 +3,7 @@
 declare -A anitya_ids=(
 	["7zip/7zip.spec"]=368867
 	["bandwhich/bandwhich.spec"]=236376
+	["breakpad/breakpad.spec"]=373970
 	["btdu/btdu.spec"]=372783
 	["cliphist/cliphist.spec"]=242870
 	["croc/croc.spec"]=350834
