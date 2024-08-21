@@ -1,23 +1,23 @@
---- bandwhich-0.22.2/Cargo.toml	2024-06-30T05:27:25.301225+00:00
-+++ bandwhich-0.22.2/Cargo.toml	2024-06-30T05:27:40.867625+00:00
-@@ -46,13 +46,6 @@
- [target.'cfg(target_os = "linux")'.dependencies]
+--- bandwhich-0.23.0/Cargo.toml	2024-08-21T05:11:22.416167+00:00
++++ bandwhich-0.23.0/Cargo.toml	2024-08-21T05:12:04.362704+00:00
+@@ -51,13 +51,6 @@
+ [target.'cfg(any(target_os = "android", target_os = "linux"))'.dependencies]
  procfs = "0.16.0"
  
 -[target.'cfg(any(target_os = "macos", target_os = "freebsd"))'.dependencies]
--regex = "1.10.3"
+-regex = "1.10.5"
 -
 -[target.'cfg(target_os = "windows")'.dependencies]
 -netstat2 = "0.9.1"
--sysinfo = "0.30.5"
+-sysinfo = "0.31.0"
 -
  [dev-dependencies]
- insta = "1.34.0"
+ insta = "1.39.0"
  packet-builder = { version = "0.7.0", git = "https://github.com/cyqsimon/packet_builder.git", branch = "patch-update" }
-@@ -69,6 +62,3 @@
+@@ -74,6 +67,3 @@
  derivative = "2.2.0"
- strum = { version = "0.25.0", features = ["derive"] }
+ strum = { version = "0.26.3", features = ["derive"] }
  
 -[target.'cfg(target_os = "windows")'.build-dependencies]
--http_req = "0.10.2"
--zip = "0.6.6"
+-http_req = "0.11.1"
+-zip = "2.1.6"
