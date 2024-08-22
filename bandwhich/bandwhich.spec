@@ -77,7 +77,7 @@ export BANDWHICH_GEN_DIR=gen
 %cargo_install
 
 install -Dpm644 gen/%{name}.1 %{buildroot}%{_mandir}/man1/%{name}.1
-install -Dpm644 res/%{name}.svg %%{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%%{name}.svg
+install -Dpm644 res/%{name}.svg %{buildroot}%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
 install -Dpm644 gen/%{name}.bash %{buildroot}%{bash_completions_dir}/%{name}
 install -Dpm644 gen/%{name}.fish %{buildroot}%{fish_completions_dir}/%{name}.fish
@@ -99,7 +99,7 @@ install -Dpm644 gen/_%{name} %{buildroot}%{zsh_completions_dir}/_%{name}
 %doc README.md
 %{_bindir}/%{name}
 %{_mandir}/man1/%{name}.1*
-%{_datadir}/icons/hicolor/scalable/apps/%%{name}.svg
+%{_datadir}/icons/hicolor/scalable/apps/%{name}.svg
 
 %files bash-completion
 %{bash_completions_dir}/%{name}
