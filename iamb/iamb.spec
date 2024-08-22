@@ -6,7 +6,7 @@
 %global cargo_install_lib 0
 
 Name:           iamb
-Version:        0.0.9
+Version:        0.0.10
 Release:        %autorelease
 Summary:        Matrix chat client that uses Vim keybindings
 License:        Apache-2.0
