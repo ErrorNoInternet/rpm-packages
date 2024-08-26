@@ -50,3 +50,7 @@
 	path = coreutils/upstream
 	url = https://src.fedoraproject.org/rpms/coreutils
 	branch = f40
+[submodule "hyprland/upstream"]
+	path = hyprland/upstream
+	url = https://src.fedoraproject.org/rpms/hyprland
+	branch = f40
