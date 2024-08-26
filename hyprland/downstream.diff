@@ -209,33 +209,34 @@ index 881bf28..91dadde 100644
 +
 diff --git a/ime-decorations.diff b/ime-decorations.diff
 new file mode 100644
-index 0000000..2ffa5b7
+index 0000000..baf777b
 --- /dev/null
 +++ b/ime-decorations.diff
-@@ -0,0 +1,24 @@
+@@ -0,0 +1,25 @@
 +diff --git a/src/render/Renderer.cpp b/src/render/Renderer.cpp
-+index c2ecbbf3..6ea9687e 100644
++index 7b29eb77..9f6c6748 100644
 +--- a/src/render/Renderer.cpp
 ++++ b/src/render/Renderer.cpp
-+@@ -791,12 +791,17 @@ void CHyprRenderer::renderIMEPopup(CInputPopup* pPopup, CMonitor* pMonitor, time
++@@ -791,11 +791,14 @@ void CHyprRenderer::renderIMEPopup(CInputPopup* pPopup, CMonitor* pMonitor, time
 + 
 +     const auto  SURF = pPopup->getSurface();
 + 
 +-    renderdata.blur     = false;
-+     renderdata.surface  = SURF;
-+     renderdata.decorate = false;
-+     renderdata.w        = SURF->current.size.x;
-+     renderdata.h        = SURF->current.size.y;
-+ 
-++    renderdata.blur     = true;
-++    renderdata.rounding = 6;
++-    renderdata.surface  = SURF;
++-    renderdata.decorate = false;
++-    renderdata.w        = SURF->current.size.x;
++-    renderdata.h        = SURF->current.size.y;
+++    renderdata.surface   = SURF;
+++    renderdata.decorate  = false;
+++    renderdata.w         = SURF->current.size.x;
+++    renderdata.h         = SURF->current.size.y;
 ++
+++    renderdata.blur      = true;
 ++    g_pHyprOpenGL->m_RenderData.discardMode |= DISCARD_ALPHA;
-++    g_pHyprOpenGL->m_RenderData.discardOpacity = 0.7;
-++
+++    g_pHyprOpenGL->m_RenderData.discardOpacity = 0.4;
++ 
 +     SURF->breadthfirst([](SP<CWLSurfaceResource> s, const Vector2D& offset, void* data) { renderSurface(s, offset.x, offset.y, data); }, &renderdata);
 + }
-+ 
 +
 diff --git a/sources b/sources
 index cfad131..3624e45 100644
