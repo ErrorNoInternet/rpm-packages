@@ -54,3 +54,7 @@
 	path = hyprland/upstream
 	url = https://src.fedoraproject.org/rpms/hyprland
 	branch = f40
+[submodule "fcitx5/upstream"]
+	path = fcitx5/upstream
+	url = https://src.fedoraproject.org/rpms/fcitx5
+	branch = f40
