@@ -1,12 +1,10 @@
 %bcond_without check
 
 %global _default_patch_fuzz 2
-
-%global crate               yazi
 %global cargo_install_lib   0
 
 Name:           yazi
-Version:        0.3.1
+Version:        0.3.2
 Release:        1%{?dist}
 Summary:        Blazing fast terminal file manager
 
@@ -121,8 +119,7 @@ done
 
 %files
 %license LICENSE LICENSE-ICONS
-%license LICENSE.dependencies
-%license cargo-vendor.txt
+%license LICENSE.dependencies cargo-vendor.txt
 %doc README.md CONTRIBUTING.md
 %{_bindir}/ya
 %{_bindir}/%{name}
