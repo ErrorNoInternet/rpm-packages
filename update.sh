@@ -20,6 +20,7 @@ declare -A anitya_ids=(
 	["prismlauncher/prismlauncher.spec"]=301949
 	["ripdrag/ripdrag.spec"]=372793
 	["rofi-emoji/rofi-emoji.spec"]=242096
+	["rsbkb/rsbkb.spec"]=374101
 	["rust-keyframe/rust-keyframe.spec"]=373513
 	["rust-keyframe_derive/rust-keyframe_derive.spec"]=373520
 	["rust-libvips/rust-libvips.spec"]=373523
