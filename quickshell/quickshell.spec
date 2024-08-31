@@ -56,6 +56,7 @@ mv %{buildroot}%{_libdir}/qt-6 %{buildroot}%{_libdir}/qt6
 %files
 %license LICENSE LICENSE-GPL
 %doc README.md CONTRIBUTING.md
+%{_bindir}/qs
 %{_bindir}/quickshell
 %{_libdir}/qt6/qml/Quickshell
 
