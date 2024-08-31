@@ -50,6 +50,7 @@ export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
 
 %install
 %cmake_install
+ln -s quickshell %{buildroot}%{_bindir}/qs
 mv %{buildroot}%{_libdir}/qt-6 %{buildroot}%{_libdir}/qt6
 
 %files
