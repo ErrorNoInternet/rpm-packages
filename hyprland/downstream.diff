@@ -1,11 +1,11 @@
 diff --git a/hyprland.spec b/hyprland.spec
-index 881bf28..91dadde 100644
+index 881bf28..914ee97 100644
 --- a/hyprland.spec
 +++ b/hyprland.spec
 @@ -1,20 +1,23 @@
  Name:           hyprland
 -Version:        0.39.1
-+Version:        0.42.0
++Version:        0.43.0
  Release:        %autorelease
  Summary:        Dynamic tiling Wayland compositor that doesn't sacrifice on its looks
  
@@ -202,11 +202,6 @@ index 881bf28..91dadde 100644
  %{_datadir}/wayland-sessions/%{name}.desktop
  %{_datadir}/xdg-desktop-portal/%{name}-portals.conf
  %{_mandir}/man1/hyprctl.1*
-@@ -187,3 +188,4 @@ rm -rf %{buildroot}%{_datadir}/pkgconfig/%{name}.pc
- 
- %changelog
- %autochangelog
-+
 diff --git a/ime-decorations.diff b/ime-decorations.diff
 new file mode 100644
 index 0000000..baf777b
