@@ -2,7 +2,7 @@
 %global snapdate    20240914
 
 Name:               xwayland-satellite
-Version:            0^%{snapdate}
+Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
 Release:            %autorelease
 Summary:            Xwayland outside your Wayland.
 
