@@ -5,7 +5,7 @@
 %global cargo_install_lib 0
 
 Name:           onefetch
-Version:        2.21.0
+Version:        2.22.0
 Release:        %autorelease
 Summary:        Command-line Git information tool
 License:        MIT
