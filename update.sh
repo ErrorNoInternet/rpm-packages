@@ -26,6 +26,7 @@ declare -A anitya_ids=(
 	["rust-libvips/rust-libvips.spec"]=373523
 	["rust-spin_sleep/rust-spin_sleep.spec"]=242190
 	["satty/satty.spec"]=372795
+	["scrcpy/scrcpy.spec"]=226924
 	["swaylock-effects/swaylock-effects.spec"]=312399
 	["swaync/swaync.spec"]=242061
 	["try/try.spec"]=372797
