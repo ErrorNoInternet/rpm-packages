@@ -14,6 +14,7 @@ declare -A anitya_ids=(
 	["iamb/iamb.spec"]=372778
 	["klassy/klassy.spec"]=372810
 	["kwin-effects/kwin-effects-sliding-notifications.spec"]=372805
+	["lowfi/lowfi.spec"]=374761
 	["mergerfs/mergerfs.spec"]=372789
 	["onefetch/onefetch.spec"]=141703
 	["par2cmdline-turbo/par2cmdline-turbo.spec"]=372791
