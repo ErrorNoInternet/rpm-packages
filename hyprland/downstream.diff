@@ -1,11 +1,11 @@
 diff --git a/hyprland.spec b/hyprland.spec
-index 881bf28..914ee97 100644
+index 881bf28..5c0acf2 100644
 --- a/hyprland.spec
 +++ b/hyprland.spec
 @@ -1,20 +1,23 @@
  Name:           hyprland
 -Version:        0.39.1
-+Version:        0.43.0
++Version:        0.44.0
  Release:        %autorelease
  Summary:        Dynamic tiling Wayland compositor that doesn't sacrifice on its looks
  
@@ -74,7 +74,7 @@ index 881bf28..914ee97 100644
  BuildRequires:  pkgconfig(xcb-ewmh)
  BuildRequires:  pkgconfig(xcb-icccm)
  BuildRequires:  pkgconfig(xcb-present)
-@@ -58,22 +65,18 @@ BuildRequires:  pkgconfig(xcb-util)
+@@ -58,26 +65,24 @@ BuildRequires:  pkgconfig(xcb-util)
  BuildRequires:  pkgconfig(xcb-xfixes)
  BuildRequires:  pkgconfig(xcb-xinput)
  BuildRequires:  pkgconfig(xcb)
@@ -96,11 +96,18 @@ index 881bf28..914ee97 100644
 -Requires:       libdrm%{?_isa} >= 2.4.120
 -Requires:       hyprcursor%{?_isa} >= 0.1.7
 +Requires:       hyprcursor%{?_isa} >= 0.1.9
-+Requires:       hyprutils%{?_isa} >= 0.2.1
++Requires:       hyprutils%{?_isa} >= 0.2.3
  
- # Both are used in the default configuration
+-# Both are used in the default configuration
++# Used in the default configuration
  Recommends:     kitty
-@@ -87,8 +90,8 @@ Recommends:     (qt5-qtwayland if qt5-qtbase-gui)
+ Recommends:     wofi
++Recommends:     playerctl
++Recommends:     brightnessctl
+ # Lack of graphical drivers may hurt the common use case
+ Recommends:     mesa-dri-drivers
+ # Logind needs polkit to create a graphical session
+@@ -87,8 +92,8 @@ Recommends:     (qt5-qtwayland if qt5-qtbase-gui)
  Recommends:     (qt6-qtwayland if qt6-qtbase-gui)
  
  %description
@@ -111,7 +118,7 @@ index 881bf28..914ee97 100644
  very flexible IPC model allowing for a lot of customization, a powerful
  plugin system and more.
  
-@@ -98,32 +101,34 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
+@@ -98,32 +103,34 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
  Requires:       cmake
  Requires:       cpio
  Requires:       gcc-c++
@@ -153,7 +160,7 @@ index 881bf28..914ee97 100644
  Requires:       pkgconfig(xcb-ewmh)
  Requires:       pkgconfig(xcb-icccm)
  Requires:       pkgconfig(xcb-present)
-@@ -135,6 +140,7 @@ Requires:       pkgconfig(xcb-util)
+@@ -135,6 +142,7 @@ Requires:       pkgconfig(xcb-util)
  Requires:       pkgconfig(xcb-xfixes)
  Requires:       pkgconfig(xcb-xinput)
  Requires:       pkgconfig(xcb)
@@ -161,12 +168,12 @@ index 881bf28..914ee97 100644
  Requires:       pkgconfig(xkbcommon)
  Requires:       pkgconfig(xwayland)
  Recommends:     git-core
-@@ -146,34 +152,29 @@ Recommends:     git-core
+@@ -146,34 +154,29 @@ Recommends:     git-core
  %prep
  %autosetup -n %{name}-source -p1
  rm -rf subprojects/{tracy,hyprland-protocols}
 +# don't run generateVersion.sh, release tarballs have pregenerated version.h
-+sed -i '/version_h/d' meson.build
++sed -i '/scripts\/generateVersion.sh/d' meson.build
  
  cp -p subprojects/udis86/LICENSE LICENSE-udis86
 -cp -p subprojects/wlroots-hyprland/LICENSE LICENSE-wlroots
