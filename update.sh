@@ -30,6 +30,7 @@ declare -A anitya_ids=(
 	["scrcpy/scrcpy.spec"]=226924
 	["swaylock-effects/swaylock-effects.spec"]=312399
 	["swaync/swaync.spec"]=242061
+	["swayosd/swayosd.spec"]=374840
 	["try/try.spec"]=372797
 	["vesktop/vesktop.spec"]=372800
 	["walker/walker.spec"]=372963
