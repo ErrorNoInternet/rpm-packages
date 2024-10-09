@@ -1,14 +1,14 @@
 diff --git a/Cargo.toml b/Cargo.toml
-index d0d2e26..991ecb3 100644
+index acaaaf3..fd09b58 100644
 --- a/Cargo.toml
 +++ b/Cargo.toml
-@@ -60,7 +60,7 @@ sysinfo = "0.31.0"
+@@ -60,7 +60,7 @@ sysinfo = "0.32.0"
  
  [dev-dependencies]
- insta = "1.39.0"
+ insta = "1.40.0"
 -packet-builder = { version = "0.7.0", git = "https://github.com/cyqsimon/packet_builder.git", branch = "patch-update" }
 +packet-builder = { path = "vendor/packet-builder" }
  pnet_base = "0.34.0"
- regex = "1.10.5"
- rstest = "0.21.0"
+ regex = "1.11.0"
+ rstest = "0.23.0"
 
