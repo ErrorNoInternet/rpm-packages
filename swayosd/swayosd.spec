@@ -39,7 +39,7 @@ cargo vendor
 
 %install
 %meson_install
-rm %{_datadir}/licenses/swayosd
+rm %{buildroot}%{_datadir}/licenses/swayosd/LICENSE
 
 %files
 %doc README.md
