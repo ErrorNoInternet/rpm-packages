@@ -40,6 +40,10 @@ cargo vendor
 %install
 %meson_install
 rm %{buildroot}%{_datadir}/licenses/swayosd/LICENSE
+mkdir -p %{buildroot}%{_prefix}/lib/systemd/system
+mv %{buildroot}%{_libdir}/systemd/system/swayosd-libinput-backend.service %{buildroot}%{_prefix}/lib/systemd/system/swayosd-libinput-backend.service
+mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d
+mv %{buildroot}%{_libdir}/udev/rules.d/99-swayosd.rules %{buildroot}%{_prefix}/lib/udev/rules.d/99-swayosd.rules
 
 %files
 %doc README.md
@@ -51,8 +55,8 @@ rm %{buildroot}%{_datadir}/licenses/swayosd/LICENSE
 %{_datadir}/dbus-1/system.d/org.erikreider.swayosd.conf
 %{_datadir}/polkit-1/actions/org.erikreider.swayosd.*
 %{_datadir}/polkit-1/rules.d/org.erikreider.swayosd.rules
-%{_libdir}/systemd/system/swayosd-libinput-backend.service
-%{_libdir}/udev/rules.d/99-swayosd.rules
+%{_prefix}/lib/systemd/system/swayosd-libinput-backend.service
+%{_prefix}/lib/udev/rules.d/99-swayosd.rules
 %{_sysconfdir}/xdg/swayosd/style.css
 
 %changelog
