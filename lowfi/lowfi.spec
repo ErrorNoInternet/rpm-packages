@@ -7,7 +7,7 @@
 %global __brp_mangle_shebangs /usr/bin/true
 
 Name:           lowfi
-Version:        1.4.1
+Version:        1.4.2
 Release:        %autorelease
 Summary:        Extremely simple lofi player
 
