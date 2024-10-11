@@ -1,11 +1,11 @@
 diff --git a/hyprland.spec b/hyprland.spec
-index 881bf28..5c0acf2 100644
+index 881bf28..9626966 100644
 --- a/hyprland.spec
 +++ b/hyprland.spec
-@@ -1,20 +1,23 @@
+@@ -1,28 +1,31 @@
  Name:           hyprland
 -Version:        0.39.1
-+Version:        0.44.0
++Version:        0.44.1
  Release:        %autorelease
  Summary:        Dynamic tiling Wayland compositor that doesn't sacrifice on its looks
  
@@ -35,15 +35,16 @@ index 881bf28..5c0acf2 100644
  # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
  ExcludeArch:    %{ix86}
  
-@@ -23,6 +26,7 @@ BuildRequires:  gcc-c++
- BuildRequires:  jq
+ BuildRequires:  cmake
+ BuildRequires:  gcc-c++
+-BuildRequires:  jq
  BuildRequires:  meson
  
 +BuildRequires:  pkgconfig(aquamarine)
  BuildRequires:  pkgconfig(cairo)
  BuildRequires:  pkgconfig(egl)
  BuildRequires:  pkgconfig(gbm)
-@@ -31,22 +35,25 @@ BuildRequires:  pkgconfig(hwdata)
+@@ -31,22 +34,25 @@ BuildRequires:  pkgconfig(hwdata)
  BuildRequires:  pkgconfig(hyprcursor)
  BuildRequires:  pkgconfig(hyprland-protocols)
  BuildRequires:  pkgconfig(hyprlang)
@@ -74,7 +75,7 @@ index 881bf28..5c0acf2 100644
  BuildRequires:  pkgconfig(xcb-ewmh)
  BuildRequires:  pkgconfig(xcb-icccm)
  BuildRequires:  pkgconfig(xcb-present)
-@@ -58,26 +65,24 @@ BuildRequires:  pkgconfig(xcb-util)
+@@ -58,26 +64,24 @@ BuildRequires:  pkgconfig(xcb-util)
  BuildRequires:  pkgconfig(xcb-xfixes)
  BuildRequires:  pkgconfig(xcb-xinput)
  BuildRequires:  pkgconfig(xcb)
@@ -107,7 +108,7 @@ index 881bf28..5c0acf2 100644
  # Lack of graphical drivers may hurt the common use case
  Recommends:     mesa-dri-drivers
  # Logind needs polkit to create a graphical session
-@@ -87,8 +92,8 @@ Recommends:     (qt5-qtwayland if qt5-qtbase-gui)
+@@ -87,8 +91,8 @@ Recommends:     (qt5-qtwayland if qt5-qtbase-gui)
  Recommends:     (qt6-qtwayland if qt6-qtbase-gui)
  
  %description
@@ -118,11 +119,9 @@ index 881bf28..5c0acf2 100644
  very flexible IPC model allowing for a lot of customization, a powerful
  plugin system and more.
  
-@@ -98,32 +103,34 @@ Requires:       %{name}%{?_isa} = %{version}-%{release}
- Requires:       cmake
- Requires:       cpio
+@@ -100,30 +104,33 @@ Requires:       cpio
  Requires:       gcc-c++
--Requires:       meson
+ Requires:       meson
  Requires:       ninja-build
 +Requires:       pkgconfig(aquamarine)
  Requires:       pkgconfig(cairo)
@@ -209,6 +208,11 @@ index 881bf28..5c0acf2 100644
  %{_datadir}/wayland-sessions/%{name}.desktop
  %{_datadir}/xdg-desktop-portal/%{name}-portals.conf
  %{_mandir}/man1/hyprctl.1*
+@@ -187,3 +190,4 @@ rm -rf %{buildroot}%{_datadir}/pkgconfig/%{name}.pc
+ 
+ %changelog
+ %autochangelog
++
 diff --git a/ime-decorations.diff b/ime-decorations.diff
 new file mode 100644
 index 0000000..baf777b
