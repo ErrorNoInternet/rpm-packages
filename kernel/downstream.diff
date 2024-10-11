@@ -1515,15 +1515,15 @@ index 000000000..c2a1235f7
 +
 diff --git a/btrfs-allocator-hints.patch b/btrfs-allocator-hints.patch
 new file mode 100644
-index 000000000..bd8fc83cd
+index 000000000..78df6390b
 --- /dev/null
 +++ b/btrfs-allocator-hints.patch
-@@ -0,0 +1,289 @@
+@@ -0,0 +1,290 @@
 +diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
-+index b1d1ac25237b7a..9246161bfdecc7 100644
++index 03926ad467c9..3675d961b39a 100644
 +--- a/fs/btrfs/sysfs.c
 ++++ b/fs/btrfs/sysfs.c
-+@@ -1817,6 +1817,70 @@ static ssize_t btrfs_devinfo_error_stats_show(struct kobject *kobj,
++@@ -1972,6 +1972,70 @@ static ssize_t btrfs_devinfo_error_stats_show(struct kobject *kobj,
 + }
 + BTRFS_ATTR(devid, error_stats, btrfs_devinfo_error_stats_show);
 + 
@@ -1594,7 +1594,7 @@ index 000000000..bd8fc83cd
 + /*
 +  * Information about one device.
 +  *
-+@@ -1830,6 +1894,7 @@ static struct attribute *devid_attrs[] = {
++@@ -1985,6 +2049,7 @@ static struct attribute *devid_attrs[] = {
 + 	BTRFS_ATTR_PTR(devid, replace_target),
 + 	BTRFS_ATTR_PTR(devid, scrub_speed_max),
 + 	BTRFS_ATTR_PTR(devid, writeable),
@@ -1603,10 +1603,10 @@ index 000000000..bd8fc83cd
 + };
 + ATTRIBUTE_GROUPS(devid);
 +diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-+index b9ef6f54635ca5..0e269b3f11185f 100644
++index fcedc43ef291..e7c5c9c7a191 100644
 +--- a/fs/btrfs/volumes.c
 ++++ b/fs/btrfs/volumes.c
-+@@ -174,6 +174,20 @@ enum btrfs_raid_types __attribute_const__ btrfs_bg_flags_to_raid_index(u64 flags
++@@ -184,6 +184,20 @@ enum btrfs_raid_types __attribute_const__ btrfs_bg_flags_to_raid_index(u64 flags
 + 	return BTRFS_BG_FLAG_TO_INDEX(profile);
 + }
 + 
@@ -1627,7 +1627,7 @@ index 000000000..bd8fc83cd
 + const char *btrfs_bg_type_to_raid_name(u64 flags)
 + {
 + 	const int index = btrfs_bg_flags_to_raid_index(flags);
-+@@ -2856,7 +2870,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
++@@ -2879,7 +2893,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
 + 	return ret;
 + }
 + 
@@ -1636,7 +1636,7 @@ index 000000000..bd8fc83cd
 + 					struct btrfs_device *device)
 + {
 + 	int ret;
-+@@ -5034,13 +5048,18 @@ static int btrfs_add_system_chunk(struct btrfs_fs_info *fs_info,
++@@ -5196,13 +5210,18 @@ static int btrfs_add_system_chunk(struct btrfs_fs_info *fs_info,
 + }
 + 
 + /*
@@ -1656,7 +1656,7 @@ index 000000000..bd8fc83cd
 + 	if (di_a->max_avail > di_b->max_avail)
 + 		return -1;
 + 	if (di_a->max_avail < di_b->max_avail)
-+@@ -5193,6 +5212,8 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
++@@ -5355,6 +5374,8 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
 + 	int ndevs = 0;
 + 	u64 max_avail;
 + 	u64 dev_offset;
@@ -1665,7 +1665,7 @@ index 000000000..bd8fc83cd
 + 
 + 	/*
 + 	 * in the first pass through the devices list, we gather information
-+@@ -5245,16 +5266,94 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
++@@ -5407,16 +5428,94 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
 + 		devices_info[ndevs].max_avail = max_avail;
 + 		devices_info[ndevs].total_avail = total_avail;
 + 		devices_info[ndevs].dev = device;
@@ -1761,10 +1761,10 @@ index 000000000..bd8fc83cd
 + }
 + 
 +diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-+index 2128a032c3b74d..12777e8e2769c8 100644
++index 37a09ebb34dd..584a9d1f155e 100644
 +--- a/fs/btrfs/volumes.h
 ++++ b/fs/btrfs/volumes.h
-+@@ -493,6 +493,7 @@ struct btrfs_device_info {
++@@ -559,6 +559,7 @@ struct btrfs_device_info {
 + 	u64 dev_offset;
 + 	u64 max_avail;
 + 	u64 total_avail;
@@ -1772,7 +1772,7 @@ index 000000000..bd8fc83cd
 + };
 + 
 + struct btrfs_raid_attr {
-+@@ -745,6 +746,8 @@ int btrfs_bg_type_to_factor(u64 flags);
++@@ -832,6 +833,8 @@ int btrfs_bg_type_to_factor(u64 flags);
 + const char *btrfs_bg_type_to_raid_name(u64 flags);
 + int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info);
 + bool btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical);
@@ -1780,12 +1780,12 @@ index 000000000..bd8fc83cd
 ++                                       struct btrfs_device *device);
 + 
 + bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr);
-+ u8 *btrfs_sb_fsid_ptr(struct btrfs_super_block *sb);
++ const u8 *btrfs_sb_fsid_ptr(const struct btrfs_super_block *sb);
 +diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/btrfs_tree.h
-+index fc3c32186d7eb1..9946e497dc8367 100644
++index fc29d273845d..92bcc59b129a 100644
 +--- a/include/uapi/linux/btrfs_tree.h
 ++++ b/include/uapi/linux/btrfs_tree.h
-+@@ -557,6 +557,22 @@ struct btrfs_node {
++@@ -578,6 +578,22 @@ struct btrfs_node {
 + 	struct btrfs_key_ptr ptrs[];
 + } __attribute__ ((__packed__));
 + 
@@ -1808,6 +1808,7 @@ index 000000000..bd8fc83cd
 + struct btrfs_dev_item {
 + 	/* the internal btrfs device id */
 + 	__le64 devid;
++
 diff --git a/btrfs-block-group-reclaim.patch b/btrfs-block-group-reclaim.patch
 new file mode 100644
 index 000000000..0ad3db7c7
