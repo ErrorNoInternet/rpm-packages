@@ -9,7 +9,7 @@ Release:            %autorelease
 Summary:            Flexible QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
-URL:                https://github.com/outfoxxed/quickshell
+URL:                https://github.com/quickshell-mirror/quickshell
 Source0:            %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
 
 BuildRequires:      cmake
@@ -38,8 +38,9 @@ Flexible QtQuick based desktop shell toolkit for Wayland and X11.
 %autosetup -n %{name}-%{commit} -p1
 
 %build
-export QTWAYLANDSCANNER=%{_libdir}/qt6/libexec/qtwaylandscanner
 %cmake  -GNinja \
+        -DDISTRIBUTOR="Fedora COPR (errornointernet/quickshell)" \
+        -DDISTRIBUTOR_DEBUGINFO_AVAILABLE=YES \
 %if %{with asan}
         -DASAN=ON \
 %endif
@@ -55,7 +56,7 @@ mv %{buildroot}%{_libdir}/qt-6 %{buildroot}%{_libdir}/qt6
 
 %files
 %license LICENSE LICENSE-GPL
-%doc README.md CONTRIBUTING.md
+%doc README.md CONTRIBUTING.md BUILD.md
 %{_bindir}/qs
 %{_bindir}/quickshell
 %{_libdir}/qt6/qml/Quickshell
