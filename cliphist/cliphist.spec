@@ -3,7 +3,7 @@
 
 # https://github.com/sentriz/cliphist
 %global goipath         github.com/sentriz/cliphist
-Version:                0.5.0
+Version:                0.6.1
 
 %gometa -L -f
 
