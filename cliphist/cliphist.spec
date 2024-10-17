@@ -21,9 +21,7 @@ License:        GPL-3.0-only
 URL:            https://github.com/sentriz/cliphist
 Source:         %{gosource}
 
-BuildRequires: golang(github.com/rogpeppe/go-internal/testscript)
-BuildRequires: golang(go.etcd.io/bbolt)
-BuildRequires: golang(golang.org/x/image/bmp)
+BuildRequires:  git
 
 %description %{common_description}
 
