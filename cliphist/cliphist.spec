@@ -32,9 +32,7 @@ BuildRequires: golang(golang.org/x/image/bmp)
 %prep
 %goprep -A
 %autopatch -p1
-
-%generate_buildrequires
-%go_generate_buildrequires
+go mod vendor
 
 %build
 %gobuild -o %{gobuilddir}/bin/cliphist %{goipath}
@@ -43,6 +41,7 @@ BuildRequires: golang(golang.org/x/image/bmp)
 %gopkginstall
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
+chmod -R u+w %{gobuilddir}/pkg
 
 %if %{with check}
 %check
@@ -50,7 +49,7 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 %endif
 
 %files
-%license LICENSE
+%license LICENSE vendor/modules.txt
 %doc CHANGELOG.md version.txt readme.md
 %{_bindir}/*
 
