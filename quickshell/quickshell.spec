@@ -51,7 +51,6 @@ Flexible QtQuick based desktop shell toolkit for Wayland and X11.
 
 %install
 %cmake_install
-ln -s quickshell %{buildroot}%{_bindir}/qs
 mv %{buildroot}%{_libdir}/qt-6 %{buildroot}%{_libdir}/qt6
 
 %files
