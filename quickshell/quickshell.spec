@@ -39,12 +39,12 @@ Flexible QtQuick based desktop shell toolkit for Wayland and X11.
 
 %build
 %cmake  -GNinja \
+        -DBUILD_SHARED_LIBS=OFF \
         -DDISTRIBUTOR="Fedora COPR (errornointernet/quickshell)" \
         -DDISTRIBUTOR_DEBUGINFO_AVAILABLE=YES \
 %if %{with asan}
         -DASAN=ON \
 %endif
-        -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_BUILD_TYPE=Release \
         -DGIT_REVISION=%{commit}
 %cmake_build
@@ -56,7 +56,7 @@ mv %{buildroot}%{_libdir}/qt-6 %{buildroot}%{_libdir}/qt6
 
 %files
 %license LICENSE LICENSE-GPL
-%doc README.md CONTRIBUTING.md BUILD.md
+%doc BUILD.md CONTRIBUTING.md README.md
 %{_bindir}/qs
 %{_bindir}/quickshell
 %{_libdir}/qt6/qml/Quickshell
