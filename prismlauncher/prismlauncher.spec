@@ -51,8 +51,6 @@ Group:            Amusements/Games
 URL:              https://github.com/PrismLauncher/PrismLauncher
 Source0:          %{url}/releases/download/%{version}/%{real_name}-%{version}.tar.gz
 
-Patch0:           bmclapi-downloads.diff
-
 BuildRequires:    cmake >= 3.15
 BuildRequires:    extra-cmake-modules
 BuildRequires:    gcc-c++
