@@ -32,7 +32,8 @@ BuildRequires:      libasan
 %endif
 
 %description
-Flexible QtQuick based desktop shell toolkit for Wayland and X11.
+Flexible toolkit for making desktop shells with QtQuick, targeting
+Wayland and X11.
 
 %prep
 %autosetup -n %{name}-%{commit} -p1
