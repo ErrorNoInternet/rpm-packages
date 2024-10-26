@@ -41,6 +41,7 @@ declare -A anitya_ids=(
 )
 
 declare -A git_forges=(
+	["asmfetch/asmfetch.spec"]=github
 	["hsize/hsize.spec"]=github
 	["overmask/overmask.spec"]=github
 	["quickshell/quickshell.spec"]=github
