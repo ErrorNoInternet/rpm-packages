@@ -245,10 +245,9 @@ index 0000000..baf777b
 + }
 +
 diff --git a/sources b/sources
-index cfad131..3624e45 100644
+deleted file mode 100644
+index cfad131..0000000
 --- a/sources
-+++ b/sources
-@@ -1 +1,2 @@
++++ /dev/null
+@@ -1 +0,0 @@
 -SHA512 (source-v0.39.1.tar.gz) = da8ee577aa823c9fb7b45bfd07503656561c1cd4cac42a9bf8f582f653c93b20824b3bce7bbcbd47b7f7f8e83fb1b630d6d5c983fe345c971322369f193c2c8f
-+SHA512 (source-v0.42.0.tar.gz) = 839916957abc867ad9a3a32b6f74830055060b99c4c1de314f71a85f8d55ef051c5adb7c79dd7a7e10f81d1130aa032458bb65ce2454198a79faa719021f66af
-+
