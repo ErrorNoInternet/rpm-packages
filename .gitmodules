@@ -1,60 +1,60 @@
 [submodule "btrfs-progs/upstream"]
 	path = btrfs-progs/upstream
 	url = https://src.fedoraproject.org/rpms/btrfs-progs
-	branch = f40
+	branch = f41
 [submodule "rsync/upstream"]
 	path = rsync/upstream
 	url = https://src.fedoraproject.org/rpms/rsync
-	branch = f40
+	branch = f41
 [submodule "rust-eza/upstream"]
 	path = rust-eza/upstream
 	url = https://src.fedoraproject.org/rpms/rust-eza
-	branch = f40
+	branch = f41
 [submodule "kitty/upstream"]
 	path = kitty/upstream
 	url = https://src.fedoraproject.org/rpms/kitty
-	branch = f40
+	branch = f41
 [submodule "kernel/upstream"]
 	path = kernel/upstream
 	url = https://src.fedoraproject.org/rpms/kernel
-	branch = f40
+	branch = f41
 [submodule "neovim/upstream"]
 	path = neovim/upstream
 	url = https://src.fedoraproject.org/rpms/neovim
-	branch = f40
+	branch = f41
 [submodule "openrgb/upstream"]
 	path = openrgb/upstream
 	url = https://src.fedoraproject.org/rpms/openrgb
-	branch = f40
+	branch = f41
 [submodule "strace/upstream"]
 	path = strace/upstream
 	url = https://src.fedoraproject.org/rpms/strace
-	branch = f40
+	branch = f41
 [submodule "btop/upstream"]
 	path = btop/upstream
 	url = https://src.fedoraproject.org/rpms/btop
-	branch = f40
+	branch = f41
 [submodule "uboot-tools/upstream"]
 	path = uboot-tools/upstream
 	url = https://src.fedoraproject.org/rpms/uboot-tools
-	branch = f40
+	branch = f41
 [submodule "rofi-wayland/upstream"]
 	path = rofi-wayland/upstream
 	url = https://src.fedoraproject.org/rpms/rofi-wayland
-	branch = f40
+	branch = f41
 [submodule "hyprlock/upstream"]
 	path = hyprlock/upstream
 	url = https://src.fedoraproject.org/rpms/hyprlock
-	branch = f40
+	branch = f41
 [submodule "coreutils/upstream"]
 	path = coreutils/upstream
 	url = https://src.fedoraproject.org/rpms/coreutils
-	branch = f40
+	branch = f41
 [submodule "hyprland/upstream"]
 	path = hyprland/upstream
 	url = https://src.fedoraproject.org/rpms/hyprland
-	branch = f40
+	branch = f41
 [submodule "fcitx5/upstream"]
 	path = fcitx5/upstream
 	url = https://src.fedoraproject.org/rpms/fcitx5
-	branch = f40
+	branch = f41
