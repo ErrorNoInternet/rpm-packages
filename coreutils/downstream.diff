@@ -1015,11 +1015,11 @@ index 0000000..8329f3a
 +
 diff --git a/coreutils-selinux.patch b/coreutils-selinux.patch
 deleted file mode 100644
-index 66e06e1..0000000
+index a31c3af..0000000
 --- a/coreutils-selinux.patch
 +++ /dev/null
 @@ -1,87 +0,0 @@
--From 88ba186955add2b230c017749d5622f7a0d62177 Mon Sep 17 00:00:00 2001
+-From 78970c915b8556fcec4622e948a37dd8e34efe6d Mon Sep 17 00:00:00 2001
 -From: rpm-build <rpm-build>
 -Date: Wed, 30 Aug 2023 17:19:58 +0200
 -Subject: [PATCH] coreutils-selinux.patch
@@ -1030,10 +1030,10 @@ index 66e06e1..0000000
 - 2 files changed, 29 insertions(+), 2 deletions(-)
 -
 -diff --git a/src/cp.c b/src/cp.c
--index 04a5cbe..7a364e5 100644
+-index 28b0217..897379f 100644
 ---- a/src/cp.c
 -+++ b/src/cp.c
--@@ -989,7 +989,7 @@ main (int argc, char **argv)
+-@@ -997,7 +997,7 @@ main (int argc, char **argv)
 -   selinux_enabled = (0 < is_selinux_enabled ());
 -   cp_option_init (&x);
 - 
@@ -1042,7 +1042,7 @@ index 66e06e1..0000000
 -                            long_opts, nullptr))
 -          != -1)
 -     {
--@@ -1041,6 +1041,23 @@ main (int argc, char **argv)
+-@@ -1049,6 +1049,23 @@ main (int argc, char **argv)
 -           copy_contents = true;
 -           break;
 - 
@@ -1067,7 +1067,7 @@ index 66e06e1..0000000
 -           x.preserve_links = true;
 -           x.dereference = DEREF_NEVER;
 -diff --git a/src/install.c b/src/install.c
--index 31a48f1..ce9fa2d 100644
+-index accd0fd..b686fe9 100644
 ---- a/src/install.c
 -+++ b/src/install.c
 -@@ -807,7 +807,7 @@ main (int argc, char **argv)
@@ -1104,13 +1104,13 @@ index 66e06e1..0000000
 -           use_default_selinux_context = false;
 -           break;
 --- 
--2.41.0
+-2.44.0
 -
 diff --git a/coreutils.spec b/coreutils.spec
-index bf36f48..1d2f943 100644
+index bf9f8b3..bd90cb8 100644
 --- a/coreutils.spec
 +++ b/coreutils.spec
-@@ -42,7 +42,10 @@ Patch107: coreutils-9.4-tail-64k-pages.patch
+@@ -36,7 +36,10 @@ Patch104: coreutils-df-direct.patch
  Patch800: coreutils-i18n.patch
  
  # downstream SELinux options deprecated since 2009
