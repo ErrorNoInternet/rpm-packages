@@ -13,9 +13,14 @@ Summary:        Rust library for Blazing fast non cryptographic random number ge
 License:        MIT OR Apache-2.0
 URL:            https://crates.io/crates/random-fast-rng
 Source:         %{crates_source}
+# * https://github.com/elichai/random-rs/issues/2
+Source1:        https://github.com/elichai/random-rs/raw/bd98b95/LICENSE-APACHE
+Source2:        https://github.com/elichai/random-rs/raw/bd98b95/LICENSE-MIT
+# Manually created patch for downstream crate metadata changes
+# * remove reference to readme file that is not included in published crates
+Patch:          random-fast-rng-fix-metadata.diff
 
 BuildRequires:  cargo-rpm-macros >= 24
-BuildRequires:  git
 
 %global _description %{expand:
 Rust library for Blazing fast non cryptographic random number generator.}
@@ -32,7 +37,8 @@ This package contains library source intended for building other packages which
 use the "%{crate}" crate.
 
 %files          devel
-# FIXME: no license files detected
+%license %{crate_instdir}/LICENSE-APACHE
+%license %{crate_instdir}/LICENSE-MIT
 %{crate_instdir}/
 
 %package     -n %{name}+default-devel
@@ -74,6 +80,7 @@ use the "std" feature of the "%{crate}" crate.
 %prep
 %autosetup -n %{crate}-%{version} -p1
 %cargo_prep
+cp -pav %{SOURCE1} %{SOURCE2} .
 
 %generate_buildrequires
 %cargo_generate_buildrequires
