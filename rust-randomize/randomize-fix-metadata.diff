@@ -1,0 +1,12 @@
+--- randomize-3.0.1/Cargo.toml	1970-01-01T00:00:00+00:00
++++ randomize-3.0.1/Cargo.toml	2023-05-10T14:01:48.470551+00:00
+@@ -21,6 +21,9 @@
+ categories = ["no-std"]
+ license = "0BSD"
+ repository = "https://github.com/Lokathor/randomize"
++autobins = false
++exclude = ["/appveyor.yml", "/bors.toml", "/release.txt", "/rustfmt.toml"]
++
+ [dependencies.rand_core]
+ version = "0.5"
+ optional = true
