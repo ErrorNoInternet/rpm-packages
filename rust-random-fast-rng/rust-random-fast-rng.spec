@@ -15,6 +15,7 @@ URL:            https://crates.io/crates/random-fast-rng
 Source:         %{crates_source}
 
 BuildRequires:  cargo-rpm-macros >= 24
+BuildRequires:  git
 
 %global _description %{expand:
 Rust library for Blazing fast non cryptographic random number generator.}
