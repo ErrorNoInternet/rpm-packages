@@ -26,6 +26,7 @@ declare -A anitya_ids=(
 	["rust-keyframe_derive/rust-keyframe_derive.spec"]=373520
 	["rust-libvips/rust-libvips.spec"]=373523
 	["rust-oorandom/rust-oorandom.spec"]=80802
+	["rust-randomize/rust-randomize.spec"]=109578
 	["rust-spin_sleep/rust-spin_sleep.spec"]=242190
 	["satty/satty.spec"]=372795
 	["scrcpy/scrcpy.spec"]=226924
