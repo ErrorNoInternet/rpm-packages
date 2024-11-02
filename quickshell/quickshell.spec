@@ -1,7 +1,7 @@
 %bcond_with         asan
 
-%global commit      98cdb8718101577068dedc95459df4c2adce57d3
-%global snapdate    20241101
+%global commit      cdeec6ee83f6512b2736b4e87695f708f291f843
+%global snapdate    20241102
 
 Name:               quickshell
 Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
