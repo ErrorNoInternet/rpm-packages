@@ -43,6 +43,7 @@ Wayland and X11.
         -DBUILD_SHARED_LIBS=OFF \
         -DDISTRIBUTOR="Fedora COPR (errornointernet/quickshell)" \
         -DDISTRIBUTOR_DEBUGINFO_AVAILABLE=YES \
+        -DINSTALL_QML_PREFIX=%{_lib}/qt6/qml \
 %if %{with asan}
         -DASAN=ON \
 %endif
@@ -52,7 +53,6 @@ Wayland and X11.
 
 %install
 %cmake_install
-mv %{buildroot}%{_libdir}/qt-6 %{buildroot}%{_libdir}/qt6
 
 %files
 %license LICENSE LICENSE-GPL
