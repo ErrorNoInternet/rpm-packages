@@ -1,7 +1,14 @@
 diff --git a/hyprland.spec b/hyprland.spec
-index 1910d6d..020805c 100644
+index 1910d6d..5d01712 100644
 --- a/hyprland.spec
 +++ b/hyprland.spec
+@@ -1,5 +1,5 @@
+ Name:           hyprland
+-Version:        0.44.1
++Version:        0.45.0
+ Release:        %autorelease
+ Summary:        Dynamic tiling Wayland compositor that doesn't sacrifice on its looks
+ 
 @@ -16,6 +16,8 @@ License:        BSD-3-Clause AND BSD-2-Clause AND LGPL-2.1-or-later AND HPND-sel
  URL:            https://github.com/hyprwm/Hyprland
  Source:         %{url}/releases/download/v%{version}/source-v%{version}.tar.gz
@@ -10,6 +17,23 @@ index 1910d6d..020805c 100644
 +
  # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
  ExcludeArch:    %{ix86}
+ 
+@@ -43,6 +45,7 @@ BuildRequires:  pkgconfig(libudev)
+ BuildRequires:  pkgconfig(pango)
+ BuildRequires:  pkgconfig(pangocairo)
+ BuildRequires:  pkgconfig(pixman-1)
++BuildRequires:  pkgconfig(systemd)
+ BuildRequires:  pkgconfig(tomlplusplus)
+ BuildRequires:  pkgconfig(uuid)
+ BuildRequires:  pkgconfig(wayland-client)
+@@ -165,6 +168,8 @@ cp -p subprojects/udis86/LICENSE LICENSE-udis86
+ 
+ %install
+ %meson_install
++rm %{buildroot}%{_userunitdir}/hyprland-session.service \
++   %{buildroot}%{_datadir}/wayland-sessions/hyprland-systemd.desktop
+ rm -rf %{buildroot}%{_includedir}/%{name}
+ rm -rf %{buildroot}%{_datadir}/pkgconfig/%{name}.pc
  
 diff --git a/ime-decorations.diff b/ime-decorations.diff
 new file mode 100644
