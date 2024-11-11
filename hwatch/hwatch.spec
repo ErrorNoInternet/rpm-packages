@@ -7,7 +7,7 @@
 %global cargo_install_lib 0
 
 Name:           hwatch
-Version:        0.3.15
+Version:        0.3.16
 Release:        %autorelease
 Summary:        Modern alternative to the watch command
 License:        MIT
