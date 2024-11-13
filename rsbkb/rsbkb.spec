@@ -5,7 +5,7 @@
 %global cargo_install_lib 0
 
 Name:           rsbkb
-Version:        1.6
+Version:        1.7.0
 Release:        %autorelease
 Summary:        CLI tools to encode/decode things
 
