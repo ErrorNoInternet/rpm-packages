@@ -15,6 +15,7 @@ Source0:            %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
 BuildRequires:      cmake
 BuildRequires:      cmake(Qt6Core)
 BuildRequires:      cmake(Qt6Qml)
+BuildRequires:      cmake(Qt6ShaderTools)
 BuildRequires:      cmake(Qt6WaylandClient)
 BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
@@ -26,6 +27,7 @@ BuildRequires:      pkgconfig(pam)
 BuildRequires:      pkgconfig(wayland-client)
 BuildRequires:      pkgconfig(wayland-protocols)
 BuildRequires:      qt6-qtbase-private-devel
+BuildRequires:      spirv-tools
 
 %if %{with asan}
 BuildRequires:      libasan
