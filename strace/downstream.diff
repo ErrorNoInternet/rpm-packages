@@ -919,27 +919,18 @@ index 0000000..7b682b9
 + 			break;
 + 		}
 diff --git a/strace.spec b/strace.spec
-index 2cc557c..6b049c9 100644
+index 98d699e..359daef 100644
 --- a/strace.spec
 +++ b/strace.spec
-@@ -1,7 +1,7 @@
- Summary: Tracks and displays system calls associated with a running process
- Name: strace
- Version: 6.11
--Release: 1%{?dist}
-+Release: 2%{?dist}
- # The test suite is GPLv2+, the bundled headers are GPLv2 with Linux syscall
- # exception, all the rest is LGPLv2.1+.
- %if 0%{?fedora} >= 35 || 0%{?centos} >= 9 || 0%{?rhel} >= 9
-@@ -115,6 +115,8 @@ BuildRequires: gcc gzip make
- BuildRequires: pkgconfig(bluez)
- %endif
+@@ -138,6 +138,8 @@ BuildRequires: pkgconfig(bluez)
+ %{?!make_build:   %global make_build %__make %{?_smp_mflags}}
+ %{?!make_install: %global make_install %__make install DESTDIR="%{?buildroot}" INSTALL="%__install -p"}
  
 +Patch0: add-colors.diff
 +
- # Install elfutils-devel or libdw-devel to enable strace -k option.
- # Install binutils-devel to enable symbol demangling.
- %if 0%{?fedora} >= 20 || 0%{?centos} >= 6 || 0%{?rhel} >= 6
+ %description
+ The strace program intercepts and records the system calls called and
+ received by a running process.  Strace can print a record of each
 @@ -149,7 +151,7 @@ Install strace if you need a tool to track the system calls made and
  received by a process.
  
