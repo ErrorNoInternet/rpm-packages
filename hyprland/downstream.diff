@@ -1,11 +1,11 @@
 diff --git a/hyprland.spec b/hyprland.spec
-index 1910d6d..3d7c2b0 100644
+index 1910d6d..a04c9c6 100644
 --- a/hyprland.spec
 +++ b/hyprland.spec
 @@ -1,5 +1,5 @@
  Name:           hyprland
 -Version:        0.44.1
-+Version:        0.45.1
++Version:        0.45.2
  Release:        %autorelease
  Summary:        Dynamic tiling Wayland compositor that doesn't sacrifice on its looks
  
