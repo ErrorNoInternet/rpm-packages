@@ -2,12 +2,14 @@
 
 Name:           try
 Version:        0.2.0
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        Inspect a command's effects before modifying your live system
 
 License:        MIT
 URL:            https://github.com/binpash/try
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+
+Patch:          ignore-vfat-mounts.diff
 
 BuildRequires:  make
 BuildRequires:  pandoc

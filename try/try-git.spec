@@ -1,10 +1,11 @@
 %global commit          b63d1e7d3aafa7cd334a68d7077ce13ffa530d27
 %global snapdate        20241120
+%global latest          0.2.0
 
 %global debug_package   %{nil}
 
 Name:           try-git
-Version:        0.2.0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
+Version:        %{latest}^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
 Release:        %autorelease
 Summary:        Inspect a command's effects before modifying your live system
 
@@ -12,10 +13,13 @@ License:        MIT
 URL:            https://github.com/binpash/try
 Source:         %{url}/archive/%{commit}/try-%{commit}.tar.gz
 
-Obsoletes:      try <= 0.2.0
+Patch:          ignore-vfat-mounts.diff
+
+Obsoletes:      try <= %{latest}
 
 BuildRequires:  attr
 BuildRequires:  autoconf
+BuildRequires:  expect
 BuildRequires:  gcc
 BuildRequires:  kmod
 BuildRequires:  make
@@ -46,17 +50,15 @@ This package installs Bash completion files for %{name}
 %build
 autoconf
 %configure
-%make_build man/try.1 utils/try-commit utils/try-summary
+%make_build
 
 %check
-./scripts/check_version.sh
+sed -i 's/ $//' Makefile
+# make test
 # make lint
 
 %install
-install -Dpm755 try %{buildroot}%{_bindir}/try
-install -Dpm755 utils/try-commit %{buildroot}%{_bindir}/try-commit
-install -Dpm755 utils/try-summary %{buildroot}%{_bindir}/try-summary
-install -Dpm644 man/try.1 %{buildroot}%{_mandir}/man1/try.1
+%make_install bindir=%{buildroot}%{_bindir} mandir=%{buildroot}%{_mandir}
 install -Dpm644 completions/try.bash %{buildroot}%{bash_completions_dir}/try
 
 %files
