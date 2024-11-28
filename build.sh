@@ -7,8 +7,8 @@ git config --global --add safe.directory "$PWD"
 git checkout f41
 
 patch -p1 <../downstream.diff || {
-	echo "downstream diff failed to apply"
-	exit 1
+    echo "downstream diff failed to apply"
+    exit 1
 }
 printf "%s\n%s\n" "%global _default_patch_fuzz 2" "$(cat "$spec")" >"$spec"
 sed -i "s|\([^%]\)%{?dist}|\1.patched%{?dist}|" "$spec"
