@@ -1,5 +1,5 @@
-%global commit      f5d91929a22bef05b735753d54af49bf558f4587
-%global snapdate    20241104
+%global commit      8733a7cb702c502e1f7a90159005046ec25e83b0
+%global snapdate    20241128
 
 Name:               asmfetch
 Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
