@@ -5,14 +5,14 @@
 
 Name:               unipicker
 Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
-Release:            %autorelease
+Release:            2%{dist}
 Summary:            Search unicode characters in console and copy to clipboard
 
 License:            MIT
 URL:                https://github.com/jeremija/unipicker
 Source:             %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
 
-Patch:              unipicker-remove-spaces.diff
+Patch:              unipicker-rofi.diff
 
 BuildRequires:      make
 BuildRequires:      python3
@@ -36,7 +36,7 @@ optionally copying them to clipboard.
 %license LICENSE
 %doc README.md
 %{_bindir}/unipicker
-%{_datadir}/unipicker/symbols
+%{_datadir}/unipicker/symbols*
 %{_sysconfdir}/unipickerrc
 
 %changelog

@@ -1,0 +1,91 @@
+diff --git a/Makefile b/Makefile
+index 262a266..4c3092f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -2,7 +2,7 @@ DESTDIR =
+ PREFIX = $(DESTDIR)/usr/local
+ UNICODE_VERSION = 15.1.0
+ 
+-all: symbols
++all: symbols symbols-rofi
+ 
+ Blocks.txt:
+ 	wget -O$@ "http://ftp.unicode.org/Public/$(UNICODE_VERSION)/ucd/Blocks.txt"
+@@ -15,11 +15,15 @@ BlocksReduced.txt: Blocks.txt Blocks.patch
+ symbols: BlocksReduced.txt
+ 	./generate-symbols.py $< > "$@"
+ 
+-install: symbols
++symbols-rofi: BlocksReduced.txt
++	./generate-symbols-rofi.py $< > "$@"
++
++install: symbols symbols-rofi
+ 	install -d -m755 $(PREFIX)/bin
+ 	install -m755 unipicker $(PREFIX)/bin/unipicker
+ 	install -d -m755 $(PREFIX)/share/unipicker
+ 	install -m644 symbols $(PREFIX)/share/unipicker/symbols
++	install -m644 symbols-rofi $(PREFIX)/share/unipicker/symbols-rofi
+ 	install -d -m755 $(DESTDIR)/etc
+ 	install -b -m644 unipickerrc $(DESTDIR)/etc/unipickerrc
+ 
+diff --git a/generate-symbols-rofi.py b/generate-symbols-rofi.py
+new file mode 100755
+index 0000000..a32136f
+--- /dev/null
++++ b/generate-symbols-rofi.py
+@@ -0,0 +1,26 @@
++#!/usr/bin/env python3
++import sys
++import unicodedata
++
++ranges = []
++with open(sys.argv[1], "r") as f:
++    for line in f:
++        if line.startswith("#") or len(line) <= 1:
++            continue
++        [rng, desc] = line.split(";")
++        [start, end] = rng.split("..")
++        ranges.append([int("0x" + start, 16), int("0x" + end, 16), desc.strip()])
++
++for rng in ranges:
++    for i in range(rng[0], rng[1] + 1):
++        try:
++            character = chr(i)
++            name = unicodedata.name(character)
++            print(
++                hex(i)[2:].upper(),
++                name.lower(),
++                "(" + rng[2] + ")",
++                f"\x00icon\x1f<span color=\"white\">{character}</span>",
++            )
++        except:
++            continue
+diff --git a/generate-symbols.py b/generate-symbols.py
+index 5b0ee95..adf524d 100755
+--- a/generate-symbols.py
++++ b/generate-symbols.py
+@@ -17,9 +17,10 @@ for rng in ranges:
+             character = chr(i)
+             name = unicodedata.name(character)
+             print(
+-                (character + " " + name.lower()).ljust(60, " "),
+-                hex(i)[2:].upper().rjust(6, " "),
+-                rng[2],
++                hex(i)[2:].upper(),
++                name.lower(),
++                "(" + rng[2] + ")",
++                character,
+             )
+         except:
+             continue
+diff --git a/unipickerrc b/unipickerrc
+index e755a80..aae65ec 100644
+--- a/unipickerrc
++++ b/unipickerrc
+@@ -5,4 +5,4 @@ UNIPICKER_SELECT_COMMAND=fzf
+ UNIPICKER_COPY_COMMAND=
+ 
+ # Where to load symbols file from
+-UNIPICKER_SYMBOLS_FILE=/usr/local/share/unipicker/symbols
++UNIPICKER_SYMBOLS_FILE=/usr/share/unipicker/symbols
+
