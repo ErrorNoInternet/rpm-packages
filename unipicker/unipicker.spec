@@ -36,9 +36,9 @@ optionally copying them to clipboard.
 %files
 %license LICENSE
 %doc README.md
+%config %{_sysconfdir}/unipickerrc
 %{_bindir}/unipicker
 %{_datadir}/unipicker/symbols*
-%{_sysconfdir}/unipickerrc
 
 %changelog
 %autochangelog
