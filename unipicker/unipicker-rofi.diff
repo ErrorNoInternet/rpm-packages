@@ -30,13 +30,14 @@ index 262a266..4c3092f 100644
  
 diff --git a/generate-symbols-rofi.py b/generate-symbols-rofi.py
 new file mode 100755
-index 0000000..a32136f
+index 0000000..00d24a3
 --- /dev/null
 +++ b/generate-symbols-rofi.py
-@@ -0,0 +1,26 @@
+@@ -0,0 +1,27 @@
 +#!/usr/bin/env python3
 +import sys
 +import unicodedata
++from gi.repository import GLib
 +
 +ranges = []
 +with open(sys.argv[1], "r") as f:
@@ -56,7 +57,7 @@ index 0000000..a32136f
 +                hex(i)[2:].upper(),
 +                name.lower(),
 +                "(" + rng[2] + ")",
-+                f"\x00icon\x1f<span color=\"white\">{character}</span>",
++                f'\x00icon\x1f<span color="white">{GLib.markup_escape_text(character)}</span>',
 +            )
 +        except:
 +            continue
@@ -79,15 +80,16 @@ index 5b0ee95..adf524d 100755
          except:
              continue
 diff --git a/unipicker b/unipicker
-index 74cc9d8..2196d3a 100755
+index 74cc9d8..de3b288 100755
 --- a/unipicker
 +++ b/unipicker
-@@ -69,7 +69,7 @@ while [ -n "$1" ];do
+@@ -69,7 +69,8 @@ while [ -n "$1" ];do
    shift
  done
  
 -letter=$(cat "$symbols_file" | eval $select_command | sed -E 's/^(.).*/\1/g')
-+letter=$(cat "$symbols_file" | eval $select_command | sed "s|</span>||" | sed -n 's|^.*\(.\)$|\1|p')
++selected=$(cat "$symbols_file" | eval $select_command)
++letter=$(grep "$selected" "${UNIPICKER_SYMBOLS_FILE:-${PWD}/symbols}" | sed -n 's|^.*\(.\)$|\1|p')
  
  echo "$letter"
  if [ "$should_copy" = true ];then
