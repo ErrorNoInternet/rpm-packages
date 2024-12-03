@@ -5,7 +5,7 @@
 
 Name:               unipicker
 Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
-Release:            2%{dist}
+Release:            3%{dist}
 Summary:            Search unicode characters in console and copy to clipboard
 
 License:            MIT

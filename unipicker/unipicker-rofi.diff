@@ -78,6 +78,19 @@ index 5b0ee95..adf524d 100755
              )
          except:
              continue
+diff --git a/unipicker b/unipicker
+index 74cc9d8..2196d3a 100755
+--- a/unipicker
++++ b/unipicker
+@@ -69,7 +69,7 @@ while [ -n "$1" ];do
+   shift
+ done
+ 
+-letter=$(cat "$symbols_file" | eval $select_command | sed -E 's/^(.).*/\1/g')
++letter=$(cat "$symbols_file" | eval $select_command | sed "s|</span>||" | sed -n 's|^.*\(.\)$|\1|p')
+ 
+ echo "$letter"
+ if [ "$should_copy" = true ];then
 diff --git a/unipickerrc b/unipickerrc
 index e755a80..aae65ec 100644
 --- a/unipickerrc
