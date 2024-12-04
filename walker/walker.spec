@@ -41,6 +41,7 @@ BuildRequires:  pkgconfig(graphene-1.0)
 BuildRequires:  pkgconfig(gtk4)
 BuildRequires:  pkgconfig(gtk4-layer-shell-0)
 BuildRequires:  pkgconfig(pango)
+BuildRequires:  pkgconfig(vips)
 
 Recommends:     wl-clipboard
 
