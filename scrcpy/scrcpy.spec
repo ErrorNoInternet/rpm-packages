@@ -1,7 +1,7 @@
 %define _fortify_level 2
 
 Name:           scrcpy
-Version:        3.0
+Version:        3.0.2
 Release:        %autorelease
 Summary:        Display and control your Android device
 License:        Apache-2.0
