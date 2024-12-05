@@ -1,0 +1,1549 @@
+diff --git a/package.json b/package.json
+index 481c91bc..333e4526 100644
+--- a/package.json
++++ b/package.json
+@@ -28,7 +28,8 @@
+         "electron-updater": "^6.3.4"
+     },
+     "optionalDependencies": {
+-        "@vencord/venmic": "^6.1.0"
++        "@vencord/venmic": "^6.1.0",
++        "@homebridge/dbus-native": "0.6.0"
+     },
+     "devDependencies": {
+         "@fal-works/esbuild-plugin-global-externals": "^2.1.2",
+diff --git a/pnpm-lock.yaml b/pnpm-lock.yaml
+index 18e57ff2..d528d907 100644
+--- a/pnpm-lock.yaml
++++ b/pnpm-lock.yaml
+@@ -20,6 +20,9 @@ importers:
+         specifier: ^6.3.4
+         version: 6.3.4
+     optionalDependencies:
++      '@homebridge/dbus-native':
++        specifier: 0.6.0
++        version: 0.6.0
+       '@vencord/venmic':
+         specifier: ^6.1.0
+         version: 6.1.0
+@@ -310,6 +313,22 @@ packages:
+   '@gar/promisify@1.1.3':
+     resolution: {integrity: sha512-k2Ty1JcVojjJFwrg/ThKi2ujJ7XNLYaFGNB/bWT9wGR+oSMJHMa5w+CUq6p/pVrKeNNgA7pCqEcjSnHVoqJQFw==}
+ 
++  '@homebridge/dbus-native@0.6.0':
++    resolution: {integrity: sha512-xObqQeYHTXmt6wsfj10+krTo4xbzR9BgUfX2aQ+edDC9nc4ojfzLScfXCh3zluAm6UCowKw+AFfXn6WLWUOPkg==}
++    hasBin: true
++
++  '@homebridge/long@5.2.1':
++    resolution: {integrity: sha512-i5Df8R63XNPCn+Nj1OgAoRdw9e+jHUQb3CNUbvJneI2iu3j4+OtzQj+5PA1Ce+747NR1SPqZSvyvD483dOT3AA==}
++
++  '@homebridge/put@0.0.8':
++    resolution: {integrity: sha512-mwxLHHqKebOmOSU0tsPEWQSBHGApPhuaqtNpCe7U+AMdsduweANiu64E9SXXUtdpyTjsOpgSMLhD1+kbLHD2gA==}
++    engines: {node: '>=0.3.0'}
++
++  '@humanwhocodes/config-array@0.11.14':
++    resolution: {integrity: sha512-3T8LkOmg45BV5FICb15QQMsyUSWrQ8AygVfC7ZG32zOalnqrilm018ZVCw0eapXux8FtA33q8PSRSstjee3jSg==}
++    engines: {node: '>=10.10.0'}
++    deprecated: Use @eslint/config-array instead
++
+   '@humanwhocodes/module-importer@1.0.1':
+     resolution: {integrity: sha512-bxveV4V8v5Yb4ncFTT3rPSgZBOpCkjfK0y4oVVVJwIuDVBRMDXrPyXRL988i5ap9m9bnyEEjWfm5WkBmtffLfA==}
+     engines: {node: '>=12.22'}
+@@ -988,6 +1007,13 @@ packages:
+     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
+     engines: {node: '>=12'}
+ 
++  dotenv@9.0.2:
++    resolution: {integrity: sha512-I9OvvrHp4pIARv4+x9iuewrWycX6CcZtoAu1XrzPxc5UygMJXJZYmBsynku8IkrJwgypE5DGNjDPmPRhDCptUg==}
++    engines: {node: '>=10'}
++
++  duplexer@0.1.2:
++    resolution: {integrity: sha512-jtD6YG370ZCIi/9GTaJKQxWTZD045+4R4hTk/x1UyoqadyJ9x9CgSi1RlVDQF8U2sxLLSnFkCaMihqljHIWgMg==}
++
+   eastasianwidth@0.2.0:
+     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+ 
+@@ -1203,6 +1229,9 @@ packages:
+     resolution: {integrity: sha512-kVscqXk4OCp68SZ0dkgEKVi6/8ij300KBWTJq32P/dYeWTSwK41WyTxalN1eRmA5Z9UU/LX9D7FWSmV9SAYx6g==}
+     engines: {node: '>=0.10.0'}
+ 
++  event-stream@4.0.1:
++    resolution: {integrity: sha512-qACXdu/9VHPBzcyhdOWR5/IahhGMf0roTeZJfzz077GwylcDd90yOHLouhmv7GJ5XzPi6ekaQWd8AvPP2nOvpA==}
++
+   expand-tilde@2.0.2:
+     resolution: {integrity: sha512-A5EmesHW6rfnZ9ysHQjPdJRni0SRar0tjtG5MNtm9n5TUvsYU8oozprtRD4AqHxcZWWlVuAmQo2nWKfN9oyjTw==}
+     engines: {node: '>=0.10.0'}
+@@ -1307,6 +1336,9 @@ packages:
+     resolution: {integrity: sha512-GMBAbW9antB8iZRHLoGw0b3HANt57diZYFO/HL1JGIC1MjKrdmhxvrJbupnVvpys0zsz7yBApXdQyfepKly2kA==}
+     engines: {node: '>=0.10.0'}
+ 
++  from@0.1.7:
++    resolution: {integrity: sha512-twe20eF1OxVxp/ML/kq2p1uc6KvFK/+vs8WjEbeKmV2He22MKm7YF2ANIt+EOqhJ5L3K/SuuPhk0hWQDjOM23g==}
++
+   fs-constants@1.0.0:
+     resolution: {integrity: sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==}
+ 
+@@ -1475,6 +1507,11 @@ packages:
+     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
+     engines: {node: '>= 0.4'}
+ 
++  hexy@0.3.5:
++    resolution: {integrity: sha512-UCP7TIZPXz5kxYJnNOym+9xaenxCLor/JyhKieo8y8/bJWunGh9xbhy3YrgYJUQ87WwfXGm05X330DszOfINZw==}
++    engines: {node: '>=10.4'}
++    hasBin: true
++    
+   homedir-polyfill@1.0.3:
+     resolution: {integrity: sha512-eSmmWE5bZTK2Nou4g0AI3zZ9rswp7GRKoKXS1BLUkvPviOqs4YTN1djQIqrXy9k5gEtdLPy86JjRwsNM9tnDcA==}
+     engines: {node: '>=0.10.0'}
+@@ -1833,6 +1870,9 @@ packages:
+     resolution: {integrity: sha512-8y/eV9QQZCiyn1SprXSrCmqJN0yNRATe+PO8ztwqrvrbdRLA3eYJF0yaR0YayLWkMbsQSKWS9N2gPcGEc4UsZg==}
+     engines: {node: '>=0.10.0'}
+ 
++  map-stream@0.0.7:
++    resolution: {integrity: sha512-C0X0KQmGm3N2ftbTGBhSyuydQ+vV1LC3f3zPvT3RXHXNZrvfPZcoXp/N5DOa8vedX/rTMm2CjTtivFg2STJMRQ==}
++
+   map-visit@1.0.0:
+     resolution: {integrity: sha512-4y7uGv8bd2WdM9vpQsiQNo41Ln1NvhvDRuVt0k2JZQ+ezN2uaQes7lZeZ+QQUHOLQAtDaBJ+7wCbi+ab/KFs+w==}
+     engines: {node: '>=0.10.0'}
+@@ -2101,6 +2141,13 @@ packages:
+     resolution: {integrity: sha512-Xa4Nw17FS9ApQFJ9umLiJS4orGjm7ZzwUrwamcGQuHSzDyth9boKDaycYdDcZDuqYATXw4HFXgaqWTctW/v1HA==}
+     engines: {node: '>=16 || 14 >=14.18'}
+ 
++  path-type@4.0.0:
++    resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
++    engines: {node: '>=8'}
++
++  pause-stream@0.0.11:
++    resolution: {integrity: sha512-e3FBlXLmN/D1S+zHzanP4E/4Z60oFAa3O051qt1pxa7DEJWKAyil6upYVXCWadEnuoqa4Pkc9oUx9zsxYeRv8A==}
++
+   pe-library@0.4.1:
+     resolution: {integrity: sha512-eRWB5LBz7PpDu4PUlwT0PhnQfTQJlDDdPa35urV4Osrm0t0AqQFGn+UIkU3klZvwJ8KPO3VbBFsXquA6p6kqZw==}
+     engines: {node: '>=12', npm: '>=6'}
+@@ -2392,6 +2439,9 @@ packages:
+     resolution: {integrity: sha512-NzNVhJDYpwceVVii8/Hu6DKfD2G+NrQHlS/V/qgv763EYudVwEcMQNxd2lh+0VrUByXN/oJkl5grOhYWvQUYiw==}
+     engines: {node: '>=0.10.0'}
+ 
++  split@1.0.1:
++    resolution: {integrity: sha512-mTyOoPbrivtXnwnIxZRFYRrPNtEFKlpB2fvjSnCQUiAA6qAZzqwna5envK4uk6OIeP17CsdF3rSBGYVBsU0Tkg==}
++
+   sprintf-js@1.1.3:
+     resolution: {integrity: sha512-Oo+0REFV59/rz3gfJNKQiBlwfHaSESl1pcGyABQsnnIfWOFt6JNj5gCog2U6MLZ//IGYD+nA8nI+mTShREReaA==}
+ 
+@@ -2410,6 +2460,9 @@ packages:
+     resolution: {integrity: sha512-72E9+uLc27Mt718pMHt9VMNiAL4LMsmDbBva8mxWUCkT07fSzEGMYUCk0XWY6lp0j6RBAG4cJ3mWuZv2OE3s0g==}
+     engines: {node: '>=0.10.0'}
+ 
++  stream-combiner@0.2.2:
++    resolution: {integrity: sha512-6yHMqgLYDzQDcAkL+tjJDC5nSNuNIx0vZtRZeiPh7Saef7VHX9H5Ijn9l2VIol2zaNYlYEX6KyuT/237A58qEQ==}
++
+   string-width@4.2.3:
+     resolution: {integrity: sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==}
+     engines: {node: '>=8'}
+@@ -2485,6 +2538,9 @@ packages:
+   text-table@0.2.0:
+     resolution: {integrity: sha512-N+8UisAXDGk8PFXP4HAzVR9nbfmVJ3zYLAWiTIoqC5v5isinhr+r5uaO8+7r3BMfuNIufIsA7RdpVgacC2cSpw==}
+ 
++  through@2.3.8:
++    resolution: {integrity: sha512-w89qg7PI8wAdvX60bMDP+bFoD5Dvhm9oLheFp5O4a2QF0cSBGsBX4qZmadPMvVqlLJBBci+WqGGOAPvcDeNSVg==}
++
+   tiny-typed-emitter@2.1.0:
+     resolution: {integrity: sha512-qVtvMxeXbVej0cQWKqVSSAHmKZEHAvxdF8HEUBFWts8h+xEo5m/lEiPakuyZ3BnCBjOD8i24kzNOiOLLgsSxhA==}
+ 
+@@ -2687,6 +2743,14 @@ packages:
+     resolution: {integrity: sha512-Z/DRB0ZAKj5vAQg++XsfQQKfT73Vfj5n5lKIVXobBDQEva6NHWUTxOA6OohJmEcpoy8AEqBmSGkXXAnFwt5qAA==}
+     engines: {node: '>= 16'}
+ 
++  xml2js@0.6.2:
++    resolution: {integrity: sha512-T4rieHaC1EXcES0Kxxj4JWgaUQHDk+qwHcYOCFHfiwKz7tOVPLq7Hjq9dM1WCMhylqMEfP7hMcOIChvotiZegA==}
++    engines: {node: '>=4.0.0'}
++
++  xmlbuilder@11.0.1:
++    resolution: {integrity: sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==}
++    engines: {node: '>=4.0'}
++
+   xmlbuilder@15.1.1:
+     resolution: {integrity: sha512-yMqGBqtXyeN1e3TGYvgNgDVZ3j84W4cwkOXQswghol6APgZWaff9lnbvN7MHYJOiXsvGPXtjTYJEiC9J2wv9Eg==}
+     engines: {node: '>=8.0'}
+@@ -2911,6 +2975,31 @@ snapshots:
+ 
+   '@gar/promisify@1.1.3': {}
+ 
++  '@homebridge/dbus-native@0.6.0':
++    dependencies:
++      '@homebridge/long': 5.2.1
++      '@homebridge/put': 0.0.8
++      event-stream: 4.0.1
++      hexy: 0.3.5
++      minimist: 1.2.8
++      safe-buffer: 5.2.1
++      xml2js: 0.6.2
++    optional: true
++
++  '@homebridge/long@5.2.1':
++    optional: true
++
++  '@homebridge/put@0.0.8':
++    optional: true
++
++  '@humanwhocodes/config-array@0.11.14':
++    dependencies:
++      '@humanwhocodes/object-schema': 2.0.3
++      debug: 4.3.5
++      minimatch: 3.1.2
++    transitivePeerDependencies:
++      - supports-color
++
+   '@humanwhocodes/module-importer@1.0.1': {}
+ 
+   '@humanwhocodes/retry@0.3.0': {}
+@@ -3214,6 +3303,42 @@ snapshots:
+ 
+   app-builder-bin@5.0.0-alpha.7: {}
+ 
++  app-builder-bin@5.0.0-alpha.6: {}
++
++  app-builder-lib@24.13.3(dmg-builder@25.0.1(electron-builder-squirrel-windows@24.13.3))(electron-builder-squirrel-windows@24.13.3(dmg-builder@25.0.1)):
++    dependencies:
++      '@develar/schema-utils': 2.6.5
++      '@electron/notarize': 2.2.1
++      '@electron/osx-sign': 1.0.5
++      '@electron/universal': 1.5.1
++      '@malept/flatpak-bundler': 0.4.0
++      '@types/fs-extra': 9.0.13
++      async-exit-hook: 2.0.1
++      bluebird-lst: 1.0.9
++      builder-util: 24.13.1
++      builder-util-runtime: 9.2.4
++      chromium-pickle-js: 0.2.0
++      debug: 4.3.5
++      dmg-builder: 25.0.1(electron-builder-squirrel-windows@24.13.3)
++      ejs: 3.1.10
++      electron-builder-squirrel-windows: 24.13.3(dmg-builder@25.0.1)
++      electron-publish: 24.13.1
++      form-data: 4.0.0
++      fs-extra: 10.1.0
++      hosted-git-info: 4.1.0
++      is-ci: 3.0.1
++      isbinaryfile: 5.0.2
++      js-yaml: 4.1.0
++      lazy-val: 1.0.5
++      minimatch: 5.1.6
++      read-config-file: 6.3.2
++      sanitize-filename: 1.6.3
++      semver: 7.6.3
++      tar: 6.2.1
++      temp-file: 3.4.0
++    transitivePeerDependencies:
++      - supports-color
++
+   app-builder-lib@25.0.5(dmg-builder@25.0.5(electron-builder-squirrel-windows@25.0.5(dmg-builder@25.0.5)))(electron-builder-squirrel-windows@25.0.5(dmg-builder@25.0.5)):
+     dependencies:
+       '@develar/schema-utils': 2.6.5
+@@ -3781,6 +3906,8 @@ snapshots:
+ 
+   dotenv@16.4.5: {}
+ 
++  duplexer@0.1.2:
++    optional: true
+   eastasianwidth@0.2.0: {}
+ 
+   ejs@3.1.10:
+@@ -4128,6 +4255,18 @@ snapshots:
+ 
+   esutils@2.0.3: {}
+ 
++
++  event-stream@4.0.1:
++    dependencies:
++      duplexer: 0.1.2
++      from: 0.1.7
++      map-stream: 0.0.7
++      pause-stream: 0.0.11
++      split: 1.0.1
++      stream-combiner: 0.2.2
++      through: 2.3.8
++    optional: true
++    
+   expand-tilde@2.0.2:
+     dependencies:
+       homedir-polyfill: 1.0.3
+@@ -4238,6 +4377,9 @@ snapshots:
+     dependencies:
+       map-cache: 0.2.2
+ 
++  from@0.1.7:
++    optional: true
++
+   fs-constants@1.0.0: {}
+ 
+   fs-extra@10.1.0:
+@@ -4450,6 +4592,9 @@ snapshots:
+     dependencies:
+       function-bind: 1.1.2
+ 
++  hexy@0.3.5:
++    optional: true
++    
+   homedir-polyfill@1.0.3:
+     dependencies:
+       parse-passwd: 1.0.0
+@@ -4792,6 +4937,9 @@ snapshots:
+ 
+   map-cache@0.2.2: {}
+ 
++  map-stream@0.0.7:
++    optional: true
++
+   map-visit@1.0.0:
+     dependencies:
+       object-visit: 1.0.1
+@@ -5074,6 +5222,13 @@ snapshots:
+       lru-cache: 10.4.3
+       minipass: 7.1.2
+ 
++  path-type@4.0.0: {}
++
++  pause-stream@0.0.11:
++    dependencies:
++      through: 2.3.8
++    optional: true
++
+   pe-library@0.4.1: {}
+ 
+   pend@1.2.0: {}
+@@ -5386,6 +5541,11 @@ snapshots:
+     dependencies:
+       extend-shallow: 3.0.2
+ 
++  split@1.0.1:
++    dependencies:
++      through: 2.3.8
++    optional: true
++
+   sprintf-js@1.1.3: {}
+ 
+   ssri@9.0.1:
+@@ -5403,6 +5563,12 @@ snapshots:
+       define-property: 0.2.5
+       object-copy: 0.1.0
+ 
++  stream-combiner@0.2.2:
++    dependencies:
++      duplexer: 0.1.2
++      through: 2.3.8
++    optional: true
++
+   string-width@4.2.3:
+     dependencies:
+       emoji-regex: 8.0.0
+@@ -5498,6 +5664,9 @@ snapshots:
+ 
+   text-table@0.2.0: {}
+ 
++  through@2.3.8:
++    optional: true
++
+   tiny-typed-emitter@2.1.0: {}
+ 
+   tmp-promise@3.0.3:
+@@ -5714,6 +5883,15 @@ snapshots:
+ 
+   xml-parser-xo@4.1.2: {}
+ 
++  xml2js@0.6.2:
++    dependencies:
++      sax: 1.4.1
++      xmlbuilder: 11.0.1
++    optional: true
++
++  xmlbuilder@11.0.1:
++    optional: true
++
+   xmlbuilder@15.1.1: {}
+ 
+   y18n@5.0.8: {}
+diff --git a/src/main/appBadge.ts b/src/main/appBadge.ts
+index 46abe1db..37bd8eb3 100644
+--- a/src/main/appBadge.ts
++++ b/src/main/appBadge.ts
+@@ -6,8 +6,11 @@
+ 
+ import { app, NativeImage, nativeImage } from "electron";
+ import { join } from "path";
++import { IpcEvents } from "shared/IpcEvents";
+ import { BADGE_DIR } from "shared/paths";
+ 
++import { mainWin } from "./mainWindow";
++
+ const imgCache = new Map<number, NativeImage>();
+ function loadBadge(index: number) {
+     const cached = imgCache.get(index);
+@@ -19,13 +22,17 @@ function loadBadge(index: number) {
+     return img;
+ }
+ 
+-let lastIndex: null | number = -1;
++let lastBadgeIndex: null | number = -1;
++export var lastBadgeCount: number = -1;
+ 
+ export function setBadgeCount(count: number) {
++    lastBadgeCount = count;
+     switch (process.platform) {
+         case "linux":
+-            if (count === -1) count = 0;
+-            app.setBadgeCount(count);
++            // commented out lines are temp to be replaced by #686
++            // if (count === -1) count = 0;
++            // app.setBadgeCount(count);
++
+             break;
+         case "darwin":
+             if (count === 0) {
+@@ -36,15 +43,17 @@ export function setBadgeCount(count: number) {
+             break;
+         case "win32":
+             const [index, description] = getBadgeIndexAndDescription(count);
+-            if (lastIndex === index) break;
++            if (lastBadgeIndex === index) break;
+ 
+-            lastIndex = index;
++            lastBadgeIndex = index;
+ 
+             // circular import shenanigans
+             const { mainWin } = require("./mainWindow") as typeof import("./mainWindow");
+             mainWin.setOverlayIcon(index === null ? null : loadBadge(index), description);
+             break;
+     }
++
++    mainWin.webContents.send(IpcEvents.SET_CURRENT_VOICE_TRAY_ICON);
+ }
+ 
+ function getBadgeIndexAndDescription(count: number): [number | null, string] {
+diff --git a/src/main/firstLaunch.ts b/src/main/firstLaunch.ts
+index dee4882d..e1017058 100644
+--- a/src/main/firstLaunch.ts
++++ b/src/main/firstLaunch.ts
+@@ -13,7 +13,7 @@ import { ICON_PATH, VIEW_DIR } from "shared/paths";
+ 
+ import { autoStart } from "./autoStart";
+ import { DATA_DIR } from "./constants";
+-import { createWindows } from "./mainWindow";
++import { createWindows, getAccentColor } from "./mainWindow";
+ import { Settings, State } from "./settings";
+ import { makeLinksOpenExternally } from "./utils/makeLinksOpenExternally";
+ 
+@@ -46,7 +46,14 @@ export function createFirstLaunchTour() {
+ 
+         console.log(data);
+         State.store.firstLaunch = false;
+-        Settings.store.discordBranch = data.discordBranch;
++        Settings.store.tray = true;
++        getAccentColor().then(color => {
++            if (color) {
++                Settings.store.trayColor = color.slice(1);
++            } else {
++                Settings.store.trayColor = "F6BFAC";
++            }
++        });
+         Settings.store.minimizeToTray = !!data.minimizeToTray;
+         Settings.store.arRPC = !!data.richPresence;
+ 
+diff --git a/src/main/ipc.ts b/src/main/ipc.ts
+index 4fa662c3..b161a1a5 100644
+--- a/src/main/ipc.ts
++++ b/src/main/ipc.ts
+@@ -18,8 +18,17 @@ import { IpcEvents } from "../shared/IpcEvents";
+ import { setBadgeCount } from "./appBadge";
+ import { autoStart } from "./autoStart";
+ import { VENCORD_FILES_DIR, VENCORD_QUICKCSS_FILE, VENCORD_THEMES_DIR } from "./constants";
+-import { mainWin } from "./mainWindow";
++import { getAccentColor, mainWin } from "./mainWindow";
+ import { Settings, State } from "./settings";
++import {
++    createTrayIcon,
++    generateTrayIcons,
++    getIconWithBadge,
++    getTrayIconFile,
++    getTrayIconFileSync,
++    pickTrayIcon,
++    setTrayIcon
++} from "./tray";
+ import { handle, handleSync } from "./utils/ipcWrappers";
+ import { PopoutWindows } from "./utils/popout";
+ import { isDeckGameMode, showGamePage } from "./utils/steamOS";
+@@ -158,3 +167,14 @@ watch(
+         mainWin?.webContents.postMessage("VencordThemeUpdate", void 0);
+     })
+ );
++
++handle(IpcEvents.SET_TRAY_ICON, (_, iconURI) => setTrayIcon(iconURI));
++handle(IpcEvents.GET_TRAY_ICON, (_, iconPath) => getTrayIconFile(iconPath));
++handleSync(IpcEvents.GET_TRAY_ICON_SYNC, (_, iconPath) => getTrayIconFileSync(iconPath));
++handle(IpcEvents.GET_SYSTEM_ACCENT_COLOR, () => getAccentColor());
++handle(IpcEvents.CREATE_TRAY_ICON_RESPONSE, (_, iconName, dataURL, isCustomIcon, isSvg) =>
++    createTrayIcon(iconName, dataURL, isCustomIcon, isSvg)
++);
++handle(IpcEvents.GENERATE_TRAY_ICONS, () => generateTrayIcons());
++handle(IpcEvents.SELECT_TRAY_ICON, async (_, iconName) => pickTrayIcon(iconName));
++handle(IpcEvents.GET_ICON_WITH_BADGE, async (_, dataURL) => getIconWithBadge(dataURL));
+diff --git a/src/main/mainWindow.ts b/src/main/mainWindow.ts
+old mode 100644
+new mode 100755
+index 1292449b..1142c3cf
+--- a/src/main/mainWindow.ts
++++ b/src/main/mainWindow.ts
+@@ -4,6 +4,7 @@
+  * Copyright (c) 2023 Vendicated and Vencord contributors
+  */
+ 
++import dbus from "@homebridge/dbus-native";
+ import {
+     app,
+     BrowserWindow,
+@@ -14,16 +15,18 @@ import {
+     nativeTheme,
+     screen,
+     session,
++    systemPreferences,
+     Tray
+ } from "electron";
++import { existsSync } from "fs";
+ import { rm } from "fs/promises";
+ import { join } from "path";
+ import { IpcEvents } from "shared/IpcEvents";
++import { ICON_PATH, ICONS_DIR } from "shared/paths";
+ import { isTruthy } from "shared/utils/guards";
+ import { once } from "shared/utils/once";
+ import type { SettingsStore } from "shared/utils/SettingsStore";
+ 
+-import { ICON_PATH } from "../shared/paths";
+ import { createAboutWindow } from "./about";
+ import { initArRPC } from "./arrpc";
+ import {
+@@ -43,7 +46,7 @@ import { applyDeckKeyboardFix, askToApplySteamLayout, isDeckGameMode } from "./u
+ import { downloadVencordFiles, ensureVencordFiles } from "./utils/vencordLoader";
+ 
+ let isQuitting = false;
+-let tray: Tray;
++export let tray: Tray;
+ 
+ applyDeckKeyboardFix();
+ 
+@@ -123,7 +126,11 @@ function initTray(win: BrowserWindow) {
+         }
+     ]);
+ 
+-    tray = new Tray(ICON_PATH);
++    if (Settings.store.trayMainOverride && existsSync(join(ICONS_DIR, "icon_custom.png"))) {
++        tray = new Tray(join(ICONS_DIR, "icon_custom.png"));
++    } else {
++        tray = new Tray(ICON_PATH);
++    }
+     tray.setToolTip("Vesktop");
+     tray.setContextMenu(trayMenu);
+     tray.on("click", onTrayClick);
+@@ -513,3 +520,39 @@ export async function createWindows() {
+ 
+     initArRPC();
+ }
++
++export function getAccentColor(): Promise<string> {
++    if (process.platform === "linux") {
++        return new Promise((resolve, reject) => {
++            const sessionBus = dbus.sessionBus();
++            sessionBus
++                .getService("org.freedesktop.portal.Desktop")
++                .getInterface(
++                    "/org/freedesktop/portal/desktop",
++                    "org.freedesktop.portal.Settings",
++                    function (err, settings) {
++                        if (err) {
++                            resolve("");
++                            return;
++                        }
++                        settings.Read("org.freedesktop.appearance", "accent-color", function (err, result) {
++                            if (err) {
++                                resolve("");
++                                return;
++                            }
++                            const [r, g, b] = result[1][0][1][0];
++                            const r255 = Math.round(r * 255);
++                            const g255 = Math.round(g * 255);
++                            const b255 = Math.round(b * 255);
++
++                            const toHex = (value: number) => value.toString(16).padStart(2, "0");
++                            const hexColor = `#${toHex(r255)}${toHex(g255)}${toHex(b255)}`;
++                            resolve(hexColor);
++                        });
++                    }
++                );
++        });
++    } else {
++        return Promise.resolve(`#${systemPreferences.getAccentColor?.() || ""}`);
++    }
++}
+diff --git a/src/main/tray.ts b/src/main/tray.ts
+new file mode 100644
+index 00000000..588f26fa
+--- /dev/null
++++ b/src/main/tray.ts
+@@ -0,0 +1,192 @@
++/*
++ * SPDX-License-Identifier: GPL-3.0
++ * Vesktop, a desktop app aiming to give you a snappier Discord Experience
++ * Copyright (c) 2023 Vendicated and Vencord contributors
++ */
++
++import { dialog, NativeImage, nativeImage, nativeTheme } from "electron";
++import { mkdirSync, readFileSync, writeFileSync } from "fs";
++import { readFile } from "fs/promises";
++import { join } from "path";
++import { IpcEvents } from "shared/IpcEvents";
++import { BADGE_DIR, ICONS_DIR, STATIC_DIR } from "shared/paths";
++
++import { lastBadgeCount } from "./appBadge";
++import { mainWin, tray } from "./mainWindow";
++import { Settings } from "./settings";
++
++export const statusToSettingsKey = {
++    speaking: "traySpeakingOverride",
++    muted: "trayMutedOverride",
++    deafened: "trayDeafenedOverride",
++    idle: "trayIdleOverride",
++    icon: "trayMainOverride"
++};
++
++export const isCustomIcon = (status: string) => {
++    const settingKey = statusToSettingsKey[status as keyof typeof statusToSettingsKey];
++    return Settings.store[settingKey];
++};
++
++export async function setTrayIcon(iconName: string) {
++    if (!tray || tray.isDestroyed()) return;
++    const Icons = new Set(["speaking", "muted", "deafened", "idle", "icon"]);
++    if (!Icons.has(iconName)) return;
++
++    // if need to set main icon then check whether there is need of notif badge
++    if (iconName === "icon" && lastBadgeCount !== 0) {
++        var trayImage: NativeImage;
++        if (isCustomIcon("icon")) {
++            trayImage = nativeImage.createFromPath(join(ICONS_DIR, "icon_custom.png"));
++        } else {
++            trayImage = nativeImage.createFromPath(join(ICONS_DIR, "icon.png"));
++        }
++
++        if (trayImage.isEmpty()) {
++            const iconKey = statusToSettingsKey[iconName as keyof typeof statusToSettingsKey];
++            Settings.store[iconKey] = false;
++            generateTrayIcons("icon");
++            return;
++        }
++
++        const badgeSvg = readFileSync(join(BADGE_DIR, `badge.svg`), "utf8");
++        // and send IPC call to renderer to add badge to icon
++        mainWin.webContents.send(IpcEvents.ADD_BADGE_TO_ICON, trayImage.toDataURL(), badgeSvg);
++        return;
++    }
++
++    try {
++        var trayImage: NativeImage;
++        if (isCustomIcon(iconName)) {
++            trayImage = nativeImage.createFromPath(join(ICONS_DIR, iconName + "_custom.png"));
++            if (trayImage.isEmpty()) {
++                const iconKey = statusToSettingsKey[iconName as keyof typeof statusToSettingsKey];
++                Settings.store[iconKey] = false;
++                generateTrayIcons(iconName);
++                return;
++            }
++        } else trayImage = nativeImage.createFromPath(join(ICONS_DIR, iconName + ".png"));
++        if (trayImage.isEmpty()) {
++            generateTrayIcons(iconName);
++            return;
++        }
++        if (process.platform === "darwin") {
++            trayImage = trayImage.resize({ width: 16, height: 16 });
++        }
++        tray.setImage(trayImage);
++    } catch (error) {
++        console.log("Error: ", error, "Regenerating tray icon.");
++        generateTrayIcons(iconName);
++    }
++    return;
++}
++
++export async function setTrayIconWithBadge(iconDataURL: string) {
++    var trayImage = nativeImage.createFromDataURL(iconDataURL);
++    if (process.platform === "darwin") {
++        trayImage = trayImage.resize({ width: 16, height: 16 });
++    }
++    tray.setImage(trayImage);
++}
++
++export async function getTrayIconFile(iconName: string) {
++    const Icons = new Set(["speaking", "muted", "deafened", "idle"]);
++    if (!Icons.has(iconName)) {
++        iconName = "icon";
++        return readFile(join(STATIC_DIR, "icon.png"));
++    }
++    return readFile(join(STATIC_DIR, iconName + ".svg"), "utf8");
++}
++
++export function getTrayIconFileSync(iconName: string) {
++    // returns dataURL of image from TrayIcons folder
++    const Icons = new Set(["speaking", "muted", "deafened", "idle", "icon"]);
++
++    if (Icons.has(iconName)) {
++        var img: NativeImage;
++        if (isCustomIcon(iconName)) {
++            img = nativeImage.createFromPath(join(ICONS_DIR, iconName + "_custom.png"));
++        } else img = nativeImage.createFromPath(join(ICONS_DIR, iconName + ".png"));
++        img = img.resize({ width: 128, height: 128 });
++        if (img.isEmpty()) {
++            console.log("Can't open icon file for", iconName, ". Regenerating.");
++            generateTrayIcons(iconName);
++            img = nativeImage.createFromPath(join(ICONS_DIR, iconName + ".png"));
++            const iconKey = statusToSettingsKey[iconName as keyof typeof statusToSettingsKey];
++            Settings.store[iconKey] = false;
++        }
++        return img.toDataURL();
++    }
++}
++
++export async function createTrayIcon(
++    iconName: string,
++    iconDataURL: string,
++    isCustomIcon: boolean = false,
++    isSvg: boolean = false
++) {
++    // creates .png at config/TrayIcons/iconName.png from given iconDataURL
++    // primarily called from renderer using CREATE_TRAY_ICON_RESPONSE IPC call
++    iconDataURL = iconDataURL.replace(/^data:image\/png;base64,/, "");
++    if (isCustomIcon) {
++        const img = nativeImage.createFromDataURL(iconDataURL).resize({ width: 128, height: 128 });
++        if (isSvg) writeFileSync(join(ICONS_DIR, iconName + "_custom.png"), iconDataURL, "base64");
++        else writeFileSync(join(ICONS_DIR, iconName + "_custom.png"), img.toPNG());
++    } else {
++        writeFileSync(join(ICONS_DIR, iconName + ".png"), iconDataURL, "base64");
++    }
++    mainWin.webContents.send(IpcEvents.SET_CURRENT_VOICE_TRAY_ICON);
++}
++
++export async function generateTrayIcons(iconName: string = "") {
++    // this function generates tray icons as .png's in Vesktop cache for future use
++    if (!mainWin) return;
++    mkdirSync(ICONS_DIR, { recursive: true });
++    const Icons = ["speaking", "muted", "deafened", "idle"];
++
++    const createMainIcon = () => {
++        const img = nativeImage.createFromPath(join(STATIC_DIR, "icon.png")).resize({ width: 128, height: 128 });
++        writeFileSync(join(ICONS_DIR, "icon.png"), img.toPNG());
++        mainWin.webContents.send(IpcEvents.SET_CURRENT_VOICE_TRAY_ICON);
++    };
++
++    if (iconName) {
++        if (Icons.includes(iconName)) mainWin.webContents.send(IpcEvents.CREATE_TRAY_ICON_REQUEST, iconName);
++        else if (iconName === "icon") createMainIcon();
++        return;
++    }
++    for (const icon of Icons) {
++        mainWin.webContents.send(IpcEvents.CREATE_TRAY_ICON_REQUEST, icon);
++    }
++    createMainIcon();
++}
++
++export async function pickTrayIcon(iconName: string) {
++    const Icons = new Set(["speaking", "muted", "deafened", "idle", "icon"]);
++    if (!Icons.has(iconName)) return;
++
++    const res = await dialog.showOpenDialog(mainWin!, {
++        properties: ["openFile"],
++        filters: [{ name: "Image", extensions: ["png", "jpg", "svg"] }]
++    });
++    if (!res.filePaths.length) return "cancelled";
++    const dir = res.filePaths[0];
++    // add .svg !!
++    if (dir.split(".").pop() === "svg") {
++        mainWin.webContents.send(IpcEvents.CREATE_TRAY_ICON_REQUEST, iconName, readFileSync(dir, "utf-8"));
++        return "svg";
++    }
++    const image = nativeImage.createFromPath(dir);
++    if (image.isEmpty()) return "invalid";
++    const img = nativeImage.createFromPath(dir).resize({ width: 128, height: 128 });
++    writeFileSync(join(ICONS_DIR, iconName + "_custom.png"), img.toPNG());
++    return dir;
++}
++
++export async function getIconWithBadge(dataURL: string) {
++    tray.setImage(nativeImage.createFromDataURL(dataURL));
++}
++
++nativeTheme.on("updated", () => {
++    generateTrayIcons();
++});
+diff --git a/src/preload/VesktopNative.ts b/src/preload/VesktopNative.ts
+index 7a8b9775..f3cde3c9 100644
+--- a/src/preload/VesktopNative.ts
++++ b/src/preload/VesktopNative.ts
+@@ -24,7 +24,8 @@ export const VesktopNative = {
+         relaunch: () => invoke<void>(IpcEvents.RELAUNCH),
+         getVersion: () => sendSync<void>(IpcEvents.GET_VERSION),
+         setBadgeCount: (count: number) => invoke<void>(IpcEvents.SET_BADGE_COUNT, count),
+-        supportsWindowsTransparency: () => sendSync<boolean>(IpcEvents.SUPPORTS_WINDOWS_TRANSPARENCY)
++        supportsWindowsTransparency: () => sendSync<boolean>(IpcEvents.SUPPORTS_WINDOWS_TRANSPARENCY),
++        getAccentColor: () => invoke<string>(IpcEvents.GET_SYSTEM_ACCENT_COLOR)
+     },
+     autostart: {
+         isEnabled: () => sendSync<boolean>(IpcEvents.AUTOSTART_ENABLED),
+@@ -33,6 +34,8 @@ export const VesktopNative = {
+     },
+     fileManager: {
+         showItemInFolder: (path: string) => invoke<void>(IpcEvents.SHOW_ITEM_IN_FOLDER, path),
++        selectTrayIcon: (iconName: string) =>
++            invoke<"cancelled" | "invalid" | string>(IpcEvents.SELECT_TRAY_ICON, iconName),
+         getVencordDir: () => sendSync<string | undefined>(IpcEvents.GET_VENCORD_DIR),
+         selectVencordDir: (value?: null) => invoke<"cancelled" | "invalid" | "ok">(IpcEvents.SELECT_VENCORD_DIR, value)
+     },
+@@ -78,5 +81,31 @@ export const VesktopNative = {
+     clipboard: {
+         copyImage: (imageBuffer: Uint8Array, imageSrc: string) =>
+             invoke<void>(IpcEvents.CLIPBOARD_COPY_IMAGE, imageBuffer, imageSrc)
++    },
++    tray: {
++        setIcon: (iconURI: string) => invoke<void>(IpcEvents.SET_TRAY_ICON, iconURI),
++        getIcon: (iconName: string) => invoke<string>(IpcEvents.GET_TRAY_ICON, iconName),
++        getIconSync: (iconName: string) => sendSync<string>(IpcEvents.GET_TRAY_ICON_SYNC, iconName),
++        createIconResponse: (
++            iconName: string,
++            iconDataURL: string,
++            isCustomIcon: boolean = true,
++            isSvg: boolean = true
++        ) => invoke<void>(IpcEvents.CREATE_TRAY_ICON_RESPONSE, iconName, iconDataURL, isCustomIcon, isSvg),
++        createIconRequest: (listener: (iconName: string, svg: string) => void) => {
++            ipcRenderer.on(IpcEvents.CREATE_TRAY_ICON_REQUEST, (_, iconPath: string, svg: string) =>
++                listener(iconPath, svg)
++            );
++        },
++        generateTrayIcons: () => invoke<void>(IpcEvents.GENERATE_TRAY_ICONS),
++        setCurrentVoiceIcon: (listener: (...args: any[]) => void) => {
++            ipcRenderer.on(IpcEvents.SET_CURRENT_VOICE_TRAY_ICON, listener);
++        },
++        addBadgeToIcon: (listener: (iconDataURL: string, badgeDataURL: string) => void) => {
++            ipcRenderer.on(IpcEvents.ADD_BADGE_TO_ICON, (_, iconDataURL: string, badgeDataURL: string) =>
++                listener(iconDataURL, badgeDataURL)
++            );
++        },
++        returnIconWithBadge: (dataURL: string) => invoke<void>(IpcEvents.GET_ICON_WITH_BADGE, dataURL)
+     }
+ };
+diff --git a/src/renderer/components/settings/Settings.tsx b/src/renderer/components/settings/Settings.tsx
+index d56f0ea4..6cc5d82f 100644
+--- a/src/renderer/components/settings/Settings.tsx
++++ b/src/renderer/components/settings/Settings.tsx
+@@ -14,6 +14,13 @@ import { isMac, isWindows } from "renderer/utils";
+ import { AutoStartToggle } from "./AutoStartToggle";
+ import { DiscordBranchPicker } from "./DiscordBranchPicker";
+ import { NotificationBadgeToggle } from "./NotificationBadgeToggle";
++import {
++    CustomizeTraySwitch,
++    TrayColorTypeSelect,
++    TrayFillColorSwitch,
++    TrayIconPicker,
++    TraySwitch
++} from "./TraySettings";
+ import { VencordLocationPicker } from "./VencordLocationPicker";
+ import { WindowsTransparencyControls } from "./WindowsTransparencyControls";
+ 
+@@ -67,28 +74,28 @@ const SettingsOptions: Record<string, Array<BooleanSetting | SettingsComponent>>
+         },
+         WindowsTransparencyControls
+     ],
+-    Behaviour: [
+-        {
+-            key: "tray",
+-            title: "Tray Icon",
+-            description: "Add a tray icon for Vesktop",
+-            defaultValue: true,
+-            invisible: () => isMac
+-        },
++    Tray: [
++        TraySwitch,
++        CustomizeTraySwitch,
++        TrayColorTypeSelect,
++        TrayIconPicker,
++        TrayFillColorSwitch,
+         {
+             key: "minimizeToTray",
+             title: "Minimize to tray",
+             description: "Hitting X will make Vesktop minimize to the tray instead of closing",
+             defaultValue: true,
+-            invisible: () => isMac,
+-            disabled: () => Settings.store.tray === false
++            invisible: () => isMac || Settings.store.tray === false
+         },
+         {
+             key: "clickTrayToShowHide",
+             title: "Hide/Show on tray click",
+             description: "Left clicking tray icon will toggle the vesktop window visibility.",
+-            defaultValue: false
+-        },
++            defaultValue: false,
++            invisible: () => Settings.store.tray === false
++        }
++    ],
++    Behaviour: [
+         {
+             key: "disableMinSize",
+             title: "Disable minimum window size",
+diff --git a/src/renderer/components/settings/TraySettings.tsx b/src/renderer/components/settings/TraySettings.tsx
+new file mode 100644
+index 00000000..c39a49e0
+--- /dev/null
++++ b/src/renderer/components/settings/TraySettings.tsx
+@@ -0,0 +1,269 @@
++/*
++ * SPDX-License-Identifier: GPL-3.0
++ * Vesktop, a desktop app aiming to give you a snappier Discord Experience
++ * Copyright (c) 2023 Vendicated and Vencord contributors
++ */
++
++import "./traySetting.css";
++
++import { Margins, Modals, ModalSize, openModal } from "@vencord/types/utils";
++import { findByCodeLazy, findByPropsLazy } from "@vencord/types/webpack";
++import { Button, Forms, Select, Switch, Toasts } from "@vencord/types/webpack/common";
++import { setCurrentTrayIcon } from "renderer/patches/tray";
++import { useSettings } from "renderer/settings";
++
++import { SettingsComponent } from "./Settings";
++
++const ColorPicker = findByCodeLazy(".Messages.USER_SETTINGS_PROFILE_COLOR_SELECT_COLOR", ".BACKGROUND_PRIMARY)");
++const { PencilIcon } = findByPropsLazy("PencilIcon");
++
++const presets = [
++    "#3DB77F", // discord default ~
++    "#F6BFAC", // Vesktop inpired
++    "#FC2F2F", // red
++    "#2FFC33", // green
++    "#FCF818", // yellow
++    "#2FFCE6", // light-blue
++    "#3870FA", // blue
++    "#6F32FD", // purple
++    "#FC18EC" // pink
++];
++
++VesktopNative.app.getAccentColor().then(color => {
++    if (color) presets.unshift(color);
++});
++
++const statusToSettingsKey = {
++    icon: { key: "trayMainOverride", label: "Default" },
++    idle: { key: "trayIdleOverride", label: "Idle" },
++    speaking: { key: "traySpeakingOverride", label: "Speaking" },
++    muted: { key: "trayMutedOverride", label: "Muted" },
++    deafened: { key: "trayDeafenedOverride", label: "Deafened" }
++};
++
++async function changeIcon(iconName, settings) {
++    const choice = await VesktopNative.fileManager.selectTrayIcon(iconName);
++    switch (choice) {
++        case "cancelled":
++            return;
++        case "invalid":
++            Toasts.show({
++                message: "Please select a valid .png, .jpg or .svg image!",
++                id: Toasts.genId(),
++                type: Toasts.Type.FAILURE
++            });
++            return;
++    }
++
++    const updateIcon = () => {
++        const iconKey = statusToSettingsKey[iconName as keyof typeof statusToSettingsKey].key;
++        settings[iconKey] = true;
++        const iconDataURL = VesktopNative.tray.getIconSync(iconName);
++        const img = document.getElementById(iconName) as HTMLImageElement;
++        if (img) {
++            img.src = iconDataURL;
++        }
++        setCurrentTrayIcon();
++    };
++
++    // sometimes new icon may not be generated in time and will be used old icon :c
++    if (choice === "svg") setTimeout(updateIcon, 50);
++    else updateIcon();
++}
++
++function trayEditButton(iconName: string) {
++    const Settings = useSettings();
++    return (
++        <div className="vcd-tray-icon-wrap">
++            <img
++                className="vcd-tray-icon-image"
++                src={VesktopNative.tray.getIconSync(iconName)}
++                alt="read if cute :3"
++                width="48"
++                height="48"
++                id={iconName}
++            ></img>
++            <PencilIcon
++                className="vcd-edit-button"
++                width="40"
++                height="40"
++                onClick={async () => {
++                    changeIcon(iconName, Settings);
++                }}
++            />
++        </div>
++    );
++}
++
++function TrayModalComponent({ modalProps, close }: { modalProps: any; close: () => void }) {
++    const Settings = useSettings();
++    return (
++        <Modals.ModalRoot {...modalProps} size={ModalSize.MEDIUM}>
++            <Modals.ModalHeader className="vcd-custom-tray-header">
++                <Forms.FormTitle tag="h2">Custom Tray Icons</Forms.FormTitle>
++                <Modals.ModalCloseButton onClick={close} />
++            </Modals.ModalHeader>
++            <Modals.ModalContent className="vcd-custom-tray-modal">
++                {Object.entries(statusToSettingsKey).map(([iconName, { key, label }]) => (
++                    <div key={iconName}>
++                        <Forms.FormSection className="vcd-custom-tray-icon-section">
++                            <div className="vcd-custom-tray-buttons">
++                                {trayEditButton(iconName)}
++                                <Button
++                                    onClick={async () => {
++                                        changeIcon(iconName, Settings);
++                                    }}
++                                    look={Button.Looks.OUTLINED}
++                                >
++                                    Choose Icon
++                                </Button>
++                                {VesktopNative.settings.get()[key] && (
++                                    <Button
++                                        onClick={() => {
++                                            Settings[key] = false;
++                                            setCurrentTrayIcon();
++                                        }}
++                                        look={Button.Looks.LINK}
++                                    >
++                                        Reset Icon
++                                    </Button>
++                                )}
++                            </div>
++                            <div>
++                                <Forms.FormText>{label}</Forms.FormText>
++                            </div>
++                        </Forms.FormSection>
++                        <Forms.FormDivider className={`${Margins.top8} ${Margins.bottom8}`} />
++                    </div>
++                ))}
++            </Modals.ModalContent>
++            <Modals.ModalFooter></Modals.ModalFooter>
++        </Modals.ModalRoot>
++    );
++}
++
++const openTrayModal = () => {
++    openModal(props => <TrayModalComponent modalProps={props} close={() => props.onClose()} />);
++};
++
++export const TraySwitch: SettingsComponent = ({ settings }) => {
++    return (
++        <Switch
++            value={settings.tray ?? true}
++            onChange={async v => {
++                settings.tray = v;
++                setCurrentTrayIcon();
++            }}
++            note="Add a system tray entry for Vesktop"
++        >
++            Enable Tray Icon
++        </Switch>
++    );
++};
++
++export const CustomizeTraySwitch: SettingsComponent = ({ settings }) => {
++    if (!settings.tray) return null;
++
++    return (
++        <>
++            <div className="vcd-tray-settings">
++                <div className="vcd-tray-container">
++                    <div className="vcd-tray-settings-labels">
++                        <Forms.FormTitle tag="h3">Custom Tray Icons</Forms.FormTitle>
++                        <Forms.FormText>Pick custom icons for your tray.</Forms.FormText>
++                    </div>
++                    <Button
++                        onClick={async () => {
++                            openTrayModal();
++                        }}
++                    >
++                        Configure
++                    </Button>
++                </div>
++                <Forms.FormDivider className={Margins.top20 + " " + Margins.bottom20} />
++            </div>
++        </>
++    );
++};
++
++export const TrayColorTypeSelect: SettingsComponent = ({ settings }) => {
++    if (!settings.tray) return null;
++    return (
++        <div className="vcd-tray-settings">
++            <div className="vcd-tray-settings-labels">
++                <Forms.FormTitle tag="h3">Tray Color Type</Forms.FormTitle>
++            </div>
++
++            <Select
++                placeholder="Default"
++                options={[
++                    { label: "Default", value: "default", default: true },
++                    { label: "System Accent", value: "system" },
++                    { label: "Custom", value: "custom" }
++                ]}
++                closeOnSelect={true}
++                select={v => {
++                    settings.trayColorType = v;
++                    VesktopNative.tray.generateTrayIcons();
++                }}
++                isSelected={v => v === settings.trayColorType}
++                serialize={s => s}
++                className="vcd-tray-settings-select"
++            ></Select>
++            <Forms.FormDivider className={Margins.top20 + " " + Margins.bottom20} />
++        </div>
++    );
++};
++
++export const TrayIconPicker: SettingsComponent = ({ settings }) => {
++    if (!settings.tray || settings.trayColorType !== "custom") return null;
++    return (
++        <div className="vcd-tray-settings">
++            <div className="vcd-tray-container">
++                <div className="vcd-tray-settings-labels">
++                    <Forms.FormTitle tag="h3">Tray Icon Accent</Forms.FormTitle>
++                    <Forms.FormText>Choose an accent color for your tray icon.</Forms.FormText>
++                </div>
++                <ColorPicker
++                    color={parseInt(settings.trayColor ?? "3DB77F", 16)}
++                    onChange={newColor => {
++                        const hexColor = newColor.toString(16).padStart(6, "0");
++                        settings.trayColor = hexColor;
++                        VesktopNative.tray.generateTrayIcons();
++                    }}
++                    showEyeDropper={false}
++                    suggestedColors={presets}
++                />
++            </div>
++            <Forms.FormDivider className={Margins.top20 + " " + Margins.bottom20} />
++        </div>
++    );
++};
++
++export const TrayFillColorSwitch: SettingsComponent = ({ settings }) => {
++    if (!settings.tray) return null;
++    return (
++        <div className="vcd-tray-settings">
++            <div className="vcd-tray-settings-labels">
++                <Forms.FormTitle tag="h3">Tray Icon Main Color</Forms.FormTitle>
++            </div>
++
++            <Select
++                placeholder="Auto"
++                options={[
++                    { label: "Auto", value: "auto", default: true },
++                    { label: "Black", value: "black" },
++                    { label: "White", value: "white" }
++                ]}
++                closeOnSelect={true}
++                select={v => {
++                    settings.trayAutoFill = v;
++                    VesktopNative.tray.generateTrayIcons();
++                }}
++                isSelected={v => v === settings.trayAutoFill}
++                serialize={s => s}
++            ></Select>
++            <Forms.FormDivider className={Margins.top20 + " " + Margins.bottom20} />
++        </div>
++    );
++};
+diff --git a/src/renderer/components/settings/traySetting.css b/src/renderer/components/settings/traySetting.css
+new file mode 100644
+index 00000000..067716a6
+--- /dev/null
++++ b/src/renderer/components/settings/traySetting.css
+@@ -0,0 +1,73 @@
++.vcd-tray-container {
++    display: flex;
++    flex-direction: row;
++    justify-content: space-between;
++}
++
++.vcd-tray-settings-labels {
++    display: flex;
++    flex-direction: column;
++    justify-content: flex-start;
++}
++
++#vcd-tray-setting {
++    display: flex;
++    justify-content: space-between;
++    align-items: center;
++    flex-wrap: nowrap;
++}
++
++.vcd-tray-icon-wrap {
++    position: relative;
++    align-self: end;
++    background: var(--background-secondrary);
++    border-radius: var(--radius-sm);
++}
++
++.vcd-tray-icon-image {
++    border-radius: 50%;
++    position: relative;
++    top: 0;
++    right: 0;
++}
++
++.vcd-edit-button {
++    visibility: visible;
++    opacity: 0;
++    position: absolute;
++    top: 0.8em;
++    left: 0.8em;
++}
++
++.vcd-tray-icon-wrap:hover .vcd-tray-icon-image {
++    transition: 0.3s ease;
++    background-color: rgb(0, 0, 0) no-repeat;
++    opacity: 0.25;
++}
++.vcd-tray-icon-wrap:hover .vcd-edit-button {
++    transition: 0.3s ease;
++    visibility: visible;
++    opacity: 1;
++}
++
++.vcd-custom-tray-header h1 {
++    margin: 0;
++}
++
++.vcd-custom-tray-modal {
++    padding: 1em;
++}
++
++.vcd-custom-tray-icon-section {
++    display: flex;
++    flex-direction: row;
++    align-items: center;
++    justify-content: space-between;
++}
++
++.vcd-custom-tray-buttons {
++    display: flex;
++    flex-direction: row;
++    align-items: center;
++    column-gap: 1em;
++}
+\ No newline at end of file
+diff --git a/src/renderer/patches/index.ts b/src/renderer/patches/index.ts
+index aabff3e0..20258c4f 100644
+--- a/src/renderer/patches/index.ts
++++ b/src/renderer/patches/index.ts
+@@ -12,3 +12,4 @@ import "./hideVenmicInput";
+ import "./screenShareFixes";
+ import "./spellCheck";
+ import "./windowsTitleBar";
++import "./tray";
+diff --git a/src/renderer/patches/tray.ts b/src/renderer/patches/tray.ts
+new file mode 100644
+index 00000000..9ec9b290
+--- /dev/null
++++ b/src/renderer/patches/tray.ts
+@@ -0,0 +1,159 @@
++/*
++ * SPDX-License-Identifier: GPL-3.0
++ * Vesktop, a desktop app aiming to give you a snappier Discord Experience
++ * Copyright (c) 2023 Vendicated and Vencord contributors
++ */
++
++import { Logger } from "@vencord/types/utils";
++import { findByPropsLazy, onceReady } from "@vencord/types/webpack";
++import { FluxDispatcher, UserStore } from "@vencord/types/webpack/common";
++
++const voiceActions = findByPropsLazy("isSelfMute");
++
++var isInCall = false;
++const logger = new Logger("VesktopTrayIcon");
++
++export function setCurrentTrayIcon() {
++    if (isInCall) {
++        if (voiceActions.isSelfDeaf()) {
++            VesktopNative.tray.setIcon("deafened");
++        } else if (voiceActions.isSelfMute()) {
++            VesktopNative.tray.setIcon("muted");
++        } else {
++            VesktopNative.tray.setIcon("idle");
++        }
++    } else {
++        VesktopNative.tray.setIcon("icon");
++    }
++}
++
++function changeColorsInSvg(svg: string, stockColor: string, accentColor: string = "f6bfac") {
++    const Settings = VesktopNative.settings.get();
++    if (Settings.trayColorType === "default") return svg;
++    const pickedColor = Settings.trayColorType === "system" ? accentColor : Settings.trayColor || accentColor;
++    const fillColor = Settings.trayAutoFill ?? "auto";
++    const reg = new RegExp(stockColor, "gim");
++    svg = svg.replace(reg, "#" + (pickedColor ?? stockColor));
++
++    if (fillColor === "white") {
++        svg = svg.replace(/black/gim, fillColor);
++    } else if (fillColor === "black") {
++        svg = svg.replace(/white/gim, fillColor);
++    }
++    return svg;
++}
++
++VesktopNative.tray.createIconRequest(async (iconName: string, svgIcon: string = "") => {
++    try {
++        var svg = svgIcon || (await VesktopNative.tray.getIcon(iconName));
++        svg = changeColorsInSvg(svg, "#f6bfac", (await VesktopNative.app.getAccentColor()).substring(1));
++
++        const parser = new DOMParser();
++        const svgDoc = parser.parseFromString(svg, "image/svg+xml");
++        const svgElement = svgDoc.documentElement;
++
++        if (!svgElement.hasAttribute("viewBox")) {
++            const width = parseFloat(svgElement.getAttribute("width") || "128");
++            const height = parseFloat(svgElement.getAttribute("height") || "128");
++            svgElement.setAttribute("viewBox", `0 0 ${width} ${height}`);
++        }
++        svg = new XMLSerializer().serializeToString(svgElement);
++
++        const canvas = document.createElement("canvas");
++        canvas.width = 128;
++        canvas.height = 128;
++        const img = new Image();
++        img.onload = () => {
++            const ctx = canvas.getContext("2d");
++            if (ctx) {
++                ctx.clearRect(0, 0, canvas.width, canvas.height);
++                const scaleX = canvas.width / img.width;
++                const scaleY = canvas.height / img.height;
++                const scale = Math.max(scaleX, scaleY);
++
++                const scaledWidth = img.width * scale;
++                const scaledHeight = img.height * scale;
++
++                const offsetX = (canvas.width - scaledWidth) / 2;
++                const offsetY = (canvas.height - scaledHeight) / 2;
++                ctx.drawImage(img, offsetX, offsetY, scaledWidth, scaledHeight);
++
++                const dataURL = canvas.toDataURL("image/png");
++                const isSvg = svgIcon !== "";
++                VesktopNative.tray.createIconResponse(iconName, dataURL, isSvg, isSvg); // custom if svgIcon is provided
++            }
++        };
++        img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
++    } catch (error) {
++        logger.error("Error: ", error);
++    }
++});
++
++VesktopNative.tray.addBadgeToIcon(async (iconDataURL: string, badgeDataSVG: string) => {
++    badgeDataSVG = changeColorsInSvg(badgeDataSVG, "#f6bfac", (await VesktopNative.app.getAccentColor()).substring(1));
++
++    const canvas = document.createElement("canvas");
++    canvas.width = 128;
++    canvas.height = 128;
++
++    const img = new Image();
++    img.width = 128;
++    img.height = 128;
++
++    img.onload = () => {
++        const ctx = canvas.getContext("2d");
++        if (ctx) {
++            ctx.drawImage(img, 0, 0);
++
++            const iconImg = new Image();
++            iconImg.width = 64;
++            iconImg.height = 64;
++
++            iconImg.onload = () => {
++                ctx.drawImage(iconImg, 64, 0, 64, 64);
++                VesktopNative.tray.returnIconWithBadge(canvas.toDataURL());
++            };
++
++            iconImg.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(badgeDataSVG)}`;
++        }
++    };
++
++    img.src = iconDataURL;
++});
++
++VesktopNative.tray.setCurrentVoiceIcon(() => {
++    setCurrentTrayIcon();
++});
++
++onceReady.then(() => {
++    VesktopNative.tray.generateTrayIcons();
++    const userID = UserStore.getCurrentUser().id;
++
++    FluxDispatcher.subscribe("SPEAKING", params => {
++        if (params.userId === userID && params.context === "default") {
++            if (params.speakingFlags) {
++                VesktopNative.tray.setIcon("speaking");
++            } else {
++                setCurrentTrayIcon();
++            }
++        }
++    });
++
++    FluxDispatcher.subscribe("AUDIO_TOGGLE_SELF_DEAF", () => {
++        if (isInCall) setCurrentTrayIcon();
++    });
++
++    FluxDispatcher.subscribe("AUDIO_TOGGLE_SELF_MUTE", () => {
++        if (isInCall) setCurrentTrayIcon();
++    });
++
++    FluxDispatcher.subscribe("RTC_CONNECTION_STATE", params => {
++        if (params.state === "RTC_CONNECTED" && params.context === "default") {
++            isInCall = true;
++            setCurrentTrayIcon();
++        } else if (params.state === "RTC_DISCONNECTED" && params.context === "default") {
++            VesktopNative.tray.setIcon("icon");
++            isInCall = false;
++        }
++    });
++});
+diff --git a/src/shared/IpcEvents.ts b/src/shared/IpcEvents.ts
+index 51d2a281..bf08c245 100644
+--- a/src/shared/IpcEvents.ts
++++ b/src/shared/IpcEvents.ts
+@@ -50,5 +50,17 @@ export const enum IpcEvents {
+ 
+     ARRPC_ACTIVITY = "VCD_ARRPC_ACTIVITY",
+ 
+-    CLIPBOARD_COPY_IMAGE = "VCD_CLIPBOARD_COPY_IMAGE"
++    CLIPBOARD_COPY_IMAGE = "VCD_CLIPBOARD_COPY_IMAGE",
++
++    SET_TRAY_ICON = "VCD_SET_TRAY_ICON",
++    GET_TRAY_ICON = "VCD_GET_TRAY_ICON",
++    GET_TRAY_ICON_SYNC = "VCD_GET_TRAY_ICON_SYNC",
++    CREATE_TRAY_ICON_REQUEST = "VCD_CREATE_TRAY_ICON_REQUEST",
++    CREATE_TRAY_ICON_RESPONSE = "VCD_CREATE_TRAY_ICON_RESPONSE",
++    GENERATE_TRAY_ICONS = "VCD_GENERATE_TRAY_ICONS",
++    SET_CURRENT_VOICE_TRAY_ICON = "VCD_SET_CURRENT_VOICE_ICON",
++    GET_SYSTEM_ACCENT_COLOR = "VCD_GET_ACCENT_COLOR",
++    SELECT_TRAY_ICON = "VCD_SELECT_TRAY_ICON",
++    ADD_BADGE_TO_ICON = "VCD_ADD_BADGE_TO_ICON",
++    GET_ICON_WITH_BADGE = "VCD_GET_ICON_WITH_BADGE"
+ }
+diff --git a/src/shared/paths.ts b/src/shared/paths.ts
+index 483250ac..eb6572e8 100644
+--- a/src/shared/paths.ts
++++ b/src/shared/paths.ts
+@@ -4,9 +4,11 @@
+  * Copyright (c) 2023 Vendicated and Vencord contributors
+  */
+ 
++import { DATA_DIR } from "main/constants";
+ import { join } from "path";
+ 
+ export const STATIC_DIR = /* @__PURE__ */ join(__dirname, "..", "..", "static");
+ export const VIEW_DIR = /* @__PURE__ */ join(STATIC_DIR, "views");
+ export const BADGE_DIR = /* @__PURE__ */ join(STATIC_DIR, "badges");
+ export const ICON_PATH = /* @__PURE__ */ join(STATIC_DIR, "icon.png");
++export const ICONS_DIR = /* @__PURE__ */ join(DATA_DIR, "TrayIcons");
+diff --git a/src/shared/settings.d.ts b/src/shared/settings.d.ts
+index f1000103..c8f97863 100644
+--- a/src/shared/settings.d.ts
++++ b/src/shared/settings.d.ts
+@@ -10,6 +10,14 @@ export interface Settings {
+     discordBranch?: "stable" | "canary" | "ptb";
+     transparencyOption?: "none" | "mica" | "tabbed" | "acrylic";
+     tray?: boolean;
++    trayColor?: string;
++    trayColorType?: "default" | "system" | "custom";
++    trayAutoFill?: "auto" | "white" | "black";
++    trayMainOverride?: boolean;
++    trayIdleOverride?: boolean;
++    trayMutedOverride?: boolean;
++    traySpeakingOverride?: boolean;
++    trayDeafenedOverride?: boolean;
+     minimizeToTray?: boolean;
+     openLinksWithElectron?: boolean;
+     staticTitle?: boolean;
+diff --git a/static/badges/badge.svg b/static/badges/badge.svg
+new file mode 100755
+index 00000000..96852ee1
+--- /dev/null
++++ b/static/badges/badge.svg
+@@ -0,0 +1,4 @@
++<?xml version="1.0"?>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
++    <circle cx="500" cy="500" r="300" stroke="#f6bfac" stroke-width="50" fill="#f6bfac"/>
++</svg>
+diff --git a/static/deafened.svg b/static/deafened.svg
+new file mode 100644
+index 00000000..b400d9dd
+--- /dev/null
++++ b/static/deafened.svg
+@@ -0,0 +1,10 @@
++<svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" viewBox="0 0 24 24">
++    <style>
++          @media (prefers-color-scheme: dark) {
++            #headphonesIcon { fill: white }
++          }
++     </style>
++    <path fill="none" d="M0 0h24v24H0V0z"/>
++    <path id="headphonesIcon" fill="black" d="M12 4c3.87 0 7 3.13 7 7v2h-2.92L21 17.92V11a9 9 0 0 0-9-9c-1.95 0-3.76.62-5.23 1.68l1.44 1.44A6.914 6.914 0 0 1 12 4zM2.27 1.72 1 3l3.33 3.32A8.899 8.899 0 0 0 3 11v7c0 1.66 1.34 3 3 3h3v-8H5v-2c0-1.17.29-2.26.79-3.22L15 17v4h3c.3 0 .59-.06.86-.14L21 23l1.27-1.27-20-20.01z"/>
++    <path fill="#f6bfac" d="M2.27 1.72 1 3l20 20 1.27-1.27-20-20.01z"/>
++</svg>
+\ No newline at end of file
+diff --git a/static/idle.svg b/static/idle.svg
+new file mode 100755
+index 00000000..9631763b
+--- /dev/null
++++ b/static/idle.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0"?>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
++    <circle cx="500" cy="500" r="400" stroke="#f6bfac" stroke-width="50" fill="#f6bfac" fill-opacity="0.5"/>
++    <path d="M 255 600 Q 255 255 600 255" fill="none" stroke="#f6bfac" stroke-width="50"/>
++</svg>
+diff --git a/static/muted.svg b/static/muted.svg
+new file mode 100644
+index 00000000..7166b175
+--- /dev/null
++++ b/static/muted.svg
+@@ -0,0 +1,10 @@
++<svg xmlns="http://www.w3.org/2000/svg" fill="#FFF" viewBox="0 0 24 24">
++    <style>
++          @media (prefers-color-scheme: dark) {
++            #micIcon { fill: white }
++          }
++     </style>
++    <path fill="none" d="M0 0h24v24H0zm0 0h24v24H0z"/>
++    <path id="micIcon" fill="black" d="M19 11h-1.7c0 .74-.16 1.43-.43 2.05l1.23 1.23c.56-.98.9-2.09.9-3.28zm-4.02.17c0-.06.02-.11.02-.17V5c0-1.66-1.34-3-3-3S9 3.34 9 5v.18l5.98 5.99zM9.02 10.28V11c0 1.66 1.33 3 2.99 3 .22 0 .44-.03.65-.08l1.66 1.66c-.71.33-1.5.52-2.31.52-2.76 0-5.3-2.1-5.3-5.1H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c.91-.13 1.77-.45 2.54-.9L19.73 21 21 19.73 4.27 3z"/>
++    <path fill="#f6bfac" d="M4.27 3 3 4.27l6.02 6.01L19.73 21 21 19.73 4.27 3"/>
++</svg>
+\ No newline at end of file
+diff --git a/static/speaking.svg b/static/speaking.svg
+new file mode 100755
+index 00000000..a0036169
+--- /dev/null
++++ b/static/speaking.svg
+@@ -0,0 +1,5 @@
++<?xml version="1.0"?>
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000">
++    <circle cx="500" cy="500" r="400" stroke="#f6bfac" stroke-width="50" fill="#f6bfac"/>
++    <path d="M 255 600 Q 255 255 600 255" fill="none" stroke="white" stroke-width="50"/>
++</svg>

@@ -14,7 +14,7 @@ Source1:        vesktop.sh
 Source2:        vesktop.desktop
 
 Patch0:         remove-splash.diff
-Patch1:         tray-notifications.diff
+Patch1:         tray-improvements.diff
 
 BuildRequires:  pnpm
 
