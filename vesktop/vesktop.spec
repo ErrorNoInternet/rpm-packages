@@ -1,5 +1,5 @@
-%global _default_patch_fuzz 2
-%global debug_package %{nil}
+%global _default_patch_fuzz 3
+%global debug_package       %{nil}
 
 Name:           vesktop
 Version:        1.5.4
