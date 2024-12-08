@@ -1,5 +1,6 @@
 %bcond_without check
 
+%global __brp_mangle_shebangs /usr/bin/true
 %global _default_patch_fuzz 2
 %global cargo_install_lib   0
 
@@ -111,8 +112,6 @@ for size in {1024,512,256,128,64,32,16}; do
     mkdir -p %{buildroot}%{_datadir}/icons/hicolor/"$size"x"$size"/apps
     magick assets/logo.png -resize "$size"x"$size"\! %{buildroot}%{_datadir}/icons/hicolor/"$size"x"$size"/apps/%{name}.png
 done
-
-rm -rf vendor
 
 %if %{with check}
 %check
