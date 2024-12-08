@@ -112,6 +112,8 @@ for size in {1024,512,256,128,64,32,16}; do
     magick assets/logo.png -resize "$size"x"$size"\! %{buildroot}%{_datadir}/icons/hicolor/"$size"x"$size"/apps/%{name}.png
 done
 
+rm -rf vendor
+
 %if %{with check}
 %check
 %cargo_test
