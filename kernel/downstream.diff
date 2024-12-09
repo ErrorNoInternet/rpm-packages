@@ -513,37 +513,37 @@ index 000000000..0bcf73b77
 +
 diff --git a/bore-scheduler.patch b/bore-scheduler.patch
 new file mode 100644
-index 000000000..57fe220ba
+index 000000000..1dd936579
 --- /dev/null
 +++ b/bore-scheduler.patch
-@@ -0,0 +1,996 @@
-+From ec8f45c344f29c83303fc1c846ceea2ab8064e35 Mon Sep 17 00:00:00 2001
-+From: Masahito S <firelzrd@gmail.com>
-+Date: Thu, 7 Nov 2024 02:22:15 +0900
-+Subject: [PATCH] linux6.11.y-bore5.7.3
+@@ -0,0 +1,982 @@
++From 83bded9dc2e0ac8e8e12b96c49f45d372540bcba Mon Sep 17 00:00:00 2001
++From: Piotr Gorski <lucjan.lucjanov@gmail.com>
++Date: Thu, 5 Dec 2024 13:23:17 +0100
++Subject: [PATCH] bore
 +
++Signed-off-by: Piotr Gorski <lucjan.lucjanov@gmail.com>
 +---
-+ include/linux/sched.h      |  20 +-
-+ include/linux/sched/bore.h |  37 ++++
++ include/linux/sched.h      |  17 ++
++ include/linux/sched/bore.h |  40 ++++
 + init/Kconfig               |  17 ++
 + kernel/Kconfig.hz          |  17 ++
 + kernel/fork.c              |   5 +
 + kernel/sched/Makefile      |   1 +
-+ kernel/sched/bore.c        | 381 +++++++++++++++++++++++++++++++++++++
-+ kernel/sched/core.c        |   7 +
++ kernel/sched/bore.c        | 412 +++++++++++++++++++++++++++++++++++++
++ kernel/sched/core.c        |   6 +
 + kernel/sched/debug.c       |  61 +++++-
-+ kernel/sched/fair.c        |  85 ++++++++-
-+ kernel/sched/features.h    |   4 +
++ kernel/sched/fair.c        |  75 ++++++-
 + kernel/sched/sched.h       |   9 +
-+ 12 files changed, 639 insertions(+), 5 deletions(-)
++ 11 files changed, 655 insertions(+), 5 deletions(-)
 + create mode 100644 include/linux/sched/bore.h
 + create mode 100644 kernel/sched/bore.c
 +
 +diff --git a/include/linux/sched.h b/include/linux/sched.h
-+index 1c771ea448..0c6ac0ac8e 100644
++index bb343136ddd0..c86185f87e7b 100644
 +--- a/include/linux/sched.h
 ++++ b/include/linux/sched.h
-+@@ -535,6 +535,14 @@ struct sched_statistics {
++@@ -538,6 +538,14 @@ struct sched_statistics {
 + #endif /* CONFIG_SCHEDSTATS */
 + } ____cacheline_aligned;
 + 
@@ -558,15 +558,7 @@ index 000000000..57fe220ba
 + struct sched_entity {
 + 	/* For load-balancing: */
 + 	struct load_weight		load;
-+@@ -543,12 +551,22 @@ struct sched_entity {
-+ 	u64				min_vruntime;
-+ 
-+ 	struct list_head		group_node;
-+-	unsigned int			on_rq;
-++	unsigned char			on_rq;
-++	unsigned char			rel_deadline;
-+ 
-+ 	u64				exec_start;
++@@ -557,6 +565,15 @@ struct sched_entity {
 + 	u64				sum_exec_runtime;
 + 	u64				prev_sum_exec_runtime;
 + 	u64				vruntime;
@@ -584,16 +576,17 @@ index 000000000..57fe220ba
 + 
 +diff --git a/include/linux/sched/bore.h b/include/linux/sched/bore.h
 +new file mode 100644
-+index 0000000000..12a613a94f
++index 000000000000..14d8f260ad6c
 +--- /dev/null
 ++++ b/include/linux/sched/bore.h
-+@@ -0,0 +1,37 @@
++@@ -0,0 +1,40 @@
 ++
 ++#include <linux/sched.h>
 ++#include <linux/sched/cputime.h>
 ++
 ++#ifndef _LINUX_SCHED_BORE_H
 ++#define _LINUX_SCHED_BORE_H
+++#define SCHED_BORE_VERSION "5.7.8"
 ++
 ++#ifdef CONFIG_SCHED_BORE
 ++extern u8   __read_mostly sched_bore;
@@ -604,6 +597,7 @@ index 000000000..57fe220ba
 ++extern u8   __read_mostly sched_burst_parity_threshold;
 ++extern u8   __read_mostly sched_burst_penalty_offset;
 ++extern uint __read_mostly sched_burst_penalty_scale;
+++extern uint __read_mostly sched_burst_cache_stop_count;
 ++extern uint __read_mostly sched_burst_cache_lifetime;
 ++extern uint __read_mostly sched_deadline_boost_mask;
 ++
@@ -620,16 +614,17 @@ index 000000000..57fe220ba
 ++	struct task_struct *p, struct task_struct *parent, u64 clone_flags);
 ++
 ++extern void init_task_bore(struct task_struct *p);
+++extern void sched_bore_init(void);
 ++
 ++extern void reweight_entity(
 ++	struct cfs_rq *cfs_rq, struct sched_entity *se, unsigned long weight);
 ++#endif // CONFIG_SCHED_BORE
 ++#endif // _LINUX_SCHED_BORE_H
 +diff --git a/init/Kconfig b/init/Kconfig
-+index 5783a0b875..b648ed538c 100644
++index c521e1421ad4..85e2567fb88b 100644
 +--- a/init/Kconfig
 ++++ b/init/Kconfig
-+@@ -1297,6 +1297,23 @@ config CHECKPOINT_RESTORE
++@@ -1332,6 +1332,23 @@ config CHECKPOINT_RESTORE
 + 
 + 	  If unsure, say N here.
 + 
@@ -654,7 +649,7 @@ index 000000000..57fe220ba
 + 	bool "Automatic process group scheduling"
 + 	select CGROUPS
 +diff --git a/kernel/Kconfig.hz b/kernel/Kconfig.hz
-+index 38ef6d0688..253c566b59 100644
++index 38ef6d06888e..253c566b5946 100644
 +--- a/kernel/Kconfig.hz
 ++++ b/kernel/Kconfig.hz
 +@@ -55,5 +55,22 @@ config HZ
@@ -681,10 +676,10 @@ index 000000000..57fe220ba
 + config SCHED_HRTICK
 + 	def_bool HIGH_RES_TIMERS
 +diff --git a/kernel/fork.c b/kernel/fork.c
-+index 6b97fb2ac4..7dc42ef458 100644
++index 22f43721d031..c01a84ac1a72 100644
 +--- a/kernel/fork.c
 ++++ b/kernel/fork.c
-+@@ -111,6 +111,8 @@
++@@ -113,6 +113,8 @@
 + #include <asm/cacheflush.h>
 + #include <asm/tlbflush.h>
 + 
@@ -693,7 +688,7 @@ index 000000000..57fe220ba
 + #include <trace/events/sched.h>
 + 
 + #define CREATE_TRACE_POINTS
-+@@ -2341,6 +2343,9 @@ __latent_entropy struct task_struct *copy_process(
++@@ -2344,6 +2346,9 @@ __latent_entropy struct task_struct *copy_process(
 + 	retval = sched_fork(clone_flags, p);
 + 	if (retval)
 + 		goto bad_fork_cleanup_policy;
@@ -704,7 +699,7 @@ index 000000000..57fe220ba
 + 	retval = perf_event_init_task(p, clone_flags);
 + 	if (retval)
 +diff --git a/kernel/sched/Makefile b/kernel/sched/Makefile
-+index 976092b7bd..293aad6754 100644
++index 976092b7bd45..293aad675444 100644
 +--- a/kernel/sched/Makefile
 ++++ b/kernel/sched/Makefile
 +@@ -32,3 +32,4 @@ obj-y += core.o
@@ -714,15 +709,16 @@ index 000000000..57fe220ba
 ++obj-y += bore.o
 +diff --git a/kernel/sched/bore.c b/kernel/sched/bore.c
 +new file mode 100644
-+index 0000000000..cd7e8a8d60
++index 000000000000..96a9177f003a
 +--- /dev/null
 ++++ b/kernel/sched/bore.c
-+@@ -0,0 +1,381 @@
++@@ -0,0 +1,412 @@
 ++/*
 ++ *  Burst-Oriented Response Enhancer (BORE) CPU Scheduler
 ++ *  Copyright (C) 2021-2024 Masahito Suzuki <firelzrd@gmail.com>
 ++ */
 ++#include <linux/cpuset.h>
+++#include <linux/sched/task.h>
 ++#include <linux/sched/bore.h>
 ++#include "sched.h"
 ++
@@ -735,7 +731,8 @@ index 000000000..57fe220ba
 ++u8   __read_mostly sched_burst_parity_threshold = 2;
 ++u8   __read_mostly sched_burst_penalty_offset   = 24;
 ++uint __read_mostly sched_burst_penalty_scale    = 1280;
-++uint __read_mostly sched_burst_cache_lifetime   = 60000000;
+++uint __read_mostly sched_burst_cache_stop_count = 20;
+++uint __read_mostly sched_burst_cache_lifetime   = 75000000;
 ++uint __read_mostly sched_deadline_boost_mask    = ENQUEUE_INITIAL
 ++                                                | ENQUEUE_WAKEUP;
 ++static int __maybe_unused sixty_four     = 64;
@@ -868,10 +865,15 @@ index 000000000..57fe220ba
 ++	return 0;
 ++}
 ++
-++static u32 count_child_tasks(struct task_struct *p) {
-++	struct task_struct *child;
+++#define for_each_child(p, t) \
+++	list_for_each_entry(t, &(p)->children, sibling)
+++
+++#define has_no_child(p) list_empty(&(p)->children)
+++
+++static u32 count_children_max2(struct task_struct *p) {
 ++	u32 cnt = 0;
-++	list_for_each_entry(child, &p->children, sibling) {cnt++;}
+++	struct task_struct *child;
+++	for_each_child(p, child) {if (2 <= ++cnt) break;}
 ++	return cnt;
 ++}
 ++
@@ -890,10 +892,11 @@ index 000000000..57fe220ba
 ++	u32 cnt = 0, sum = 0;
 ++	struct task_struct *child;
 ++
-++	list_for_each_entry(child, &p->children, sibling) {
+++	for_each_child(p, child) {
 ++		if (!task_is_bore_eligible(child)) continue;
 ++		cnt++;
 ++		sum += child->se.burst_penalty;
+++		if (unlikely(sched_burst_cache_stop_count <= cnt)) break;
 ++	}
 ++
 ++	update_burst_cache(&p->se.child_burst, p, cnt, sum, now);
@@ -912,20 +915,22 @@ index 000000000..57fe220ba
 ++	u32 cnt = 0, dcnt = 0, sum = 0;
 ++	struct task_struct *child, *dec;
 ++
-++	list_for_each_entry(child, &p->children, sibling) {
+++	for_each_child(p, child) {
 ++		dec = child;
-++		while ((dcnt = count_child_tasks(dec)) == 1)
+++		while ((dcnt = count_children_max2(dec)) == 1)
 ++			dec = list_first_entry(&dec->children, struct task_struct, sibling);
 ++		
 ++		if (!dcnt || !depth) {
 ++			if (!task_is_bore_eligible(dec)) continue;
 ++			cnt++;
 ++			sum += dec->se.burst_penalty;
+++			if (unlikely(sched_burst_cache_stop_count <= cnt)) break;
 ++			continue;
 ++		}
 ++		if (!burst_cache_expired(&dec->se.child_burst, now)) {
 ++			cnt += dec->se.child_burst.count;
 ++			sum += (u32)dec->se.child_burst.score * dec->se.child_burst.count;
+++			if (sched_burst_cache_stop_count <= cnt) break;
 ++			continue;
 ++		}
 ++		update_child_burst_topological(dec, now, depth - 1, &cnt, &sum);
@@ -940,8 +945,9 @@ index 000000000..57fe220ba
 ++	struct task_struct *anc = p;
 ++	u32 cnt = 0, sum = 0;
 ++
-++	while (anc->real_parent != anc && count_child_tasks(anc) == 1)
-++		anc = anc->real_parent;
+++	for (struct task_struct *next;
+++		 anc != (next = anc->real_parent) && has_no_child(anc);
+++		 anc = next) {}
 ++
 ++	if (burst_cache_expired(&anc->se.child_burst, now))
 ++		update_child_burst_topological(
@@ -958,6 +964,7 @@ index 000000000..57fe220ba
 ++		if (!task_is_bore_eligible(task)) continue;
 ++		cnt++;
 ++		sum += task->se.burst_penalty;
+++		if (unlikely(sched_burst_cache_stop_count <= cnt)) break;
 ++	}
 ++
 ++	update_burst_cache(&p->se.group_burst, p, cnt, sum, now);
@@ -973,15 +980,22 @@ index 000000000..57fe220ba
 ++
 ++void sched_clone_bore(
 ++	struct task_struct *p, struct task_struct *parent, u64 clone_flags) {
+++	u64 now;
+++	u8 penalty;
+++
 ++	if (!task_is_bore_eligible(p)) return;
 ++
-++	u64 now = ktime_get_ns();
 ++	read_lock(&tasklist_lock);
-++	u8 penalty = (clone_flags & CLONE_THREAD) ?
-++		inherit_burst_tg(parent, now) :
-++		likely(sched_burst_fork_atavistic) ?
+++	now = jiffies_to_nsecs(jiffies);
+++	if (clone_flags & CLONE_THREAD) {
+++		penalty = inherit_burst_tg(parent, now);
+++	} else {
+++		if (clone_flags & CLONE_PARENT)
+++			parent = parent->real_parent;
+++		penalty = likely(sched_burst_fork_atavistic) ?
 ++			inherit_burst_topological(parent, now):
 ++			inherit_burst_direct(parent, now);
+++	}
 ++	read_unlock(&tasklist_lock);
 ++
 ++	struct sched_entity *se = &p->se;
@@ -1000,6 +1014,11 @@ index 000000000..57fe220ba
 ++	p->se.burst_score = 0;
 ++	memset(&p->se.child_burst, 0, sizeof(struct sched_burst_cache));
 ++	memset(&p->se.group_burst, 0, sizeof(struct sched_burst_cache));
+++}
+++
+++void __init sched_bore_init(void) {
+++	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification %s by Masahito Suzuki", SCHED_BORE_VERSION);
+++    init_task_bore(&init_task);
 ++}
 ++
 ++#ifdef CONFIG_SYSCTL
@@ -1077,6 +1096,13 @@ index 000000000..57fe220ba
 ++		.extra2		= &maxval_12_bits,
 ++	},
 ++	{
+++		.procname	= "sched_burst_cache_stop_count",
+++		.data		= &sched_burst_cache_stop_count,
+++		.maxlen		= sizeof(uint),
+++		.mode		= 0644,
+++		.proc_handler = proc_douintvec,
+++	},
+++	{
 ++		.procname	= "sched_burst_cache_lifetime",
 ++		.data		= &sched_burst_cache_lifetime,
 ++		.maxlen		= sizeof(uint),
@@ -1100,7 +1126,7 @@ index 000000000..57fe220ba
 ++#endif // CONFIG_SYSCTL
 ++#endif // CONFIG_SCHED_BORE
 +diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-+index 1af59cf714..9ad2c18bac 100644
++index a1c353a62c56..4dc0c98c1afd 100644
 +--- a/kernel/sched/core.c
 ++++ b/kernel/sched/core.c
 +@@ -97,6 +97,8 @@
@@ -1112,20 +1138,19 @@ index 000000000..57fe220ba
 + EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpu);
 + EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpumask);
 + 
-+@@ -8204,6 +8206,11 @@ void __init sched_init(void)
-+ 	BUG_ON(&dl_sched_class != &stop_sched_class + 1);
++@@ -8380,6 +8382,10 @@ void __init sched_init(void)
++ 	BUG_ON(!sched_class_above(&ext_sched_class, &idle_sched_class));
 + #endif
 + 
 ++#ifdef CONFIG_SCHED_BORE
-++	printk(KERN_INFO "BORE (Burst-Oriented Response Enhancer) CPU Scheduler modification 5.7.3 by Masahito Suzuki");
-++	init_task_bore(&init_task);
+++	sched_bore_init();
 ++#endif // CONFIG_SCHED_BORE
 ++
 + 	wait_bit_init();
 + 
 + #ifdef CONFIG_FAIR_GROUP_SCHED
 +diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-+index c1eb9a1afd..02d2895c46 100644
++index f4035c7a0fa1..0edb3a216f5d 100644
 +--- a/kernel/sched/debug.c
 ++++ b/kernel/sched/debug.c
 +@@ -167,7 +167,53 @@ static const struct file_operations sched_feat_fops = {
@@ -1191,7 +1216,7 @@ index 000000000..57fe220ba
 + #endif /* SMP */
 + 
 + #ifdef CONFIG_PREEMPT_DYNAMIC
-+@@ -347,13 +393,20 @@ static __init int sched_init_debug(void)
++@@ -504,13 +550,20 @@ static __init int sched_init_debug(void)
 + 	debugfs_create_file("preempt", 0644, debugfs_sched, NULL, &sched_dynamic_fops);
 + #endif
 + 
@@ -1212,7 +1237,7 @@ index 000000000..57fe220ba
 + 	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
 + 	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
 + 
-+@@ -596,6 +649,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
++@@ -755,6 +808,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 + 		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_sleep_runtime)),
 + 		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_block_runtime)));
 + 
@@ -1220,9 +1245,9 @@ index 000000000..57fe220ba
 ++	SEQ_printf(m, " %2d", p->se.burst_score);
 ++#endif // CONFIG_SCHED_BORE
 + #ifdef CONFIG_NUMA_BALANCING
-+ 	SEQ_printf(m, " %d %d", task_node(p), task_numa_group_id(p));
++ 	SEQ_printf(m, "   %d      %d", task_node(p), task_numa_group_id(p));
 + #endif
-+@@ -1069,6 +1125,9 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
++@@ -1243,6 +1299,9 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
 + 
 + 	P(se.load.weight);
 + #ifdef CONFIG_SMP
@@ -1233,7 +1258,7 @@ index 000000000..57fe220ba
 + 	P(se.avg.runnable_sum);
 + 	P(se.avg.util_sum);
 +diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-+index 1d2cbdb162..8666269f73 100644
++index 2d16c8545c71..94c54154a175 100644
 +--- a/kernel/sched/fair.c
 ++++ b/kernel/sched/fair.c
 +@@ -55,6 +55,8 @@
@@ -1310,7 +1335,7 @@ index 000000000..57fe220ba
 + 
 + 	return clamp(vlag, -limit, limit);
 + }
-+@@ -896,6 +922,10 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
++@@ -926,6 +952,10 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
 + 	 * until it gets a new slice. See the HACK in set_next_entity().
 + 	 */
 + 	if (sched_feat(RUN_TO_PARITY) && curr && curr->vlag == curr->deadline)
@@ -1321,7 +1346,7 @@ index 000000000..57fe220ba
 + 		return curr;
 + 
 + 	/* Pick the leftmost entity if it's eligible */
-+@@ -954,6 +984,7 @@ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
++@@ -984,6 +1014,7 @@ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
 +  * Scheduling class statistics methods:
 +  */
 + #ifdef CONFIG_SMP
@@ -1329,7 +1354,7 @@ index 000000000..57fe220ba
 + int sched_update_scaling(void)
 + {
 + 	unsigned int factor = get_update_sysctl_factor();
-+@@ -965,6 +996,7 @@ int sched_update_scaling(void)
++@@ -995,6 +1026,7 @@ int sched_update_scaling(void)
 + 
 + 	return 0;
 + }
@@ -1337,7 +1362,7 @@ index 000000000..57fe220ba
 + #endif
 + #endif
 + 
-+@@ -1165,6 +1197,10 @@ static void update_curr(struct cfs_rq *cfs_rq)
++@@ -1227,6 +1259,10 @@ static void update_curr(struct cfs_rq *cfs_rq)
 + 	if (unlikely(delta_exec <= 0))
 + 		return;
 + 
@@ -1346,9 +1371,9 @@ index 000000000..57fe220ba
 ++	update_burst_penalty(curr);
 ++#endif // CONFIG_SCHED_BORE
 + 	curr->vruntime += calc_delta_fair(delta_exec, curr);
-+ 	update_deadline(cfs_rq, curr);
++ 	resched = update_deadline(cfs_rq, curr);
 + 	update_min_vruntime(cfs_rq);
-+@@ -3791,7 +3827,7 @@ static void reweight_eevdf(struct sched_entity *se, u64 avruntime,
++@@ -3871,7 +3907,7 @@ static void reweight_eevdf(struct sched_entity *se, u64 avruntime,
 + 	se->deadline = avruntime + vslice;
 + }
 + 
@@ -1357,7 +1382,7 @@ index 000000000..57fe220ba
 + 			    unsigned long weight)
 + {
 + 	bool curr = cfs_rq->curr == se;
-+@@ -5198,6 +5234,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++@@ -5280,6 +5316,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 + 	 *
 + 	 * EEVDF: placement strategy #1 / #2
 + 	 */
@@ -1367,15 +1392,11 @@ index 000000000..57fe220ba
 + 	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running) {
 + 		struct sched_entity *curr = cfs_rq->curr;
 + 		unsigned long load;
-+@@ -5268,6 +5307,16 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-+ 
-+ 	se->vruntime = vruntime - lag;
-+ 
-++	if (sched_feat(PLACE_REL_DEADLINE) && se->rel_deadline) {
-++		se->deadline += se->vruntime;
-++		se->rel_deadline = 0;
-++		return;
-++	}
++@@ -5355,7 +5394,11 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++ 		se->rel_deadline = 0;
++ 		return;
++ 	}
++-
 ++#ifdef CONFIG_SCHED_BORE
 ++	else if (likely(sched_bore))
 ++		vslice >>= !!(flags & sched_deadline_boost_mask);
@@ -1384,42 +1405,22 @@ index 000000000..57fe220ba
 + 	/*
 + 	 * When joining the competition; the existing tasks will be,
 + 	 * on average, halfway through their slice, as such start tasks
-+@@ -5377,6 +5426,7 @@ static __always_inline void return_cfs_rq_runtime(struct cfs_rq *cfs_rq);
-+ static void
-+ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-+ {
-++	bool sleep = flags & DEQUEUE_SLEEP;
-+ 	int action = UPDATE_TG;
-+ 
-+ 	if (entity_is_task(se) && task_on_rq_migrating(task_of(se)))
-+@@ -5404,6 +5454,11 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-+ 	clear_buddies(cfs_rq, se);
-+ 
-+ 	update_entity_lag(cfs_rq, se);
-++	if (sched_feat(PLACE_REL_DEADLINE) && !sleep) {
-++		se->deadline -= se->vruntime;
-++		se->rel_deadline = 1;
-++	}
-++
-+ 	if (se != cfs_rq->curr)
-+ 		__dequeue_entity(cfs_rq, se);
-+ 	se->on_rq = 0;
-+@@ -6855,6 +6910,14 @@ static void dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
-+ 	bool was_sched_idle = sched_idle_rq(rq);
-+ 
-+ 	util_est_dequeue(&rq->cfs, p);
++@@ -7097,6 +7140,14 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
++ 		p = task_of(se);
++ 		h_nr_running = 1;
++ 		idle_h_nr_running = task_has_idle_policy(p);
 ++#ifdef CONFIG_SCHED_BORE
-++	if (task_sleep) {
-++		cfs_rq = cfs_rq_of(se);
-++		if (cfs_rq->curr == se)
-++			update_curr(cfs_rq);
-++		restart_burst(se);
-++	}
+++		if (task_sleep) {
+++			cfs_rq = cfs_rq_of(se);
+++			if (cfs_rq->curr == se)
+++				update_curr(cfs_rq);
+++			restart_burst(se);
+++		}
 ++#endif // CONFIG_SCHED_BORE
-+ 
-+ 	for_each_sched_entity(se) {
-+ 		cfs_rq = cfs_rq_of(se);
-+@@ -8637,16 +8700,25 @@ static void yield_task_fair(struct rq *rq)
++ 	} else {
++ 		cfs_rq = group_cfs_rq(se);
++ 		slice = cfs_rq_min_slice(cfs_rq);
++@@ -9012,16 +9063,25 @@ static void yield_task_fair(struct rq *rq)
 + 	/*
 + 	 * Are we the only task in the tree?
 + 	 */
@@ -1445,17 +1446,17 @@ index 000000000..57fe220ba
 + 	/*
 + 	 * Tell update_rq_clock() that we've just updated,
 + 	 * so we don't do microscopic update in schedule()
-+@@ -12722,6 +12794,9 @@ static void task_fork_fair(struct task_struct *p)
-+ 	curr = cfs_rq->curr;
-+ 	if (curr)
-+ 		update_curr(cfs_rq);
++@@ -13073,6 +13133,9 @@ static void task_tick_fair(struct rq *rq, struct task_struct *curr, int queued)
++ static void task_fork_fair(struct task_struct *p)
++ {
++ 	set_task_max_allowed_capacity(p);
 ++#ifdef CONFIG_SCHED_BORE
-++	update_burst_score(se);
+++	update_burst_score(&p->se);
 ++#endif // CONFIG_SCHED_BORE
-+ 	place_entity(cfs_rq, se, ENQUEUE_INITIAL);
-+ 	rq_unlock(rq, &rf);
 + }
-+@@ -12834,6 +12909,10 @@ static void attach_task_cfs_rq(struct task_struct *p)
++ 
++ /*
++@@ -13183,6 +13246,10 @@ static void attach_task_cfs_rq(struct task_struct *p)
 + 
 + static void switched_from_fair(struct rq *rq, struct task_struct *p)
 + {
@@ -1466,26 +1467,11 @@ index 000000000..57fe220ba
 + 	detach_task_cfs_rq(p);
 + }
 + 
-+diff --git a/kernel/sched/features.h b/kernel/sched/features.h
-+index 143f55df89..e97b7b68bd 100644
-+--- a/kernel/sched/features.h
-++++ b/kernel/sched/features.h
-+@@ -6,6 +6,10 @@
-+  */
-+ SCHED_FEAT(PLACE_LAG, true)
-+ SCHED_FEAT(PLACE_DEADLINE_INITIAL, true)
-++/*
-++ * Preserve relative virtual deadline on 'migration'.
-++ */
-++SCHED_FEAT(PLACE_REL_DEADLINE, true)
-+ SCHED_FEAT(RUN_TO_PARITY, true)
-+ 
-+ /*
 +diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-+index 4c36cc6803..2c7d3eb3b1 100644
++index c03b3d7b320e..bbe2f77aa42d 100644
 +--- a/kernel/sched/sched.h
 ++++ b/kernel/sched/sched.h
-+@@ -1984,7 +1984,11 @@ static inline void update_sched_domain_debugfs(void) { }
++@@ -2075,7 +2075,11 @@ static inline void update_sched_domain_debugfs(void) { }
 + static inline void dirty_sched_domain_sysctl(int cpu) { }
 + #endif
 + 
@@ -1497,7 +1483,7 @@ index 000000000..57fe220ba
 + 
 + static inline const struct cpumask *task_user_cpus(struct task_struct *p)
 + {
-+@@ -2600,7 +2604,12 @@ extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
++@@ -2825,7 +2829,12 @@ extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
 + extern const_debug unsigned int sysctl_sched_nr_migrate;
 + extern const_debug unsigned int sysctl_sched_migration_cost;
 + 
@@ -1511,16 +1497,16 @@ index 000000000..57fe220ba
 + #ifdef CONFIG_SCHED_DEBUG
 + extern int sysctl_resched_latency_warn_ms;
 +-- 
-+2.34.1
++2.47.1
 +
 diff --git a/btrfs-allocator-hints.patch b/btrfs-allocator-hints.patch
 new file mode 100644
-index 000000000..78df6390b
+index 000000000..c9d6e4be7
 --- /dev/null
 +++ b/btrfs-allocator-hints.patch
-@@ -0,0 +1,290 @@
+@@ -0,0 +1,302 @@
 +diff --git a/fs/btrfs/sysfs.c b/fs/btrfs/sysfs.c
-+index 03926ad467c9..3675d961b39a 100644
++index 03926ad467c919..3675d961b39a2a 100644
 +--- a/fs/btrfs/sysfs.c
 ++++ b/fs/btrfs/sysfs.c
 +@@ -1972,6 +1972,70 @@ static ssize_t btrfs_devinfo_error_stats_show(struct kobject *kobj,
@@ -1603,10 +1589,10 @@ index 000000000..78df6390b
 + };
 + ATTRIBUTE_GROUPS(devid);
 +diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-+index fcedc43ef291..e7c5c9c7a191 100644
++index eb51b609190fb5..99d2c60ac2bf3e 100644
 +--- a/fs/btrfs/volumes.c
 ++++ b/fs/btrfs/volumes.c
-+@@ -184,6 +184,20 @@ enum btrfs_raid_types __attribute_const__ btrfs_bg_flags_to_raid_index(u64 flags
++@@ -184,6 +184,21 @@ enum btrfs_raid_types __attribute_const__ btrfs_bg_flags_to_raid_index(u64 flags
 + 	return BTRFS_BG_FLAG_TO_INDEX(profile);
 + }
 + 
@@ -1616,6 +1602,7 @@ index 000000000..78df6390b
 ++		BTRFS_DEV_ALLOCATION_MASK_BIT_COUNT)
 ++
 ++static const char alloc_hint_map[BTRFS_DEV_ALLOCATION_MASK_COUNT] = {
+++	[BTRFS_DEV_ALLOCATION_NONE_ONLY] = -99,
 ++	[BTRFS_DEV_ALLOCATION_DATA_ONLY] = -1,
 ++	[BTRFS_DEV_ALLOCATION_PREFERRED_DATA] = 0,
 ++	[BTRFS_DEV_ALLOCATION_PREFERRED_METADATA] = 1,
@@ -1627,7 +1614,7 @@ index 000000000..78df6390b
 + const char *btrfs_bg_type_to_raid_name(u64 flags)
 + {
 + 	const int index = btrfs_bg_flags_to_raid_index(flags);
-+@@ -2879,7 +2893,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
++@@ -2882,7 +2897,7 @@ int btrfs_init_new_device(struct btrfs_fs_info *fs_info, const char *device_path
 + 	return ret;
 + }
 + 
@@ -1636,7 +1623,7 @@ index 000000000..78df6390b
 + 					struct btrfs_device *device)
 + {
 + 	int ret;
-+@@ -5196,13 +5210,18 @@ static int btrfs_add_system_chunk(struct btrfs_fs_info *fs_info,
++@@ -5022,13 +5037,18 @@ static int btrfs_add_system_chunk(struct btrfs_fs_info *fs_info,
 + }
 + 
 + /*
@@ -1656,7 +1643,7 @@ index 000000000..78df6390b
 + 	if (di_a->max_avail > di_b->max_avail)
 + 		return -1;
 + 	if (di_a->max_avail < di_b->max_avail)
-+@@ -5355,6 +5374,8 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
++@@ -5181,6 +5201,8 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
 + 	int ndevs = 0;
 + 	u64 max_avail;
 + 	u64 dev_offset;
@@ -1665,7 +1652,7 @@ index 000000000..78df6390b
 + 
 + 	/*
 + 	 * in the first pass through the devices list, we gather information
-+@@ -5407,16 +5428,94 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
++@@ -5233,16 +5255,104 @@ static int gather_device_info(struct btrfs_fs_devices *fs_devices,
 + 		devices_info[ndevs].max_avail = max_avail;
 + 		devices_info[ndevs].total_avail = total_avail;
 + 		devices_info[ndevs].dev = device;
@@ -1687,6 +1674,11 @@ index 000000000..78df6390b
 ++			if (hint == BTRFS_DEV_ALLOCATION_METADATA_ONLY)
 ++				continue;
 ++			/*
+++			 * skip BTRFS_DEV_NONE_ONLY disks
+++			 */
+++			if (hint == BTRFS_DEV_ALLOCATION_NONE_ONLY)
+++				continue;
+++			/*
 ++			 * if a data chunk must be allocated,
 ++			 * sort also by hint (data disk
 ++			 * higher priority)
@@ -1699,6 +1691,11 @@ index 000000000..78df6390b
 ++			 * skip BTRFS_DEV_DATA_ONLY disks
 ++			 */
 ++			if (hint == BTRFS_DEV_ALLOCATION_DATA_ONLY)
+++				continue;
+++			/*
+++			 * skip BTRFS_DEV_NONE_ONLY disks
+++			 */
+++			if (hint == BTRFS_DEV_ALLOCATION_NONE_ONLY)
 ++				continue;
 ++			/*
 ++			 * if a data chunk must be allocated,
@@ -1761,10 +1758,10 @@ index 000000000..78df6390b
 + }
 + 
 +diff --git a/fs/btrfs/volumes.h b/fs/btrfs/volumes.h
-+index 37a09ebb34dd..584a9d1f155e 100644
++index 4481575dd70f35..f3c5437e270a22 100644
 +--- a/fs/btrfs/volumes.h
 ++++ b/fs/btrfs/volumes.h
-+@@ -559,6 +559,7 @@ struct btrfs_device_info {
++@@ -565,6 +565,7 @@ struct btrfs_device_info {
 + 	u64 dev_offset;
 + 	u64 max_avail;
 + 	u64 total_avail;
@@ -1772,7 +1769,7 @@ index 000000000..78df6390b
 + };
 + 
 + struct btrfs_raid_attr {
-+@@ -832,6 +833,8 @@ int btrfs_bg_type_to_factor(u64 flags);
++@@ -836,6 +837,8 @@ int btrfs_bg_type_to_factor(u64 flags);
 + const char *btrfs_bg_type_to_raid_name(u64 flags);
 + int btrfs_verify_dev_extents(struct btrfs_fs_info *fs_info);
 + bool btrfs_repair_one_zone(struct btrfs_fs_info *fs_info, u64 logical);
@@ -1782,10 +1779,10 @@ index 000000000..78df6390b
 + bool btrfs_pinned_by_swapfile(struct btrfs_fs_info *fs_info, void *ptr);
 + const u8 *btrfs_sb_fsid_ptr(const struct btrfs_super_block *sb);
 +diff --git a/include/uapi/linux/btrfs_tree.h b/include/uapi/linux/btrfs_tree.h
-+index fc29d273845d..92bcc59b129a 100644
++index fc29d273845d84..3db20734aacfc6 100644
 +--- a/include/uapi/linux/btrfs_tree.h
 ++++ b/include/uapi/linux/btrfs_tree.h
-+@@ -578,6 +578,22 @@ struct btrfs_node {
++@@ -578,6 +578,24 @@ struct btrfs_node {
 + 	struct btrfs_key_ptr ptrs[];
 + } __attribute__ ((__packed__));
 + 
@@ -1803,12 +1800,13 @@ index 000000000..78df6390b
 ++#define BTRFS_DEV_ALLOCATION_DATA_ONLY		(3ULL)
 ++/* preferred no chunk, but chunks allowed */
 ++#define BTRFS_DEV_ALLOCATION_PREFERRED_NONE	(4ULL)
-++/* 5..7 are unused values */
+++/* no chunks allowed */
+++#define BTRFS_DEV_ALLOCATION_NONE_ONLY	        (5ULL)
+++/* 6..7 are unused values */
 ++
 + struct btrfs_dev_item {
 + 	/* the internal btrfs device id */
 + 	__le64 devid;
-+
 diff --git a/crypto-updates.patch b/crypto-updates.patch
 new file mode 100644
 index 000000000..2c28f8837
@@ -10005,10 +10003,10 @@ index 000000000..2c28f8837
 +2.46.0.rc1
 +
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
-index 5715e8ddd..024b2651f 100644
+index 0d526c87c..996e0971c 100644
 --- a/kernel-x86_64-fedora.config
 +++ b/kernel-x86_64-fedora.config
-@@ -2899,7 +2899,8 @@ CONFIG_IIO_TIGHTLOOP_TRIGGER=m
+@@ -2931,7 +2931,8 @@ CONFIG_IIO_TIGHTLOOP_TRIGGER=m
  CONFIG_IIO_TRIGGERED_BUFFER=m
  CONFIG_IIO_TRIGGERED_EVENT=m
  CONFIG_IIO_TRIGGER=y
@@ -10018,7 +10016,7 @@ index 5715e8ddd..024b2651f 100644
  CONFIG_IKHEADERS=m
  CONFIG_IMA_APPRAISE_BOOTPARAM=y
  # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
-@@ -4265,7 +4266,7 @@ CONFIG_MODULE_COMPRESS_NONE=y
+@@ -4309,7 +4310,7 @@ CONFIG_MODULE_COMPRESS_NONE=y
  # CONFIG_MODULE_COMPRESS_ZSTD is not set
  # CONFIG_MODULE_DEBUG is not set
  # CONFIG_MODULE_FORCE_LOAD is not set
@@ -10027,7 +10025,7 @@ index 5715e8ddd..024b2651f 100644
  CONFIG_MODULE_SIG_ALL=y
  # CONFIG_MODULE_SIG_FORCE is not set
  CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
-@@ -9089,3 +9090,6 @@ CONFIG_ZSWAP=y
+@@ -9170,3 +9171,6 @@ CONFIG_ZSWAP=y
  # CONFIG_ZSWAP_ZPOOL_DEFAULT_Z3FOLD is not set
  CONFIG_ZSWAP_ZPOOL_DEFAULT_ZBUD=y
  # CONFIG_ZSWAP_ZPOOL_DEFAULT_ZSMALLOC is not set
@@ -10035,10 +10033,10 @@ index 5715e8ddd..024b2651f 100644
 +CONFIG_ACPI_CALL=y
 +CONFIG_NTSYNC=y
 diff --git a/kernel.spec b/kernel.spec
-index 87ffd85c7..91aec7be8 100644
+index df4cdf56e..009bf42e9 100644
 --- a/kernel.spec
 +++ b/kernel.spec
-@@ -308,8 +308,6 @@ Summary: The Linux kernel
+@@ -310,8 +310,6 @@ Summary: The Linux kernel
  
  %if %{with_verbose}
  %define make_opts V=1
@@ -10047,7 +10045,7 @@ index 87ffd85c7..91aec7be8 100644
  %endif
  
  %if %{with toolchain_clang}
-@@ -1018,6 +1016,12 @@ Source4002: gating.yaml
+@@ -1068,6 +1066,12 @@ Source4002: gating.yaml
  Patch1: patch-%{patchversion}-redhat.patch
  %endif
  
@@ -10060,7 +10058,7 @@ index 87ffd85c7..91aec7be8 100644
  # empty final patch to facilitate testing of kernel patches
  Patch999999: linux-kernel-test.patch
  
-@@ -1862,6 +1866,12 @@ ApplyOptionalPatch patch-%{patchversion}-redhat.patch
+@@ -1898,6 +1902,12 @@ ApplyOptionalPatch patch-%{patchversion}-redhat.patch
  
  ApplyOptionalPatch linux-kernel-test.patch
  
@@ -10073,7 +10071,7 @@ index 87ffd85c7..91aec7be8 100644
  %{log_msg "End of patch applications"}
  # END OF PATCH APPLICATIONS
  
-@@ -2064,7 +2074,7 @@ cp_vmlinux()
+@@ -2109,7 +2119,7 @@ cp_vmlinux()
  # from redhat-rpm-config assume that host == target so target arch
  # flags cause issues with the host compiler.
  %if !%{with_cross}
@@ -10084,13 +10082,13 @@ index 87ffd85c7..91aec7be8 100644
  
 diff --git a/ntsync.patch b/ntsync.patch
 new file mode 100644
-index 000000000..e86a5b7d9
+index 000000000..01f05be7d
 --- /dev/null
 +++ b/ntsync.patch
 @@ -0,0 +1,3089 @@
-+From be6cd7bdda9491cedd3dfdffce6eda44c4e63764 Mon Sep 17 00:00:00 2001
++From 2b26fe935509d7c15fc1edc0a0311156f33b8e66 Mon Sep 17 00:00:00 2001
 +From: Peter Jung <admin@ptr1337.dev>
-+Date: Thu, 10 Oct 2024 12:38:18 +0200
++Date: Mon, 9 Dec 2024 15:06:08 +0100
 +Subject: [PATCH 08/12] ntsync
 +
 +Signed-off-by: Peter Jung <admin@ptr1337.dev>
@@ -10530,10 +10528,10 @@ index 000000000..e86a5b7d9
 ++  ``objs`` and in ``alert``. If this is attempted, the function fails
 ++  with ``EINVAL``.
 +diff --git a/MAINTAINERS b/MAINTAINERS
-+index 2ba00c0cd701..0bcfbc58a9ab 100644
++index a2d251917629..a30770b6f75a 100644
 +--- a/MAINTAINERS
 ++++ b/MAINTAINERS
-+@@ -16327,6 +16327,15 @@ T:	git https://github.com/Paragon-Software-Group/linux-ntfs3.git
++@@ -16501,6 +16501,15 @@ T:	git https://github.com/Paragon-Software-Group/linux-ntfs3.git
 + F:	Documentation/filesystems/ntfs3.rst
 + F:	fs/ntfs3/
 + 
@@ -10550,10 +10548,10 @@ index 000000000..e86a5b7d9
 + M:	Finn Thain <fthain@linux-m68k.org>
 + L:	linux-m68k@lists.linux-m68k.org
 +diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-+index 41c54051347a..bde398e12696 100644
++index 3fe7e2a9bd29..6c8b999a5e08 100644
 +--- a/drivers/misc/Kconfig
 ++++ b/drivers/misc/Kconfig
-+@@ -507,7 +507,6 @@ config OPEN_DICE
++@@ -517,7 +517,6 @@ config OPEN_DICE
 + 
 + config NTSYNC
 + 	tristate "NT synchronization primitive emulation"
@@ -10562,7 +10560,7 @@ index 000000000..e86a5b7d9
 + 	  This module provides kernel support for emulation of Windows NT
 + 	  synchronization primitives. It is not a hardware driver.
 +diff --git a/drivers/misc/ntsync.c b/drivers/misc/ntsync.c
-+index 3c2f743c58b0..87a24798a5c7 100644
++index 4954553b7baa..3fac06270549 100644
 +--- a/drivers/misc/ntsync.c
 ++++ b/drivers/misc/ntsync.c
 +@@ -6,11 +6,17 @@
@@ -11233,7 +11231,7 @@ index 000000000..e86a5b7d9
 + 	default:
 + 		return -ENOIOCTLCMD;
 + 	}
-+@@ -141,6 +717,9 @@ static struct ntsync_obj *ntsync_alloc_obj(struct ntsync_device *dev,
++@@ -140,6 +716,9 @@ static struct ntsync_obj *ntsync_alloc_obj(struct ntsync_device *dev,
 + 	obj->dev = dev;
 + 	get_file(dev->file);
 + 	spin_lock_init(&obj->lock);
@@ -11243,7 +11241,7 @@ index 000000000..e86a5b7d9
 + 
 + 	return obj;
 + }
-+@@ -191,6 +770,400 @@ static int ntsync_create_sem(struct ntsync_device *dev, void __user *argp)
++@@ -190,6 +769,400 @@ static int ntsync_create_sem(struct ntsync_device *dev, void __user *argp)
 + 	return put_user(fd, &user_args->sem);
 + }
 + 
@@ -11644,7 +11642,7 @@ index 000000000..e86a5b7d9
 + static int ntsync_char_open(struct inode *inode, struct file *file)
 + {
 + 	struct ntsync_device *dev;
-+@@ -199,6 +1172,8 @@ static int ntsync_char_open(struct inode *inode, struct file *file)
++@@ -198,6 +1171,8 @@ static int ntsync_char_open(struct inode *inode, struct file *file)
 + 	if (!dev)
 + 		return -ENOMEM;
 + 
@@ -11653,7 +11651,7 @@ index 000000000..e86a5b7d9
 + 	file->private_data = dev;
 + 	dev->file = file;
 + 	return nonseekable_open(inode, file);
-+@@ -220,8 +1195,16 @@ static long ntsync_char_ioctl(struct file *file, unsigned int cmd,
++@@ -219,8 +1194,16 @@ static long ntsync_char_ioctl(struct file *file, unsigned int cmd,
 + 	void __user *argp = (void __user *)parm;
 + 
 + 	switch (cmd) {
@@ -11723,10 +11721,10 @@ index 000000000..e86a5b7d9
 + 
 + #endif
 +diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
-+index bc8fe9e8f7f2..b1296bd8eb3f 100644
++index 363d031a16f7..ff18c0361e38 100644
 +--- a/tools/testing/selftests/Makefile
 ++++ b/tools/testing/selftests/Makefile
-+@@ -17,6 +17,7 @@ TARGETS += devices/error_logs
++@@ -18,6 +18,7 @@ TARGETS += devices/error_logs
 + TARGETS += devices/probe
 + TARGETS += dmabuf-heaps
 + TARGETS += drivers/dma-buf
@@ -13175,7 +13173,7 @@ index 000000000..e86a5b7d9
 ++
 ++TEST_HARNESS_MAIN
 +-- 
-+2.47.0.rc0
++2.47.1
 +
 diff --git a/process_configs.sh b/process_configs.sh
 index 431487955..a9a71e897 100755
@@ -13196,13 +13194,13 @@ index 431487955..a9a71e897 100755
  
 diff --git a/zstd-updates.patch b/zstd-updates.patch
 new file mode 100644
-index 000000000..552ebb391
+index 000000000..7e53f7467
 --- /dev/null
 +++ b/zstd-updates.patch
 @@ -0,0 +1,18652 @@
-+From 89792579fbd7314abdd8a19d0ee9b510e9bec911 Mon Sep 17 00:00:00 2001
++From 687a65788e3de0d4c0ebc824109f2193dbcf3af1 Mon Sep 17 00:00:00 2001
 +From: Peter Jung <admin@ptr1337.dev>
-+Date: Thu, 10 Oct 2024 12:39:34 +0200
++Date: Mon, 9 Dec 2024 15:06:50 +0100
 +Subject: [PATCH 12/12] zstd
 +
 +Signed-off-by: Peter Jung <admin@ptr1337.dev>
@@ -13270,7 +13268,7 @@ index 000000000..552ebb391
 + create mode 100644 lib/zstd/common/bits.h
 +
 +diff --git a/include/linux/zstd.h b/include/linux/zstd.h
-+index 113408eef6ec..f109d49f43f8 100644
++index b2c7cf310c8f..ac59ae9a18d7 100644
 +--- a/include/linux/zstd.h
 ++++ b/include/linux/zstd.h
 +@@ -1,6 +1,6 @@
@@ -16687,7 +16685,7 @@ index 000000000..552ebb391
 ++#endif   /* HUF_H_298734234 */
 + 
 +diff --git a/lib/zstd/common/mem.h b/lib/zstd/common/mem.h
-+index 1d9cc03924ca..2e91e7780c1f 100644
++index c22a2e69bf46..d9bd752fe17b 100644
 +--- a/lib/zstd/common/mem.h
 ++++ b/lib/zstd/common/mem.h
 +@@ -1,6 +1,6 @@
@@ -18167,7 +18165,7 @@ index 000000000..552ebb391
 + }
 +-
 +diff --git a/lib/zstd/compress/zstd_compress.c b/lib/zstd/compress/zstd_compress.c
-+index f620cafca633..0d139727cd39 100644
++index 16bb995bc6c4..885167f7e47b 100644
 +--- a/lib/zstd/compress/zstd_compress.c
 ++++ b/lib/zstd/compress/zstd_compress.c
 +@@ -1,5 +1,6 @@
@@ -21219,16 +21217,16 @@ index 000000000..552ebb391
 +             FORWARD_IF_ERROR(dictID, "ZSTD_compress_insertDictionary failed");
 +             assert(dictID <= (size_t)(U32)-1);
 +             cdict->dictID = (U32)dictID;
-+@@ -4811,7 +5450,7 @@ ZSTD_CDict* ZSTD_createCDict_advanced2(
-+                         cctxParams.useRowMatchFinder, cctxParams.enableDedicatedDictSearch,
-+                         customMem);
++@@ -4813,7 +5452,7 @@ ZSTD_CDict* ZSTD_createCDict_advanced2(
++     if (!cdict)
++         return NULL;
 + 
 +-    if (ZSTD_isError( ZSTD_initCDict_internal(cdict,
 ++    if (!cdict || ZSTD_isError( ZSTD_initCDict_internal(cdict,
 +                                     dict, dictSize,
 +                                     dictLoadMethod, dictContentType,
 +                                     cctxParams) )) {
-+@@ -4906,6 +5545,7 @@ const ZSTD_CDict* ZSTD_initStaticCDict(
++@@ -4908,6 +5547,7 @@ const ZSTD_CDict* ZSTD_initStaticCDict(
 +     params.cParams = cParams;
 +     params.useRowMatchFinder = useRowMatchFinder;
 +     cdict->useRowMatchFinder = useRowMatchFinder;
@@ -21236,7 +21234,7 @@ index 000000000..552ebb391
 + 
 +     if (ZSTD_isError( ZSTD_initCDict_internal(cdict,
 +                                               dict, dictSize,
-+@@ -4985,12 +5625,17 @@ size_t ZSTD_compressBegin_usingCDict_advanced(
++@@ -4987,12 +5627,17 @@ size_t ZSTD_compressBegin_usingCDict_advanced(
 + 
 + /* ZSTD_compressBegin_usingCDict() :
 +  * cdict must be != NULL */
@@ -21255,7 +21253,7 @@ index 000000000..552ebb391
 + /*! ZSTD_compress_usingCDict_internal():
 +  * Implementation of various ZSTD_compress_usingCDict* functions.
 +  */
-+@@ -5000,7 +5645,7 @@ static size_t ZSTD_compress_usingCDict_internal(ZSTD_CCtx* cctx,
++@@ -5002,7 +5647,7 @@ static size_t ZSTD_compress_usingCDict_internal(ZSTD_CCtx* cctx,
 +                                 const ZSTD_CDict* cdict, ZSTD_frameParameters fParams)
 + {
 +     FORWARD_IF_ERROR(ZSTD_compressBegin_usingCDict_internal(cctx, cdict, fParams, srcSize), ""); /* will check if cdict != NULL */
@@ -21264,7 +21262,7 @@ index 000000000..552ebb391
 + }
 + 
 + /*! ZSTD_compress_usingCDict_advanced():
-+@@ -5197,30 +5842,41 @@ size_t ZSTD_initCStream(ZSTD_CStream* zcs, int compressionLevel)
++@@ -5199,30 +5844,41 @@ size_t ZSTD_initCStream(ZSTD_CStream* zcs, int compressionLevel)
 + 
 + static size_t ZSTD_nextInputSizeHint(const ZSTD_CCtx* cctx)
 + {
@@ -21318,7 +21316,7 @@ index 000000000..552ebb391
 +     if (zcs->appliedParams.inBufferMode == ZSTD_bm_buffered) {
 +         assert(zcs->inBuff != NULL);
 +         assert(zcs->inBuffSize > 0);
-+@@ -5229,8 +5885,10 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
++@@ -5231,8 +5887,10 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
 +         assert(zcs->outBuff !=  NULL);
 +         assert(zcs->outBuffSize > 0);
 +     }
@@ -21330,7 +21328,7 @@ index 000000000..552ebb391
 +     assert((U32)flushMode <= (U32)ZSTD_e_end);
 + 
 +     while (someMoreWork) {
-+@@ -5245,7 +5903,7 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
++@@ -5247,7 +5905,7 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
 +                 || zcs->appliedParams.outBufferMode == ZSTD_bm_stable)  /* OR we are allowed to return dstSizeTooSmall */
 +               && (zcs->inBuffPos == 0) ) {
 +                 /* shortcut to compression pass directly into output buffer */
@@ -21339,7 +21337,7 @@ index 000000000..552ebb391
 +                                                 op, oend-op, ip, iend-ip);
 +                 DEBUGLOG(4, "ZSTD_compressEnd : cSize=%u", (unsigned)cSize);
 +                 FORWARD_IF_ERROR(cSize, "ZSTD_compressEnd failed");
-+@@ -5262,8 +5920,7 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
++@@ -5264,8 +5922,7 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
 +                                         zcs->inBuff + zcs->inBuffPos, toLoad,
 +                                         ip, iend-ip);
 +                 zcs->inBuffPos += loaded;
@@ -21349,7 +21347,7 @@ index 000000000..552ebb391
 +                 if ( (flushMode == ZSTD_e_continue)
 +                   && (zcs->inBuffPos < zcs->inBuffTarget) ) {
 +                     /* not enough input to fill full block : stop here */
-+@@ -5274,6 +5931,20 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
++@@ -5276,6 +5933,20 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
 +                     /* empty */
 +                     someMoreWork = 0; break;
 +                 }
@@ -21370,7 +21368,7 @@ index 000000000..552ebb391
 +             }
 +             /* compress current block (note : this stage cannot be stopped in the middle) */
 +             DEBUGLOG(5, "stream compression stage (flushMode==%u)", flushMode);
-+@@ -5281,9 +5952,8 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
++@@ -5283,9 +5954,8 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
 +                 void* cDst;
 +                 size_t cSize;
 +                 size_t oSize = oend-op;
@@ -21382,7 +21380,7 @@ index 000000000..552ebb391
 +                 if (oSize >= ZSTD_compressBound(iSize) || zcs->appliedParams.outBufferMode == ZSTD_bm_stable)
 +                     cDst = op;   /* compress into output buffer, to skip flush stage */
 +                 else
-+@@ -5291,9 +5961,9 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
++@@ -5293,9 +5963,9 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
 +                 if (inputBuffered) {
 +                     unsigned const lastBlock = (flushMode == ZSTD_e_end) && (ip==iend);
 +                     cSize = lastBlock ?
@@ -21394,7 +21392,7 @@ index 000000000..552ebb391
 +                                         zcs->inBuff + zcs->inToCompress, iSize);
 +                     FORWARD_IF_ERROR(cSize, "%s", lastBlock ? "ZSTD_compressEnd failed" : "ZSTD_compressContinue failed");
 +                     zcs->frameEnded = lastBlock;
-+@@ -5306,19 +5976,16 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
++@@ -5308,19 +5978,16 @@ static size_t ZSTD_compressStream_generic(ZSTD_CStream* zcs,
 +                     if (!lastBlock)
 +                         assert(zcs->inBuffTarget <= zcs->inBuffSize);
 +                     zcs->inToCompress = zcs->inBuffPos;
@@ -21420,7 +21418,7 @@ index 000000000..552ebb391
 +                 }
 +                 if (cDst == op) {  /* no need to flush */
 +                     op += cSize;
-+@@ -5388,8 +6055,10 @@ size_t ZSTD_compressStream(ZSTD_CStream* zcs, ZSTD_outBuffer* output, ZSTD_inBuf
++@@ -5390,8 +6057,10 @@ size_t ZSTD_compressStream(ZSTD_CStream* zcs, ZSTD_outBuffer* output, ZSTD_inBuf
 + /* After a compression call set the expected input/output buffer.
 +  * This is validated at the start of the next compression call.
 +  */
@@ -21432,7 +21430,7 @@ index 000000000..552ebb391
 +     if (cctx->appliedParams.inBufferMode == ZSTD_bm_stable) {
 +         cctx->expectedInBuffer = *input;
 +     }
-+@@ -5408,22 +6077,22 @@ static size_t ZSTD_checkBufferStability(ZSTD_CCtx const* cctx,
++@@ -5410,22 +6079,22 @@ static size_t ZSTD_checkBufferStability(ZSTD_CCtx const* cctx,
 + {
 +     if (cctx->appliedParams.inBufferMode == ZSTD_bm_stable) {
 +         ZSTD_inBuffer const expect = cctx->expectedInBuffer;
@@ -21461,7 +21459,7 @@ index 000000000..552ebb391
 +     ZSTD_CCtx_params params = cctx->requestedParams;
 +     ZSTD_prefixDict const prefixDict = cctx->prefixDict;
 +     FORWARD_IF_ERROR( ZSTD_initLocalDict(cctx) , ""); /* Init the local dict if present. */
-+@@ -5437,9 +6106,9 @@ static size_t ZSTD_CCtx_init_compressStream2(ZSTD_CCtx* cctx,
++@@ -5439,9 +6108,9 @@ static size_t ZSTD_CCtx_init_compressStream2(ZSTD_CCtx* cctx,
 +         params.compressionLevel = cctx->cdict->compressionLevel;
 +     }
 +     DEBUGLOG(4, "ZSTD_compressStream2 : transparent init stage");
@@ -21474,7 +21472,7 @@ index 000000000..552ebb391
 +                 ? prefixDict.dictSize
 +                 : (cctx->cdict ? cctx->cdict->dictContentSize : 0);
 +         ZSTD_cParamMode_e const mode = ZSTD_getCParamMode(cctx->cdict, &params, cctx->pledgedSrcSizePlusOne - 1);
-+@@ -5451,6 +6120,9 @@ static size_t ZSTD_CCtx_init_compressStream2(ZSTD_CCtx* cctx,
++@@ -5453,6 +6122,9 @@ static size_t ZSTD_CCtx_init_compressStream2(ZSTD_CCtx* cctx,
 +     params.useBlockSplitter = ZSTD_resolveBlockSplitterMode(params.useBlockSplitter, &params.cParams);
 +     params.ldmParams.enableLdm = ZSTD_resolveEnableLdm(params.ldmParams.enableLdm, &params.cParams);
 +     params.useRowMatchFinder = ZSTD_resolveRowMatchFinderMode(params.useRowMatchFinder, &params.cParams);
@@ -21484,7 +21482,7 @@ index 000000000..552ebb391
 + 
 +     {   U64 const pledgedSrcSize = cctx->pledgedSrcSizePlusOne - 1;
 +         assert(!ZSTD_isError(ZSTD_checkCParams(params.cParams)));
-+@@ -5477,6 +6149,8 @@ static size_t ZSTD_CCtx_init_compressStream2(ZSTD_CCtx* cctx,
++@@ -5479,6 +6151,8 @@ static size_t ZSTD_CCtx_init_compressStream2(ZSTD_CCtx* cctx,
 +     return 0;
 + }
 + 
@@ -21493,7 +21491,7 @@ index 000000000..552ebb391
 + size_t ZSTD_compressStream2( ZSTD_CCtx* cctx,
 +                              ZSTD_outBuffer* output,
 +                              ZSTD_inBuffer* input,
-+@@ -5491,8 +6165,27 @@ size_t ZSTD_compressStream2( ZSTD_CCtx* cctx,
++@@ -5493,8 +6167,27 @@ size_t ZSTD_compressStream2( ZSTD_CCtx* cctx,
 + 
 +     /* transparent initialization stage */
 +     if (cctx->streamStage == zcss_init) {
@@ -21523,7 +21521,7 @@ index 000000000..552ebb391
 +     }
 +     /* end of transparent initialization stage */
 + 
-+@@ -5510,13 +6203,20 @@ size_t ZSTD_compressStream2_simpleArgs (
++@@ -5512,13 +6205,20 @@ size_t ZSTD_compressStream2_simpleArgs (
 +                       const void* src, size_t srcSize, size_t* srcPos,
 +                             ZSTD_EndDirective endOp)
 + {
@@ -21550,7 +21548,7 @@ index 000000000..552ebb391
 + }
 + 
 + size_t ZSTD_compress2(ZSTD_CCtx* cctx,
-+@@ -5539,6 +6239,7 @@ size_t ZSTD_compress2(ZSTD_CCtx* cctx,
++@@ -5541,6 +6241,7 @@ size_t ZSTD_compress2(ZSTD_CCtx* cctx,
 +         /* Reset to the original values. */
 +         cctx->requestedParams.inBufferMode = originalInBufferMode;
 +         cctx->requestedParams.outBufferMode = originalOutBufferMode;
@@ -21558,7 +21556,7 @@ index 000000000..552ebb391
 +         FORWARD_IF_ERROR(result, "ZSTD_compressStream2_simpleArgs failed");
 +         if (result != 0) {  /* compression not completed, due to lack of output space */
 +             assert(oPos == dstCapacity);
-+@@ -5549,64 +6250,61 @@ size_t ZSTD_compress2(ZSTD_CCtx* cctx,
++@@ -5551,64 +6252,61 @@ size_t ZSTD_compress2(ZSTD_CCtx* cctx,
 +     }
 + }
 + 
@@ -21643,7 +21641,7 @@ index 000000000..552ebb391
 +     if (cctx->cdict) {
 +         dictSize = (U32)cctx->cdict->dictContentSize;
 +     } else if (cctx->prefixDict.dict) {
-+@@ -5615,25 +6313,55 @@ ZSTD_copySequencesToSeqStoreExplicitBlockDelim(ZSTD_CCtx* cctx,
++@@ -5617,25 +6315,55 @@ ZSTD_copySequencesToSeqStoreExplicitBlockDelim(ZSTD_CCtx* cctx,
 +         dictSize = 0;
 +     }
 +     ZSTD_memcpy(updatedRepcodes.rep, cctx->blockState.prevCBlock->rep, sizeof(repcodes_t));
@@ -21708,7 +21706,7 @@ index 000000000..552ebb391
 +     ZSTD_memcpy(cctx->blockState.nextCBlock->rep, updatedRepcodes.rep, sizeof(repcodes_t));
 + 
 +     if (inSeqs[idx].litLength) {
-+@@ -5642,26 +6370,15 @@ ZSTD_copySequencesToSeqStoreExplicitBlockDelim(ZSTD_CCtx* cctx,
++@@ -5644,26 +6372,15 @@ ZSTD_copySequencesToSeqStoreExplicitBlockDelim(ZSTD_CCtx* cctx,
 +         ip += inSeqs[idx].litLength;
 +         seqPos->posInSrc += inSeqs[idx].litLength;
 +     }
@@ -21738,7 +21736,7 @@ index 000000000..552ebb391
 + {
 +     U32 idx = seqPos->idx;
 +     U32 startPosInSequence = seqPos->posInSequence;
-+@@ -5673,6 +6390,9 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
++@@ -5675,6 +6392,9 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
 +     U32 bytesAdjustment = 0;
 +     U32 finalMatchSplit = 0;
 + 
@@ -21748,7 +21746,7 @@ index 000000000..552ebb391
 +     if (cctx->cdict) {
 +         dictSize = cctx->cdict->dictContentSize;
 +     } else if (cctx->prefixDict.dict) {
-+@@ -5680,7 +6400,7 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
++@@ -5682,7 +6402,7 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
 +     } else {
 +         dictSize = 0;
 +     }
@@ -21757,7 +21755,7 @@ index 000000000..552ebb391
 +     DEBUGLOG(5, "Start seq: idx: %u (of: %u ml: %u ll: %u)", idx, inSeqs[idx].offset, inSeqs[idx].matchLength, inSeqs[idx].litLength);
 +     ZSTD_memcpy(updatedRepcodes.rep, cctx->blockState.prevCBlock->rep, sizeof(repcodes_t));
 +     while (endPosInSequence && idx < inSeqsSize && !finalMatchSplit) {
-+@@ -5688,7 +6408,7 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
++@@ -5690,7 +6410,7 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
 +         U32 litLength = currSeq.litLength;
 +         U32 matchLength = currSeq.matchLength;
 +         U32 const rawOffset = currSeq.offset;
@@ -21766,7 +21764,7 @@ index 000000000..552ebb391
 + 
 +         /* Modify the sequence depending on where endPosInSequence lies */
 +         if (endPosInSequence >= currSeq.litLength + currSeq.matchLength) {
-+@@ -5702,7 +6422,6 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
++@@ -5704,7 +6424,6 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
 +             /* Move to the next sequence */
 +             endPosInSequence -= currSeq.litLength + currSeq.matchLength;
 +             startPosInSequence = 0;
@@ -21774,7 +21772,7 @@ index 000000000..552ebb391
 +         } else {
 +             /* This is the final (partial) sequence we're adding from inSeqs, and endPosInSequence
 +                does not reach the end of the match. So, we have to split the sequence */
-+@@ -5742,21 +6461,23 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
++@@ -5744,21 +6463,23 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
 +         }
 +         /* Check if this offset can be represented with a repcode */
 +         {   U32 const ll0 = (litLength == 0);
@@ -21805,7 +21803,7 @@ index 000000000..552ebb391
 +     }
 +     DEBUGLOG(5, "Ending seq: idx: %u (of: %u ml: %u ll: %u)", idx, inSeqs[idx].offset, inSeqs[idx].matchLength, inSeqs[idx].litLength);
 +     assert(idx == inSeqsSize || endPosInSequence <= inSeqs[idx].litLength + inSeqs[idx].matchLength);
-+@@ -5779,7 +6500,7 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
++@@ -5781,7 +6502,7 @@ ZSTD_copySequencesToSeqStoreNoBlockDelim(ZSTD_CCtx* cctx, ZSTD_sequencePosition*
 + 
 + typedef size_t (*ZSTD_sequenceCopier) (ZSTD_CCtx* cctx, ZSTD_sequencePosition* seqPos,
 +                                        const ZSTD_Sequence* const inSeqs, size_t inSeqsSize,
@@ -21814,7 +21812,7 @@ index 000000000..552ebb391
 + static ZSTD_sequenceCopier ZSTD_selectSequenceCopier(ZSTD_sequenceFormat_e mode)
 + {
 +     ZSTD_sequenceCopier sequenceCopier = NULL;
-+@@ -5793,6 +6514,57 @@ static ZSTD_sequenceCopier ZSTD_selectSequenceCopier(ZSTD_sequenceFormat_e mode)
++@@ -5795,6 +6516,57 @@ static ZSTD_sequenceCopier ZSTD_selectSequenceCopier(ZSTD_sequenceFormat_e mode)
 +     return sequenceCopier;
 + }
 + 
@@ -21872,7 +21870,7 @@ index 000000000..552ebb391
 + /* Compress, block-by-block, all of the sequences given.
 +  *
 +  * Returns the cumulative size of all compressed blocks (including their headers),
-+@@ -5805,9 +6577,6 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
++@@ -5807,9 +6579,6 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
 +                           const void* src, size_t srcSize)
 + {
 +     size_t cSize = 0;
@@ -21882,7 +21880,7 @@ index 000000000..552ebb391
 +     size_t remaining = srcSize;
 +     ZSTD_sequencePosition seqPos = {0, 0, 0};
 + 
-+@@ -5827,22 +6596,29 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
++@@ -5829,22 +6598,29 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
 +     }
 + 
 +     while (remaining) {
@@ -21918,7 +21916,7 @@ index 000000000..552ebb391
 +             cSize += cBlockSize;
 +             ip += blockSize;
 +             op += cBlockSize;
-+@@ -5851,6 +6627,7 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
++@@ -5853,6 +6629,7 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
 +             continue;
 +         }
 + 
@@ -21926,7 +21924,7 @@ index 000000000..552ebb391
 +         compressedSeqsSize = ZSTD_entropyCompressSeqStore(&cctx->seqStore,
 +                                 &cctx->blockState.prevCBlock->entropy, &cctx->blockState.nextCBlock->entropy,
 +                                 &cctx->appliedParams,
-+@@ -5859,11 +6636,11 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
++@@ -5861,11 +6638,11 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
 +                                 cctx->entropyWorkspace, ENTROPY_WORKSPACE_SIZE /* statically allocated in resetCCtx */,
 +                                 cctx->bmi2);
 +         FORWARD_IF_ERROR(compressedSeqsSize, "Compressing sequences of block failed");
@@ -21940,7 +21938,7 @@ index 000000000..552ebb391
 +             /* We don't want to emit our first block as a RLE even if it qualifies because
 +             * doing so will cause the decoder (cli only) to throw a "should consume all input error."
 +             * This is only an issue for zstd <= v1.4.3
-+@@ -5874,12 +6651,12 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
++@@ -5876,12 +6653,12 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
 +         if (compressedSeqsSize == 0) {
 +             /* ZSTD_noCompressBlock writes the block header as well */
 +             cBlockSize = ZSTD_noCompressBlock(op, dstCapacity, ip, blockSize, lastBlock);
@@ -21957,7 +21955,7 @@ index 000000000..552ebb391
 +         } else {
 +             U32 cBlockHeader;
 +             /* Error checking and repcodes update */
-+@@ -5891,11 +6668,10 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
++@@ -5893,11 +6670,10 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
 +             cBlockHeader = lastBlock + (((U32)bt_compressed)<<1) + (U32)(compressedSeqsSize << 3);
 +             MEM_writeLE24(op, cBlockHeader);
 +             cBlockSize = ZSTD_blockHeaderSize + compressedSeqsSize;
@@ -21970,7 +21968,7 @@ index 000000000..552ebb391
 + 
 +         if (lastBlock) {
 +             break;
-+@@ -5906,12 +6682,15 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
++@@ -5908,12 +6684,15 @@ ZSTD_compressSequences_internal(ZSTD_CCtx* cctx,
 +             dstCapacity -= cBlockSize;
 +             cctx->isFirstBlock = 0;
 +         }
@@ -21987,7 +21985,7 @@ index 000000000..552ebb391
 +                               const ZSTD_Sequence* inSeqs, size_t inSeqsSize,
 +                               const void* src, size_t srcSize)
 + {
-+@@ -5921,7 +6700,7 @@ size_t ZSTD_compressSequences(ZSTD_CCtx* const cctx, void* dst, size_t dstCapaci
++@@ -5923,7 +6702,7 @@ size_t ZSTD_compressSequences(ZSTD_CCtx* const cctx, void* dst, size_t dstCapaci
 +     size_t frameHeaderSize = 0;
 + 
 +     /* Transparent initialization stage, same as compressStream2() */
@@ -21996,7 +21994,7 @@ index 000000000..552ebb391
 +     assert(cctx != NULL);
 +     FORWARD_IF_ERROR(ZSTD_CCtx_init_compressStream2(cctx, ZSTD_e_end, srcSize), "CCtx initialization failed");
 +     /* Begin writing output, starting with frame header */
-+@@ -5949,26 +6728,34 @@ size_t ZSTD_compressSequences(ZSTD_CCtx* const cctx, void* dst, size_t dstCapaci
++@@ -5951,26 +6730,34 @@ size_t ZSTD_compressSequences(ZSTD_CCtx* const cctx, void* dst, size_t dstCapaci
 +         cSize += 4;
 +     }
 + 
@@ -22035,7 +22033,7 @@ index 000000000..552ebb391
 +     if (zcs->appliedParams.nbWorkers > 0) return remainingToFlush;   /* minimal estimation */
 +     /* single thread mode : attempt to calculate remaining to flush more precisely */
 +     {   size_t const lastBlockSize = zcs->frameEnded ? 0 : ZSTD_BLOCKHEADERSIZE;
-+@@ -6090,7 +6877,7 @@ static ZSTD_compressionParameters ZSTD_getCParams_internal(int compressionLevel,
++@@ -6092,7 +6879,7 @@ static ZSTD_compressionParameters ZSTD_getCParams_internal(int compressionLevel,
 +             cp.targetLength = (unsigned)(-clampedCompressionLevel);
 +         }
 +         /* refine parameters based on srcSize & dictSize */
@@ -22044,7 +22042,7 @@ index 000000000..552ebb391
 +     }
 + }
 + 
-+@@ -6125,3 +6912,29 @@ ZSTD_parameters ZSTD_getParams(int compressionLevel, unsigned long long srcSizeH
++@@ -6127,3 +6914,29 @@ ZSTD_parameters ZSTD_getParams(int compressionLevel, unsigned long long srcSizeH
 +     if (srcSizeHint == 0) srcSizeHint = ZSTD_CONTENTSIZE_UNKNOWN;
 +     return ZSTD_getParams_internal(compressionLevel, srcSizeHint, dictSize, ZSTD_cpm_unknown);
 + }
@@ -31817,7 +31815,7 @@ index 000000000..552ebb391
 + MODULE_LICENSE("Dual BSD/GPL");
 + MODULE_DESCRIPTION("Zstd Common");
 +diff --git a/lib/zstd/zstd_compress_module.c b/lib/zstd/zstd_compress_module.c
-+index 04e1b5c01d9b..8ecf43226af2 100644
++index bd8784449b31..ceaf352d03e2 100644
 +--- a/lib/zstd/zstd_compress_module.c
 ++++ b/lib/zstd/zstd_compress_module.c
 +@@ -1,6 +1,6 @@
@@ -31829,7 +31827,7 @@ index 000000000..552ebb391
 +  *
 +  * This source code is licensed under both the BSD-style license (found in the
 +diff --git a/lib/zstd/zstd_decompress_module.c b/lib/zstd/zstd_decompress_module.c
-+index f4ed952ed485..7d31518e9d5a 100644
++index 469fc3059be0..0ae819f0c927 100644
 +--- a/lib/zstd/zstd_decompress_module.c
 ++++ b/lib/zstd/zstd_decompress_module.c
 +@@ -1,6 +1,6 @@
@@ -31840,7 +31838,7 @@ index 000000000..552ebb391
 +  * All rights reserved.
 +  *
 +  * This source code is licensed under both the BSD-style license (found in the
-+@@ -77,7 +77,7 @@ EXPORT_SYMBOL(zstd_init_dstream);
++@@ -113,7 +113,7 @@ EXPORT_SYMBOL(zstd_init_dstream);
 + 
 + size_t zstd_reset_dstream(zstd_dstream *dstream)
 + {
@@ -31850,5 +31848,5 @@ index 000000000..552ebb391
 + EXPORT_SYMBOL(zstd_reset_dstream);
 + 
 +-- 
-+2.47.0.rc0
++2.47.1
 +
