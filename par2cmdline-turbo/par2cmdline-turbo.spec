@@ -8,7 +8,7 @@ URL:            https://github.com/animetosho/par2cmdline-turbo
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 Obsoletes:      par2cmdline <= 0.8.1
-Provides:       par2cmdline
+Provides:       par2cmdline = %{version}-%{release}
 
 BuildRequires:  automake
 BuildRequires:  gcc-c++
