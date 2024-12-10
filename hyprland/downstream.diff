@@ -1,5 +1,34 @@
+diff --git a/explicit-out-fences.diff b/explicit-out-fences.diff
+new file mode 100644
+index 0000000..bf82482
+--- /dev/null
++++ b/explicit-out-fences.diff
+@@ -0,0 +1,23 @@
++diff --git a/src/render/Renderer.cpp b/src/render/Renderer.cpp
++index d98e32a95f1..37e6f81ee51 100644
++--- a/src/render/Renderer.cpp
+++++ b/src/render/Renderer.cpp
++@@ -1507,6 +1507,9 @@ bool CHyprRenderer::commitPendingAndDoExplicitSync(PHLMONITOR pMonitor) {
++     pMonitor->output->state->resetExplicitFences();
++     if (inFD >= 0)
++         pMonitor->output->state->setExplicitInFence(inFD);
+++    auto explicitOptions = getExplicitSyncSettings();
+++    if (explicitOptions.explicitEnabled && explicitOptions.explicitKMSEnabled)
+++        pMonitor->output->state->enableExplicitOutFenceForNextCommit();
++ 
++     if (pMonitor->ctmUpdated) {
++         pMonitor->ctmUpdated = false;
++@@ -1530,8 +1533,6 @@ bool CHyprRenderer::commitPendingAndDoExplicitSync(PHLMONITOR pMonitor) {
++         }
++     }
++ 
++-    auto explicitOptions = getExplicitSyncSettings();
++-
++     if (!explicitOptions.explicitEnabled)
++         return ok;
++ 
 diff --git a/hyprland.spec b/hyprland.spec
-index 1910d6d..a04c9c6 100644
+index 1910d6d..30ac82f 100644
 --- a/hyprland.spec
 +++ b/hyprland.spec
 @@ -1,5 +1,5 @@
@@ -9,16 +38,17 @@ index 1910d6d..a04c9c6 100644
  Release:        %autorelease
  Summary:        Dynamic tiling Wayland compositor that doesn't sacrifice on its looks
  
-@@ -16,6 +16,8 @@ License:        BSD-3-Clause AND BSD-2-Clause AND LGPL-2.1-or-later AND HPND-sel
+@@ -16,6 +16,9 @@ License:        BSD-3-Clause AND BSD-2-Clause AND LGPL-2.1-or-later AND HPND-sel
  URL:            https://github.com/hyprwm/Hyprland
  Source:         %{url}/releases/download/v%{version}/source-v%{version}.tar.gz
  
-+Patch:          ime-decorations.diff
++Patch0:         ime-decorations.diff
++Patch1:         explicit-out-fences.diff
 +
  # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
  ExcludeArch:    %{ix86}
  
-@@ -43,6 +45,7 @@ BuildRequires:  pkgconfig(libudev)
+@@ -43,6 +46,7 @@ BuildRequires:  pkgconfig(libudev)
  BuildRequires:  pkgconfig(pango)
  BuildRequires:  pkgconfig(pangocairo)
  BuildRequires:  pkgconfig(pixman-1)
@@ -26,7 +56,7 @@ index 1910d6d..a04c9c6 100644
  BuildRequires:  pkgconfig(tomlplusplus)
  BuildRequires:  pkgconfig(uuid)
  BuildRequires:  pkgconfig(wayland-client)
-@@ -165,6 +168,8 @@ cp -p subprojects/udis86/LICENSE LICENSE-udis86
+@@ -165,6 +169,8 @@ cp -p subprojects/udis86/LICENSE LICENSE-udis86
  
  %install
  %meson_install
