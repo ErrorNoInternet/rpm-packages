@@ -10046,7 +10046,7 @@ index 0d526c87c..78ae94ea1 100644
 +CONFIG_ACPI_CALL=y
 +CONFIG_NTSYNC=y
 diff --git a/kernel.spec b/kernel.spec
-index df4cdf56e..638f77fe3 100644
+index df4cdf56e..e1165ca7c 100644
 --- a/kernel.spec
 +++ b/kernel.spec
 @@ -310,8 +310,6 @@ Summary: The Linux kernel
@@ -10089,7 +10089,7 @@ index df4cdf56e..638f77fe3 100644
  # flags cause issues with the host compiler.
  %if !%{with_cross}
 -%define build_hostcflags  %{?build_cflags}
-+%define build_hostcflags  %{?build_cflags} -march=skylake -mtune=skylake
++%define build_hostcflags  %{?build_cflags} -march=skylake
  %define build_hostldflags %{?build_ldflags}
  %endif
  
