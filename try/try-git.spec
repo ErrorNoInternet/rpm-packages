@@ -1,5 +1,5 @@
-%global commit          b63d1e7d3aafa7cd334a68d7077ce13ffa530d27
-%global snapdate        20241120
+%global commit          f938e2a57e6abae2c8fecf686d1e7538305d0d8d
+%global snapdate        20241213
 %global latest          0.2.0
 
 %global debug_package   %{nil}
