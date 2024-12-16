@@ -4,13 +4,14 @@ Name:           SwayNotificationCenter
 Version:        0.10.1
 Release:        %autorelease
 Summary:        Notification daemon with GTK GUI
+
+License:        GPL-3.0-or-later
+URL:            https://github.com/ErikReider/SwayNotificationCenter
+Source:         %{url}/archive/refs/tags/v%{version}.tar.gz
+
 Provides:       desktop-notification-daemon
 Provides:       sway-notification-center = %{version}-%{release}
 Provides:       %{alt_pkg_name} = %{version}-%{release}
-License:        GPL-3.0-or-later
-
-URL:            https://github.com/ErikReider/SwayNotificationCenter
-Source:         %{url}/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  meson >= 0.51.0
 BuildRequires:  vala >= 0.56
