@@ -38,15 +38,15 @@ index 0000000..118ac74
 +         replaceInString(in, "$FAIL", FAIL.has_value() ? FAIL.value() : "");
 +
 diff --git a/hyprlock.spec b/hyprlock.spec
-index 4691bef..c23dc93 100644
+index 4691bef..1fc2980 100644
 --- a/hyprlock.spec
 +++ b/hyprlock.spec
 @@ -1,10 +1,15 @@
-+%global sdbus_version 2.0.0
++%global sdbus_version 2.1.0
 +
  Name:           hyprlock
 -Version:        0.4.1
-+Version:        0.5.0
++Version:        0.6.0
  Release:        %autorelease
  Summary:        Hyprland's GPU-accelerated screen locking utility
 +
@@ -58,7 +58,13 @@ index 4691bef..c23dc93 100644
  
  # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
  ExcludeArch:    %{ix86}
-@@ -20,31 +25,49 @@ BuildRequires:  pkgconfig(hyprutils)
+@@ -15,36 +20,55 @@ BuildRequires:  gcc-c++
+ BuildRequires:  pkgconfig(cairo)
+ BuildRequires:  pkgconfig(egl)
+ BuildRequires:  pkgconfig(gbm)
++BuildRequires:  pkgconfig(hyprgraphics)
+ BuildRequires:  pkgconfig(hyprlang)
+ BuildRequires:  pkgconfig(hyprutils)
  BuildRequires:  pkgconfig(libdrm)
  BuildRequires:  pkgconfig(libjpeg)
  BuildRequires:  pkgconfig(libmagic)
