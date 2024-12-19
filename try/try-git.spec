@@ -12,7 +12,6 @@ Summary:        Inspect a command's effects before modifying your live system
 License:        MIT
 URL:            https://github.com/binpash/try
 Source:         %{url}/archive/%{commit}/try-%{commit}.tar.gz
-
 Patch:          ignore-vfat-mounts.diff
 
 Obsoletes:      try <= %{latest}
