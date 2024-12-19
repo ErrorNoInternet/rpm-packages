@@ -16,6 +16,7 @@ declare -A anitya_ids=(
     ["lowfi/lowfi.spec"]=374761
     ["mergerfs/mergerfs.spec"]=372789
     ["par2cmdline-turbo/par2cmdline-turbo.spec"]=372791
+    ["peaclock/peaclock.spec"]=375777
     ["prismlauncher/prismlauncher.spec"]=301949
     ["ripdrag/ripdrag.spec"]=372793
     ["rofi-emoji/rofi-emoji.spec"]=242096
