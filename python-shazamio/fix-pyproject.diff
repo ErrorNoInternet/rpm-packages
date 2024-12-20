@@ -1,8 +1,15 @@
 diff --git a/pyproject.toml b/pyproject.toml
-index a73b130..2b99d21 100644
+index a73b130..2f55baa 100644
 --- a/pyproject.toml
 +++ b/pyproject.toml
-@@ -15,15 +15,15 @@ include = [
+@@ -8,22 +8,18 @@ keywords = ["python", "shazam", "music", "recognize", "api", "async", "asyncio",
+ readme = "README.md"
+ homepage = "https://github.com/dotX12/ShazamIO"
+ repository = "https://github.com/dotX12/ShazamIO"
+-include = [
+-    "README.md",
+-    "LICENSE.txt"
+-]
  
  [tool.poetry.dependencies]
  python = "^3.10"
