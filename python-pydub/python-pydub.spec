@@ -42,7 +42,7 @@ Summary:        %{summary}
 
 %files -n python3-%{pypi_name} -f %{pyproject_files}
 %license LICENSE
-%doc README.md
+%doc README.markdown
 
 %changelog
 %autochangelog
