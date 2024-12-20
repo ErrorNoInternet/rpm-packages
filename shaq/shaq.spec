@@ -6,9 +6,12 @@ Summary:        A CLI client for Shazam
 License:        MIT
 URL:            https://github.com/woodruffw/shaq
 Source:         %{url}/archive/v%{version}/%{name}-v%{version}.tar.gz
+Patch0:         fix-pyproject.diff
+Patch1:         add-short-flags.diff
 
 BuildArch:      noarch
 BuildRequires:  python3-devel
+Requires:       python-audioop-lts
 
 %description
 A bare-bones CLI client for Shazam.
@@ -24,8 +27,9 @@ A bare-bones CLI client for Shazam.
 
 %install
 %pyproject_install
+%pyproject_save_files shaq
 
-%files
+%files -f %{pyproject_files}
 %license LICENSE
 %doc README.md
 %{_bindir}/shaq

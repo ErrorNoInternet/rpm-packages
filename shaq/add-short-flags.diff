@@ -1,0 +1,26 @@
+diff --git a/shaq/_cli.py b/shaq/_cli.py
+index 19b816c..70e6768 100644
+--- a/shaq/_cli.py
++++ b/shaq/_cli.py
+@@ -119,9 +119,9 @@ def _parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+     input_group = parser.add_mutually_exclusive_group(required=True)
+     input_group.add_argument(
+-        "--listen", action="store_true", help="detect from the system's microphone"
++        "-l", "--listen", action="store_true", help="detect from the system's microphone"
+     )
+-    input_group.add_argument("--input", type=Path, help="detect from the given audio input file")
++    input_group.add_argument("-i", "--input", type=Path, help="detect from the given audio input file")
+ 
+     parser.add_argument(
+         "-d",
+@@ -134,7 +134,7 @@ def _parser() -> argparse.ArgumentParser:
+     parser.add_argument(
+         "-j", "--json", action="store_true", help="emit Shazam's response as JSON on stdout"
+     )
+-    parser.add_argument("--albumcover", action="store_true", help="return url to HD album cover")
++    parser.add_argument("-a", "--albumcover", action="store_true", help="return url to HD album cover")
+ 
+     advanced_group = parser.add_argument_group(
+         title="Advanced Options",
+
