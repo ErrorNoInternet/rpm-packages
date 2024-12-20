@@ -19,6 +19,7 @@ declare -A anitya_ids=(
     ["peaclock/peaclock.spec"]=375777
     ["prismlauncher/prismlauncher.spec"]=301949
     ["python-audioop-lts/python-audioop-lts.spec"]=376000
+    ["python-dataclass-factory/python-dataclass-factory.spec"]=59042
     ["python-pydub/python-pydub.spec"]=175488
     ["python-shazamio-core/python-shazamio-core.spec"]=375995
     ["python-shazamio/python-shazamio.spec"]=162803
