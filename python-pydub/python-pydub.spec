@@ -9,9 +9,10 @@ License:        MIT
 URL:            https://github.com/jiaaro/pydub
 Source:         %{url}/archive/v%{version}/%{pypi_name}-v%{version}.tar.gz
 
-BuildRequires:  cargo
-BuildRequires:  python3-devel
+BuildRequires:  ffmpeg-free
 BuildRequires:  python3-audioop-lts
+BuildRequires:  python3-devel
+BuildRequires:  python3-scipy
 
 %global _description %{expand:
 Manipulate audio with an simple and easy high level interface.}
