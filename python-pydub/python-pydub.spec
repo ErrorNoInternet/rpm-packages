@@ -1,4 +1,5 @@
-%global pypi_name pydub
+%global pypi_name       pydub
+%global debug_package   %{nil}
 
 Name:           python-%{pypi_name}
 Version:        0.25.1
