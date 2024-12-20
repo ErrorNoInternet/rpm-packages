@@ -1,0 +1,25 @@
+diff --git a/pyproject.toml b/pyproject.toml
+index a73b130..2b99d21 100644
+--- a/pyproject.toml
++++ b/pyproject.toml
+@@ -15,15 +15,15 @@ include = [
+ 
+ [tool.poetry.dependencies]
+ python = "^3.10"
+-numpy = "2.1.2"
++numpy = "^2"
+ aiohttp = "^3.8.3"
+ pydub = "^0.25.1"
+ dataclass-factory = "2.16"
+-aiofiles = "23.2.1"
+-anyio = "4.3.0"
++aiofiles = "^24"
++anyio = "^3"
+ shazamio-core = "^1.0.7"
+ aiohttp-retry = "^2.8.3"
+-pydantic = "2.9.2"
++pydantic = "^2"
+ [tool.poetry.dev-dependencies]
+ black = {version = "^24.2.0", allow-prereleases = true}
+ pytest = "8.1.2"
+

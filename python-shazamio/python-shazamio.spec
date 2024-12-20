@@ -8,6 +8,7 @@ Summary:        Reverse engineered Shazam API for Python
 License:        MIT
 URL:            https://github.com/shazamio/ShazamIO
 Source:         %{url}/archive/%{version}/%{pypi_name}-%{version}.tar.gz
+Patch:          loosen-dependency-versions.diff
 
 BuildArch:      noarch
 BuildRequires:  python3-devel
@@ -34,7 +35,7 @@ Summary:        %{summary}
 
 %install
 %pyproject_install
-%pyproject_save_files %{pypi_name}
+%pyproject_save_files -l %{pypi_name}
 
 %check
 %pyproject_check_import
