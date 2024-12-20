@@ -18,6 +18,10 @@ declare -A anitya_ids=(
     ["par2cmdline-turbo/par2cmdline-turbo.spec"]=372791
     ["peaclock/peaclock.spec"]=375777
     ["prismlauncher/prismlauncher.spec"]=301949
+    ["python-audioop-lts/python-audioop-lts.spec"]=376000
+    ["python-pydub/python-pydub.spec"]=175488
+    ["python-shazamio-core/python-shazamio-core.spec"]=375995
+    ["python-shazamio/python-shazamio.spec"]=162803
     ["ripdrag/ripdrag.spec"]=372793
     ["rofi-emoji/rofi-emoji.spec"]=242096
     ["rsbkb/rsbkb.spec"]=374101
@@ -28,6 +32,7 @@ declare -A anitya_ids=(
     ["rust-randomize/rust-randomize.spec"]=109578
     ["satty/satty.spec"]=372795
     ["scrcpy/scrcpy.spec"]=226924
+    ["shaq/shaq.spec"]=363252
     ["swaylock-effects/swaylock-effects.spec"]=312399
     ["swaync/swaync.spec"]=242061
     ["swayosd/swayosd.spec"]=374840
@@ -52,6 +57,10 @@ declare -A git_forges=(
 
 for file in "${!anitya_ids[@]}"; do
     name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$file" | head -1)
+    if grep -q "pypi_name" "$file"; then
+        pypi_name=$(sed -n "s|^%global\s\+pypi_name\s\+\(.*\)\$|\1|p" "$file")
+        name=${name//%\{pypi_name\}/$pypi_name}
+    fi
     echo "> querying versions for $name ($file)..."
 
     if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${anitya_ids[$file]}") ||
