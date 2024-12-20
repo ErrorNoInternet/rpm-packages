@@ -9,7 +9,6 @@ License:        MIT
 URL:            https://github.com/AbstractUmbra/audioop
 Source:         %{url}/archive/%{version}/audioop-%{version}.tar.gz
 
-BuildRequires:  cargo
 BuildRequires:  python3-devel
 
 %global _description %{expand:
