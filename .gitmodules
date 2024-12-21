@@ -50,10 +50,6 @@
 	path = coreutils/upstream
 	url = https://src.fedoraproject.org/rpms/coreutils
 	branch = f41
-[submodule "hyprland/upstream"]
-	path = hyprland/upstream
-	url = https://src.fedoraproject.org/rpms/hyprland
-	branch = f41
 [submodule "fcitx5/upstream"]
 	path = fcitx5/upstream
 	url = https://src.fedoraproject.org/rpms/fcitx5
