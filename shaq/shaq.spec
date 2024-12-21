@@ -7,7 +7,7 @@ License:        MIT
 URL:            https://github.com/woodruffw/shaq
 Source:         %{url}/archive/v%{version}/%{name}-v%{version}.tar.gz
 Patch0:         fix-pyproject.diff
-Patch1:         add-short-flags.diff
+Patch1:         improvements.diff
 
 BuildArch:      noarch
 BuildRequires:  python3-devel

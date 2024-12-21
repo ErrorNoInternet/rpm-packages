@@ -1,0 +1,65 @@
+diff --git a/shaq/_cli.py b/shaq/_cli.py
+index 19b816c..5e1ff71 100644
+--- a/shaq/_cli.py
++++ b/shaq/_cli.py
+@@ -5,6 +5,7 @@ import logging
+ import os
+ import shutil
+ import sys
++import time
+ import wave
+ from collections.abc import Iterator
+ from contextlib import contextmanager
+@@ -17,6 +18,7 @@ from pydub import AudioSegment
+ from rich import progress
+ from rich.console import Console
+ from rich.logging import RichHandler
++from rich.progress import TextColumn
+ from rich.status import Status
+ from shazamio import Serialize, Shazam
+ 
+@@ -34,6 +36,14 @@ _DEFAULT_DURATION = 10
+ 
+ logger = logging.getLogger(__name__)
+ 
++class FixedTimeColumn(TextColumn):
++    def __init__(self, elapsed_when_finished, duration):
++        super().__init__(elapsed_when_finished)
++        self.start_time = time.time()
++        self.duration = duration
++
++    def render(self, _task):
++        return f"[cyan]{round((self.start_time + self.duration) - time.time())}s"
+ 
+ @contextmanager
+ def _console() -> Iterator[Console]:
+@@ -81,6 +91,7 @@ def _listen(console: Console, args: argparse.Namespace) -> bytearray:
+         wav.setframerate(args.sample_rate)
+ 
+         stream = p.open(format=_FORMAT, channels=args.channels, rate=args.sample_rate, input=True)
++        progress.TimeRemainingColumn = lambda elapsed_when_finished: FixedTimeColumn(elapsed_when_finished, args.duration)
+         for _ in progress.track(
+             range(0, args.sample_rate // args.chunk_size * args.duration),
+             description="shaq is listening...",
+@@ -119,9 +130,9 @@ def _parser() -> argparse.ArgumentParser:
+     parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+     input_group = parser.add_mutually_exclusive_group(required=True)
+     input_group.add_argument(
+-        "--listen", action="store_true", help="detect from the system's microphone"
++        "-l", "--listen", action="store_true", help="detect from the system's microphone"
+     )
+-    input_group.add_argument("--input", type=Path, help="detect from the given audio input file")
++    input_group.add_argument("-i", "--input", type=Path, help="detect from the given audio input file")
+ 
+     parser.add_argument(
+         "-d",
+@@ -134,7 +145,7 @@ def _parser() -> argparse.ArgumentParser:
+     parser.add_argument(
+         "-j", "--json", action="store_true", help="emit Shazam's response as JSON on stdout"
+     )
+-    parser.add_argument("--albumcover", action="store_true", help="return url to HD album cover")
++    parser.add_argument("-a", "--albumcover", action="store_true", help="return url to HD album cover")
+ 
+     advanced_group = parser.add_argument_group(
+         title="Advanced Options",
+
