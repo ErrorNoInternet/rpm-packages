@@ -4,13 +4,15 @@
 # prevent library files from being installed
 %global cargo_install_lib 0
 
+%global features -n -f ffmpeg,pulse,mpris
+
 Name:           songrec
 Version:        0.4.3
 Release:        %autorelease
 Summary:        Open-source Shazam client for Linux, written in Rust
 
 SourceLicense:  GPL-3.0-or-later
-License:        GPL-3.0-or-later
+License:        (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND GPL-3.0+ AND Apache-2.0 AND GPL-3.0-or-later AND (MIT OR Apache-2.0 OR Zlib) AND MPL-2.0 AND BSD-3-Clause AND (MIT OR Apache-2.0) AND MIT AND (Zlib OR Apache-2.0 OR MIT) AND (BSD-2-Clause OR MIT OR Apache-2.0) AND (Unlicense OR MIT) AND (BSD-3-Clause OR MIT OR Apache-2.0) AND (Apache-2.0 OR MIT)
 
 URL:            https://github.com/marin-m/SongRec
 Source:         %{url}/archive/%{version}/%{name}-%{version}.tar.gz
@@ -40,17 +42,17 @@ cargo vendor
 %cargo_prep -v vendor
 
 %build
-%cargo_build
-%{cargo_license_summary}
-%{cargo_license} > LICENSE.dependencies
+%cargo_build %{features}
+%{cargo_license_summary %{features}}
+%{cargo_license %{features}} > LICENSE.dependencies
 %{cargo_vendor_manifest}
 
 %install
-%cargo_install
+%cargo_install %{features}
 
 %if %{with check}
 %check
-%cargo_test
+%cargo_test %{features}
 %endif
 
 %files
