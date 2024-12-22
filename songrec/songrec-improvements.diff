@@ -20,6 +20,45 @@ index 261d1c5..a33e42d 100644
                  }
              }
              GUIMessage::SongRecognized(message) => {
+diff --git a/src/core/http_thread.rs b/src/core/http_thread.rs
+index 594cd2c..ec41a1d 100644
+--- a/src/core/http_thread.rs
++++ b/src/core/http_thread.rs
+@@ -42,7 +42,8 @@ fn try_recognize_song(signature: DecodedSignature) -> Result<SongRecognizedMessa
+             }
+         }
+     }
+-    
++   
++    let cover_image_url = &json_object["track"]["images"]["coverart"];
+     Ok(SongRecognizedMessage {
+         artist_name: match &json_object["track"]["subtitle"] {
+             Value::String(string) => string.to_string(),
+@@ -53,10 +54,11 @@ fn try_recognize_song(signature: DecodedSignature) -> Result<SongRecognizedMessa
+             Value::String(string) => string.to_string(),
+             _ => { return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, gettext("No match for this song").as_str()))) }
+         },
+-        cover_image: match &json_object["track"]["images"]["coverart"] {
++        cover_image: match cover_image_url {
+             Value::String(string) => Some(obtain_raw_cover_image(string)?),
+             _ => None
+         },
++        cover_image_url: if let Value::String(cover_image_url) = cover_image_url { Some(cover_image_url.to_string()) } else { None },
+         track_key: match &json_object["track"]["key"] {
+             Value::String(string) => string.to_string(),
+             _ => { return Err(Box::new(std::io::Error::new(std::io::ErrorKind::Other, gettext("No match for this song").as_str()))) }
+diff --git a/src/core/thread_messages.rs b/src/core/thread_messages.rs
+index 7143bc7..fab1156 100644
+--- a/src/core/thread_messages.rs
++++ b/src/core/thread_messages.rs
+@@ -21,6 +21,7 @@ pub struct SongRecognizedMessage {
+     pub album_name: Option<String>,
+     pub song_name: String,
+     pub cover_image: Option<Vec<u8>>,
++    pub cover_image_url: Option<String>,
+ 
+     // Used only in the CSV export for now:
+     pub track_key: String,
 diff --git a/src/main.rs b/src/main.rs
 index 76e59d9..b90a0b1 100644
 --- a/src/main.rs
@@ -143,6 +182,20 @@ index 76e59d9..b90a0b1 100644
                  audio_device: None,
                  input_file: None,
                  output_type: CLIOutputType::SongName
+diff --git a/src/utils/mpris_player.rs b/src/utils/mpris_player.rs
+index 9028aa4..685ea87 100644
+--- a/src/utils/mpris_player.rs
++++ b/src/utils/mpris_player.rs
+@@ -45,8 +45,6 @@ pub fn update_song(p: &MprisPlayer, m: &SongRecognizedMessage) {
+     if let Some(ref genre) = m.genre { 
+         metadata.genre = Some(vec![genre.clone()]);
+     }
+-    if let Some(ref buf) = m.cover_image { 
+-        metadata.art_url = Some(format!("data:image/jpeg;base64,{}", base64::encode(buf)));
+-    }
++    metadata.art_url = m.cover_image_url.clone();
+     p.set_metadata(metadata);
+ }
 diff --git a/translations/ca/LC_MESSAGES/songrec.po b/translations/ca/LC_MESSAGES/songrec.po
 index 7346e91..f33fce7 100644
 --- a/translations/ca/LC_MESSAGES/songrec.po
