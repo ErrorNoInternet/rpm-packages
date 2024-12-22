@@ -1,0 +1,107 @@
+diff --git a/view.go b/view.go
+index 9625659..c6676a1 100644
+--- a/view.go
++++ b/view.go
+@@ -144,7 +144,7 @@ func (m model) View() string {
+ 			if column == cursorColumn {
+ 				out = out.Background(term.Color(hourColorCode(hour)))
+ 				if hasDarkBackground {
+-					out = out.Foreground(term.Color("#262626")).Bold()
++					out = out.Foreground(term.Color("#2e3440")).Bold()
+ 				} else {
+ 					out = out.Foreground(term.Color("#f1f1f1"))
+ 				}
+@@ -213,7 +213,7 @@ func (m model) View() string {
+ 		clockString := zone.ClockEmoji(m.clock.t)
+ 		usedZoneHeaderWidth := termenv.String(clockString + zoneString + datetime).Width()
+ 		unusedZoneHeaderWidth := max(0, zoneHeaderWidth - usedZoneHeaderWidth - MinimumZoneHeaderPadding)
+-		rightAlignmentSpace := strings.Repeat(" ", unusedZoneHeaderWidth)
++		rightAlignmentSpace := strings.Repeat(" ", unusedZoneHeaderWidth-2)
+ 		zoneHeader := fmt.Sprintf("%s %s %s%s", clockString, normalTextStyle(zoneString), rightAlignmentSpace, dateTimeStyle(datetime))
+ 
+ 		marker := "  "
+@@ -264,10 +264,7 @@ func generateKeymapStrings(k Keymaps, showAll bool) []string {
+ 			),
+ 		}
+ 	} else {
+-		return []string {
+-			helpKey,
+-			quitKey,
+-		}
++		return []string {}
+ 	}
+ }
+ 
+@@ -281,7 +278,7 @@ func status(m model) string {
+ 
+ 	color := "#939183"
+ 	if hasDarkBackground {
+-		color = "#605C5A"
++		color = "#d8dee9"
+ 	}
+ 
+ 	status := termenv.String(strings.Join(text, "\n")).Foreground(term.Color(color))
+@@ -297,7 +294,7 @@ func formatDayChange(m *model, z *Zone) string {
+ 
+ 	color := "#777266"
+ 	if hasDarkBackground {
+-		color = "#7B7573"
++		color = "#d8dee9"
+ 	}
+ 
+ 	str := termenv.String(fmt.Sprintf("📆 %s", zTime.Format("Mon 02")))
+@@ -310,7 +307,7 @@ func hourColorCode(hour int) (color string) {
+ 	// Morning
+ 	case 7, 8:
+ 		if hasDarkBackground {
+-			color = "#98E1D8"
++			color = "#8fbcbb"
+ 		} else {
+ 			color = "#35B6A6"
+ 		}
+@@ -318,7 +315,7 @@ func hourColorCode(hour int) (color string) {
+ 	// Day
+ 	case 9, 10, 11, 12, 13, 14, 15, 16, 17:
+ 		if hasDarkBackground {
+-			color = "#E8C64D"
++			color = "#ebcb8b"
+ 		} else {
+ 			color = "#FA8F2D"
+ 		}
+@@ -326,7 +323,7 @@ func hourColorCode(hour int) (color string) {
+ 	// Evening
+ 	case 18, 19:
+ 		if hasDarkBackground {
+-			color = "#C95F48"
++			color = "#d08770"
+ 		} else {
+ 			color = "#FC6442"
+ 		}
+@@ -334,7 +331,7 @@ func hourColorCode(hour int) (color string) {
+ 	// Night
+ 	default:
+ 		if hasDarkBackground {
+-			color = "#5957C9"
++			color = "#81a1c1"
+ 		} else {
+ 			color = "#664FC3"
+ 		}
+@@ -345,7 +342,7 @@ func hourColorCode(hour int) (color string) {
+ func dateTimeStyle(str string) termenv.Style {
+ 	color := "#777266"
+ 	if hasDarkBackground {
+-		color = "#757575"
++		color = "#d8dee9"
+ 	}
+ 	return termenv.String(str).Foreground(term.Color(color))
+ }
+@@ -353,7 +350,7 @@ func dateTimeStyle(str string) termenv.Style {
+ func normalTextStyle(str string) termenv.Style {
+ 	var color = "#32312B"
+ 	if hasDarkBackground {
+-		color = "#ECEAD9"
++		color = "#d8dee9"
+ 	}
+ 	return termenv.String(str).Foreground(term.Color(color))
+ }
+

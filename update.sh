@@ -52,6 +52,7 @@ declare -A git_forges=(
     ["overmask/overmask.spec"]=github
     ["quickshell/quickshell.spec"]=github
     ["try/try-git.spec"]=github
+    ["tz/tz.spec"]=github
     ["unipicker/unipicker.spec"]=github
     ["xwayland-satellite/xwayland-satellite.spec"]=github
 )
