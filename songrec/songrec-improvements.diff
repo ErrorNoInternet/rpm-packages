@@ -1,0 +1,388 @@
+diff --git a/src/cli_main.rs b/src/cli_main.rs
+index 261d1c5..a33e42d 100644
+--- a/src/cli_main.rs
++++ b/src/cli_main.rs
+@@ -114,7 +114,7 @@ pub fn cli_main(parameters: CLIParameters) -> Result<(), Box<dyn Error>> {
+                     }
+                     &device_names[0].inner_name
+                 };
+-                eprintln!("{} {}", gettext("Using device"), dev_name);
++                eprintln!("{} {}", gettext("using device"), dev_name);
+                 microphone_tx
+                     .send(MicrophoneMessage::MicrophoneRecordStart(
+                         dev_name.to_owned(),
+@@ -154,7 +154,7 @@ pub fn cli_main(parameters: CLIParameters) -> Result<(), Box<dyn Error>> {
+             }
+             GUIMessage::MicrophoneRecording => {
+                 if !do_recognize_once {
+-                    eprintln!("{}", gettext("Recording started!"));
++                    eprintln!("{}", gettext("recording..."));
+                 }
+             }
+             GUIMessage::SongRecognized(message) => {
+diff --git a/src/main.rs b/src/main.rs
+index 76e59d9..b90a0b1 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -66,7 +66,7 @@ macro_rules! base_app {
+         .about(gettext("An open-source Shazam client for Linux, written in Rust.").as_str())
+         .subcommand(
+             App::new("listen")
+-                .about(gettext("Run as a command-line program listening the microphone and printing recognized songs to stdout, exposing current song info via MPRIS").as_str())
++                .about(gettext("Listen to the microphone and print recognized songs to stdout").as_str())
+                 .arg(
+                     Arg::with_name("audio-device")
+                         .short("d")
+@@ -95,7 +95,7 @@ macro_rules! base_app {
+         )
+         .subcommand(
+             App::new("recognize")
+-                .about(gettext("Recognize one song from a sound file or microphone and print its info.").as_str())
++                .about(gettext("Recognize one song from a sound file or microphone").as_str())
+                 .arg(
+                     Arg::with_name("audio-device")
+                         .short("d")
+@@ -122,44 +122,6 @@ macro_rules! base_app {
+                         .help(gettext("Recognize a file instead of using mic input").as_str())
+                 )
+         )
+-        .subcommand(
+-            App::new("audio-file-to-recognized-song")
+-                .about(gettext("Generate a Shazam fingerprint from a sound file, perform song recognition towards Shazam's servers and print obtained information to the standard output.").as_str())
+-                .arg(
+-                    Arg::with_name("input_file")
+-                        .required(true)
+-                        .help(gettext("The audio file to recognize.").as_str())
+-                )
+-        )
+-        .subcommand(
+-            App::new("microphone-to-recognized-song")
+-                .about(gettext("Recognize a currently playing song using the microphone and print obtained information to the standard output").as_str())
+-                .arg(
+-                    Arg::with_name("audio-device")
+-                        .short("d")
+-                        .long("audio-device")
+-                        .takes_value(true)
+-                        .help(gettext("Specify the audio device to use").as_str())
+-                )
+-        )
+-        .subcommand(
+-            App::new("audio-file-to-fingerprint")
+-                .about(gettext("Generate a Shazam fingerprint from a sound file, and print it to the standard output.").as_str())
+-                .arg(
+-                    Arg::with_name("input_file")
+-                        .required(true)
+-                        .help(gettext("The .WAV or .MP3 file to generate an audio fingerprint for.").as_str())
+-                )
+-        )
+-        .subcommand(
+-            App::new("fingerprint-to-recognized-song")
+-                .about(gettext("Take a data-URI Shazam fingerprint, perform song recognition towards Shazam's servers and print obtained information to the standard output.").as_str())
+-                .arg(
+-                    Arg::with_name("fingerprint")
+-                        .required(true)
+-                        .help(gettext("The data-URI Shazam fingerprint to recognize.").as_str())
+-                )
+-        )
+     };
+ }
+ 
+@@ -218,27 +180,6 @@ fn main() -> Result<(), Box<dyn Error>> {
+     let args = app!().get_matches();
+     
+     match args.subcommand_name() {
+-        Some("audio-file-to-recognized-song") => {            
+-            let subcommand_args = args.subcommand_matches("audio-file-to-recognized-song").unwrap();
+-            
+-            let input_file_string = subcommand_args.value_of("input_file").unwrap();
+-            
+-            println!("{}", serde_json::to_string_pretty(&recognize_song_from_signature(&SignatureGenerator::make_signature_from_file(input_file_string)?)?)?);
+-        },
+-        Some("audio-file-to-fingerprint") => {
+-            let subcommand_args = args.subcommand_matches("audio-file-to-fingerprint").unwrap();
+-            
+-            let input_file_string = subcommand_args.value_of("input_file").unwrap();
+-            
+-            println!("{}", SignatureGenerator::make_signature_from_file(input_file_string)?.encode_to_uri()?);
+-        },
+-        Some("fingerprint-to-recognized-song") => {
+-            let subcommand_args = args.subcommand_matches("fingerprint-to-recognized-song").unwrap();
+-            
+-            let fingerprint_string = subcommand_args.value_of("fingerprint").unwrap();
+-            
+-            println!("{}", serde_json::to_string_pretty(&recognize_song_from_signature(&DecodedSignature::decode_from_uri(fingerprint_string)?)?)?);
+-        },
+         Some("listen") => {
+             let subcommand_args = args.subcommand_matches("listen").unwrap();
+             let audio_device = subcommand_args.value_of("audio-device").map(str::to_string);
+@@ -286,18 +227,6 @@ fn main() -> Result<(), Box<dyn Error>> {
+                 }
+             })?;
+         },
+-        Some("microphone-to-recognized-song") => {
+-            let subcommand_args = args.subcommand_matches("microphone-to-recognized-song").unwrap();
+-            let audio_device = subcommand_args.value_of("audio-device").map(str::to_string);
+-
+-            cli_main(CLIParameters {
+-                enable_mpris: false,
+-                recognize_once: true,
+-                audio_device,
+-                input_file: None,
+-                output_type: CLIOutputType::JSON
+-            })?;
+-        },
+         #[cfg(feature="gui")]
+         Some("gui-norecording") => {
+             let subcommand_args = args.subcommand_matches("gui-norecording").unwrap();
+@@ -323,7 +252,7 @@ fn main() -> Result<(), Box<dyn Error>> {
+         None => {
+             cli_main(CLIParameters {
+                 enable_mpris: true,
+-                recognize_once: false,
++                recognize_once: true,
+                 audio_device: None,
+                 input_file: None,
+                 output_type: CLIOutputType::SongName
+diff --git a/translations/ca/LC_MESSAGES/songrec.po b/translations/ca/LC_MESSAGES/songrec.po
+index 7346e91..f33fce7 100644
+--- a/translations/ca/LC_MESSAGES/songrec.po
++++ b/translations/ca/LC_MESSAGES/songrec.po
+@@ -27,7 +27,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "Sortint: no s'han trobat dispositius d'àudio!"
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "Utilitzant dispositiu"
+ 
+ #: ../src/cli_main.rs:138
+@@ -49,7 +49,7 @@ msgid "Error:"
+ msgstr "Error:"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "Enregistrament iniciat!"
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/de_DE/LC_MESSAGES/songrec.po b/translations/de_DE/LC_MESSAGES/songrec.po
+index 0b0a91c..9ebcdb5 100644
+--- a/translations/de_DE/LC_MESSAGES/songrec.po
++++ b/translations/de_DE/LC_MESSAGES/songrec.po
+@@ -27,7 +27,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "Beenden: Keine Audiogeräte gefunden!"
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "Gerät verwenden"
+ 
+ #: ../src/cli_main.rs:138
+@@ -49,7 +49,7 @@ msgid "Error:"
+ msgstr "Fehler:"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "Aufnahme aktiv!"
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/es/LC_MESSAGES/songrec.po b/translations/es/LC_MESSAGES/songrec.po
+index 2fcf90d..ebcdbbd 100644
+--- a/translations/es/LC_MESSAGES/songrec.po
++++ b/translations/es/LC_MESSAGES/songrec.po
+@@ -27,7 +27,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "Saliendo: no se ha encontrado ningún dispositivo de sonido."
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "Utilizando el dispositivo"
+ 
+ #: ../src/cli_main.rs:138
+@@ -49,7 +49,7 @@ msgid "Error:"
+ msgstr "Error:"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "Grabación en curso"
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/fr_FR/LC_MESSAGES/songrec.po b/translations/fr_FR/LC_MESSAGES/songrec.po
+index 0e32096..b890826 100644
+--- a/translations/fr_FR/LC_MESSAGES/songrec.po
++++ b/translations/fr_FR/LC_MESSAGES/songrec.po
+@@ -28,7 +28,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "Fin de l'exécution : aucun périphérique audio disponible !"
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "Utilisation du périphérique"
+ 
+ #: ../src/cli_main.rs:138
+@@ -50,7 +50,7 @@ msgid "Error:"
+ msgstr "Erreur :"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "Enregistrement en cours..."
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/it/LC_MESSAGES/songrec.po b/translations/it/LC_MESSAGES/songrec.po
+index 6ca31e7..70f6bb2 100644
+--- a/translations/it/LC_MESSAGES/songrec.po
++++ b/translations/it/LC_MESSAGES/songrec.po
+@@ -29,7 +29,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "In uscita: nessun dispositivo audio trovato!"
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "Dispositivo in uso"
+ 
+ #: ../src/cli_main.rs:138
+@@ -51,7 +51,7 @@ msgid "Error:"
+ msgstr "Errore:"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "Registrazione iniziata!"
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/ja/LC_MESSAGES/songrec.po b/translations/ja/LC_MESSAGES/songrec.po
+index c3a92ca..fd3764b 100644
+--- a/translations/ja/LC_MESSAGES/songrec.po
++++ b/translations/ja/LC_MESSAGES/songrec.po
+@@ -27,7 +27,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr ""
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr ""
+ 
+ #: ../src/cli_main.rs:138
+@@ -49,7 +49,7 @@ msgid "Error:"
+ msgstr ""
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr ""
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/ko_KR/LC_MESSAGES/songrec.po b/translations/ko_KR/LC_MESSAGES/songrec.po
+index 8a710ef..4a721fa 100644
+--- a/translations/ko_KR/LC_MESSAGES/songrec.po
++++ b/translations/ko_KR/LC_MESSAGES/songrec.po
+@@ -26,7 +26,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "종료 중: 오디오 장치를 찾을 수 없습니다!"
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "장치 사용 중"
+ 
+ #: ../src/cli_main.rs:138
+@@ -48,7 +48,7 @@ msgid "Error:"
+ msgstr "오류:"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "녹음이 시작되었습니다!"
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/nl/LC_MESSAGES/songrec.po b/translations/nl/LC_MESSAGES/songrec.po
+index 9236a52..9b08d48 100644
+--- a/translations/nl/LC_MESSAGES/songrec.po
++++ b/translations/nl/LC_MESSAGES/songrec.po
+@@ -27,7 +27,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "Geen audio-apparaten aangetroffen"
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "Gebruikmakend van"
+ 
+ #: ../src/cli_main.rs:138
+@@ -49,7 +49,7 @@ msgid "Error:"
+ msgstr "Foutmelding:"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "De opname is gestart!"
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/pl/LC_MESSAGES/songrec.po b/translations/pl/LC_MESSAGES/songrec.po
+index d4451ba..aafcbdc 100644
+--- a/translations/pl/LC_MESSAGES/songrec.po
++++ b/translations/pl/LC_MESSAGES/songrec.po
+@@ -28,7 +28,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr ""
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr ""
+ 
+ #: ../src/cli_main.rs:138
+@@ -50,7 +50,7 @@ msgid "Error:"
+ msgstr ""
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr ""
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/pt_BR/LC_MESSAGES/songrec.po b/translations/pt_BR/LC_MESSAGES/songrec.po
+index 749967c..eab6908 100644
+--- a/translations/pt_BR/LC_MESSAGES/songrec.po
++++ b/translations/pt_BR/LC_MESSAGES/songrec.po
+@@ -29,7 +29,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "Saindo do programa: Nenhum dispositivo de áudio foi encontrado!"
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "Utilizando o dispositivo"
+ 
+ #: ../src/cli_main.rs:138
+@@ -51,7 +51,7 @@ msgid "Error:"
+ msgstr "Ocorreu um erro:"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "A gravação foi iniciada!"
+ 
+ #: ../src/main.rs:66
+diff --git a/translations/sk_SK/LC_MESSAGES/songrec.po b/translations/sk_SK/LC_MESSAGES/songrec.po
+index db2935c..9fd6773 100644
+--- a/translations/sk_SK/LC_MESSAGES/songrec.po
++++ b/translations/sk_SK/LC_MESSAGES/songrec.po
+@@ -27,7 +27,7 @@ msgid "Exiting: no audio devices found!"
+ msgstr "Ukončenie: neboli nájdené žiadne zvukové zariadenia!"
+ 
+ #: ../src/cli_main.rs:117
+-msgid "Using device"
++msgid "using device"
+ msgstr "Použité zariadenie"
+ 
+ #: ../src/cli_main.rs:138
+@@ -49,7 +49,7 @@ msgid "Error:"
+ msgstr "Chyba:"
+ 
+ #: ../src/cli_main.rs:157
+-msgid "Recording started!"
++msgid "recording..."
+ msgstr "Nahrávanie spustené!"
+ 
+ #: ../src/main.rs:66
+
