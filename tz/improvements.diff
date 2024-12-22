@@ -12,9 +12,18 @@ index f58b963..ff2f993 100644
  		watch:      *watch,
  		showHelp:   false,
 diff --git a/view.go b/view.go
-index 9625659..243e56b 100644
+index 9625659..302ecce 100644
 --- a/view.go
 +++ b/view.go
+@@ -93,7 +93,7 @@ const MinimumZoneHeaderPadding = 6
+ const MaximumZoneHeaderColumns = UIWidth + MinimumZoneHeaderPadding
+ 
+ func (m model) View() string {
+-	s := normalTextStyle("\n  What time is it?\n\n").String()
++	s := normalTextStyle("\n").String()
+ 
+ 	zoneHeaderWidth := MaximumZoneHeaderColumns
+ 	envWidth, envErr := strconv.Atoi(os.Getenv("COLUMNS"))
 @@ -144,7 +144,7 @@ func (m model) View() string {
  			if column == cursorColumn {
  				out = out.Background(term.Color(hourColorCode(hour)))
