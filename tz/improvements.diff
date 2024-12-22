@@ -1,5 +1,18 @@
+diff --git a/main.go b/main.go
+index f58b963..ff2f993 100644
+--- a/main.go
++++ b/main.go
+@@ -225,7 +225,7 @@ func main() {
+ 		zones:      config.Zones,
+ 		keymaps:    config.Keymaps,
+ 		clock:      *NewClockNow(),
+-		showDates:  false,
++		showDates:  true,
+ 		isMilitary: *military,
+ 		watch:      *watch,
+ 		showHelp:   false,
 diff --git a/view.go b/view.go
-index 9625659..c6676a1 100644
+index 9625659..243e56b 100644
 --- a/view.go
 +++ b/view.go
 @@ -144,7 +144,7 @@ func (m model) View() string {
@@ -16,7 +29,7 @@ index 9625659..c6676a1 100644
  		usedZoneHeaderWidth := termenv.String(clockString + zoneString + datetime).Width()
  		unusedZoneHeaderWidth := max(0, zoneHeaderWidth - usedZoneHeaderWidth - MinimumZoneHeaderPadding)
 -		rightAlignmentSpace := strings.Repeat(" ", unusedZoneHeaderWidth)
-+		rightAlignmentSpace := strings.Repeat(" ", unusedZoneHeaderWidth-2)
++		rightAlignmentSpace := strings.Repeat(" ", unusedZoneHeaderWidth - 2)
  		zoneHeader := fmt.Sprintf("%s %s %s%s", clockString, normalTextStyle(zoneString), rightAlignmentSpace, dateTimeStyle(datetime))
  
  		marker := "  "
