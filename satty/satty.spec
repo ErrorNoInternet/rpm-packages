@@ -7,7 +7,7 @@
 %global cargo_install_lib 0
 
 Name:           satty
-Version:        0.14.0
+Version:        0.15.0
 Release:        1%{?dist}
 Summary:        Modern Screenshot Annotation
 License:        MPL-2.0
