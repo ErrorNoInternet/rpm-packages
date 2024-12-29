@@ -60,28 +60,30 @@ index 7143bc7..fab1156 100644
      // Used only in the CSV export for now:
      pub track_key: String,
 diff --git a/src/main.rs b/src/main.rs
-index 76e59d9..b90a0b1 100644
+index 76e59d9..fa94a71 100644
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -66,7 +66,7 @@ macro_rules! base_app {
+@@ -66,7 +66,8 @@ macro_rules! base_app {
          .about(gettext("An open-source Shazam client for Linux, written in Rust.").as_str())
          .subcommand(
              App::new("listen")
 -                .about(gettext("Run as a command-line program listening the microphone and printing recognized songs to stdout, exposing current song info via MPRIS").as_str())
 +                .about(gettext("Listen to the microphone and print recognized songs to stdout").as_str())
++                .visible_aliases(&["l"])
                  .arg(
                      Arg::with_name("audio-device")
                          .short("d")
-@@ -95,7 +95,7 @@ macro_rules! base_app {
+@@ -95,7 +96,8 @@ macro_rules! base_app {
          )
          .subcommand(
              App::new("recognize")
 -                .about(gettext("Recognize one song from a sound file or microphone and print its info.").as_str())
 +                .about(gettext("Recognize one song from a sound file or microphone").as_str())
++                .visible_aliases(&["r"])
                  .arg(
                      Arg::with_name("audio-device")
                          .short("d")
-@@ -122,44 +122,6 @@ macro_rules! base_app {
+@@ -122,44 +124,6 @@ macro_rules! base_app {
                          .help(gettext("Recognize a file instead of using mic input").as_str())
                  )
          )
@@ -126,7 +128,7 @@ index 76e59d9..b90a0b1 100644
      };
  }
  
-@@ -218,27 +180,6 @@ fn main() -> Result<(), Box<dyn Error>> {
+@@ -218,27 +182,6 @@ fn main() -> Result<(), Box<dyn Error>> {
      let args = app!().get_matches();
      
      match args.subcommand_name() {
@@ -154,7 +156,7 @@ index 76e59d9..b90a0b1 100644
          Some("listen") => {
              let subcommand_args = args.subcommand_matches("listen").unwrap();
              let audio_device = subcommand_args.value_of("audio-device").map(str::to_string);
-@@ -286,18 +227,6 @@ fn main() -> Result<(), Box<dyn Error>> {
+@@ -286,18 +229,6 @@ fn main() -> Result<(), Box<dyn Error>> {
                  }
              })?;
          },
@@ -173,7 +175,7 @@ index 76e59d9..b90a0b1 100644
          #[cfg(feature="gui")]
          Some("gui-norecording") => {
              let subcommand_args = args.subcommand_matches("gui-norecording").unwrap();
-@@ -323,7 +252,7 @@ fn main() -> Result<(), Box<dyn Error>> {
+@@ -323,7 +254,7 @@ fn main() -> Result<(), Box<dyn Error>> {
          None => {
              cli_main(CLIParameters {
                  enable_mpris: true,
