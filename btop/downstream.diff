@@ -1,17 +1,18 @@
 diff --git a/btop.spec b/btop.spec
-index 84c97c4..dd696e8 100644
+index 9566903..b45eb58 100644
 --- a/btop.spec
 +++ b/btop.spec
-@@ -10,6 +10,8 @@ License:        Apache-2.0 and MIT and Public Domain
+@@ -11,6 +11,9 @@ License:        Apache-2.0 AND LicenseRef-Fedora-Public-Domain
  URL:            https://github.com/aristocratos/btop
  Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
  
 +Patch0:         fix-resize-warning.diff
++Patch1:         escape-proc-newlines.diff
 +
  BuildRequires:  desktop-file-utils
  BuildRequires:  gcc-c++
  BuildRequires:  make
-@@ -47,7 +49,7 @@ memory, disks, network and processes.
+@@ -46,7 +49,7 @@ memory, disks, network and processes.
  C++ version and continuation of bashtop and bpytop.
  
  %prep
@@ -20,6 +21,25 @@ index 84c97c4..dd696e8 100644
  
  
  %build
+diff --git a/escape-proc-newlines.diff b/escape-proc-newlines.diff
+new file mode 100644
+index 0000000..d8c6ecb
+--- /dev/null
++++ b/escape-proc-newlines.diff
+@@ -0,0 +1,13 @@
++diff --git a/src/linux/btop_collect.cpp b/src/linux/btop_collect.cpp
++index 4b3ab95..f0d3d46 100644
++--- a/src/linux/btop_collect.cpp
+++++ b/src/linux/btop_collect.cpp
++@@ -2793,6 +2793,7 @@ namespace Proc {
++ 					}
++ 					pread.close();
++ 					if (not new_proc.cmd.empty()) new_proc.cmd.pop_back();
+++					new_proc.cmd = std::regex_replace(new_proc.cmd, std::regex("\n"), "\\n");
++ 
++ 					pread.open(d.path() / "status");
++ 					if (not pread.good()) continue;
++
 diff --git a/fix-resize-warning.diff b/fix-resize-warning.diff
 new file mode 100644
 index 0000000..81229e7
