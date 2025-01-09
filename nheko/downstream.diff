@@ -1,0 +1,246 @@
+diff --git a/nheko.spec b/nheko.spec
+index d31d1b4..e527ff2 100644
+--- a/nheko.spec
++++ b/nheko.spec
+@@ -9,6 +9,7 @@ Source0: %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+ 
+ # https://github.com/Nheko-Reborn/nheko/pull/1776
+ Patch100: %{name}-0.12.0-fmt11-fix.patch
++Patch101: use-kirigami-scrolling.diff
+ 
+ BuildRequires: cmake(KDSingleApplication-qt6) >= 1.0.0
+ BuildRequires: cmake(MatrixClient) >= 0.10.0
+@@ -27,6 +28,7 @@ BuildRequires: cmake(httplib) >= 0.5.12
+ BuildRequires: cmake(mpark_variant)
+ BuildRequires: cmake(nlohmann_json) >= 3.11.0
+ BuildRequires: cmake(spdlog) >= 1.0.0
++BuildRequires: cmake(KF6Kirigami)
+ 
+ BuildRequires: pkgconfig(blurhash) >= 0.2.0
+ BuildRequires: pkgconfig(coeurl) >= 0.3.1
+diff --git a/use-kirigami-scrolling.diff b/use-kirigami-scrolling.diff
+new file mode 100644
+index 0000000..266e28a
+--- /dev/null
++++ b/use-kirigami-scrolling.diff
+@@ -0,0 +1,220 @@
++diff --git a/CMakeLists.txt b/CMakeLists.txt
++index 7988f0cd..e709c92a 100644
++--- a/CMakeLists.txt
+++++ b/CMakeLists.txt
++@@ -914,6 +914,7 @@ target_link_libraries(nheko PRIVATE
++     Qt::Qml
++     Qt::QmlPrivate
++     Qt::QuickControls2
+++    Kirigami
++     qt6keychain
++     KDAB::kdsingleapplication
++     nlohmann_json::nlohmann_json
++diff --git a/resources/qml/CommunitiesList.qml b/resources/qml/CommunitiesList.qml
++index a1344749..27866463 100644
++--- a/resources/qml/CommunitiesList.qml
+++++ b/resources/qml/CommunitiesList.qml
++@@ -8,6 +8,7 @@ import QtQuick
++ import QtQuick.Controls
++ import QtQuick.Layouts
++ import im.nheko
+++import org.kde.kirigami as Kirigami
++ 
++ Page {
++     id: communitySidebar
++@@ -38,6 +39,13 @@ Page {
++         model: Communities.filtered()
++         boundsBehavior: Flickable.StopAtBounds
++ 
+++        Kirigami.WheelHandler {
+++            id: wheelHandler
+++            target: communitiesList
+++            filterMouseEvents: true
+++            keyNavigationEnabled: true
+++        }
+++
++         ScrollBar.vertical: ScrollBar {
++             id: scrollbar
++ 
++diff --git a/resources/qml/MessageView.qml b/resources/qml/MessageView.qml
++index dd5dd77a..49eeaa0b 100644
++--- a/resources/qml/MessageView.qml
+++++ b/resources/qml/MessageView.qml
++@@ -9,6 +9,7 @@ import QtQuick.Controls 2.15
++ import QtQuick.Layouts 1.2
++ import QtQuick.Window 2.13
++ import im.nheko 1.0
+++import org.kde.kirigami as Kirigami
++ 
++ Item {
++     id: chatRoot
++@@ -65,6 +66,13 @@ Item {
++         spacing: 2
++         verticalLayoutDirection: ListView.BottomToTop
++ 
+++        Kirigami.WheelHandler {
+++            id: wheelHandler
+++            target: chat
+++            filterMouseEvents: true
+++            keyNavigationEnabled: true
+++        }
+++
++         property int lastScrollPos: 0
++ 
++         // Fixup the scroll position when the height changes. Without this, the view is kept around the center of the currently visible content, while we usually want to stick to the bottom.
++diff --git a/resources/qml/RoomList.qml b/resources/qml/RoomList.qml
++index 4557b5a3..83f3f772 100644
++--- a/resources/qml/RoomList.qml
+++++ b/resources/qml/RoomList.qml
++@@ -9,6 +9,7 @@ import QtQuick
++ import QtQuick.Controls
++ import QtQuick.Layouts
++ import im.nheko
+++import org.kde.kirigami as Kirigami
++ 
++ Page {
++     //leftPadding: Nheko.paddingSmall
++@@ -446,6 +447,13 @@ Page {
++         model: Rooms
++         boundsBehavior: Flickable.StopAtBounds
++ 
+++        Kirigami.WheelHandler {
+++            id: wheelHandler
+++            target: roomlist
+++            filterMouseEvents: true
+++            keyNavigationEnabled: true
+++        }
+++
++         //reuseItems: true
++         ScrollBar.vertical: ScrollBar {
++             id: scrollbar
++diff --git a/resources/qml/dialogs/AllowedRoomsSettingsDialog.qml b/resources/qml/dialogs/AllowedRoomsSettingsDialog.qml
++index 82b5506e..1d1ad108 100644
++--- a/resources/qml/dialogs/AllowedRoomsSettingsDialog.qml
+++++ b/resources/qml/dialogs/AllowedRoomsSettingsDialog.qml
++@@ -8,6 +8,7 @@ import QtQuick.Controls
++ import QtQuick.Layouts
++ import QtQuick.Window
++ import im.nheko
+++import org.kde.kirigami as Kirigami
++ 
++ ApplicationWindow {
++     id: allowedDialog
++@@ -51,6 +52,12 @@ ApplicationWindow {
++ 
++             clip: true
++ 
+++            Kirigami.WheelHandler {
+++                id: wheelHandler
+++                target: view
+++                filterMouseEvents: true
+++                keyNavigationEnabled: true
+++            }
++ 
++             model: roomSettings.allowedRoomsModel
++             spacing: 4
++diff --git a/resources/qml/dialogs/IgnoredUsers.qml b/resources/qml/dialogs/IgnoredUsers.qml
++index 6d6585f0..54eac9c6 100644
++--- a/resources/qml/dialogs/IgnoredUsers.qml
+++++ b/resources/qml/dialogs/IgnoredUsers.qml
++@@ -8,6 +8,7 @@ import QtQuick.Controls
++ import QtQuick.Layouts
++ import QtQuick.Window
++ import im.nheko
+++import org.kde.kirigami as Kirigami
++ import "../"
++ 
++ Window {
++@@ -26,6 +27,13 @@ Window {
++         spacing: Nheko.paddingMedium
++         footerPositioning: ListView.OverlayFooter
++ 
+++        Kirigami.WheelHandler {
+++            id: wheelHandler
+++            target: view
+++            filterMouseEvents: true
+++            keyNavigationEnabled: true
+++        }
+++
++         model: TimelineManager.ignoredUsers
++         header: ColumnLayout {
++             Text {
++diff --git a/resources/qml/dialogs/RoomDirectory.qml b/resources/qml/dialogs/RoomDirectory.qml
++index dbf3b459..a50b6926 100644
++--- a/resources/qml/dialogs/RoomDirectory.qml
+++++ b/resources/qml/dialogs/RoomDirectory.qml
++@@ -9,6 +9,7 @@ import QtQuick.Controls 2.3
++ import QtQuick.Layouts 1.3
++ import QtQuick.Window 2.15
++ import im.nheko 1.0
+++import org.kde.kirigami as Kirigami
++ 
++ ApplicationWindow {
++     id: roomDirectoryWindow
++@@ -34,6 +35,13 @@ ApplicationWindow {
++         anchors.fill: parent
++         model: publicRooms
++ 
+++        Kirigami.WheelHandler {
+++            id: wheelHandler
+++            target: roomDirView
+++            filterMouseEvents: true
+++            keyNavigationEnabled: true
+++        }
+++
++         delegate: Rectangle {
++             id: roomDirDelegate
++ 
++diff --git a/resources/qml/dialogs/RoomMembers.qml b/resources/qml/dialogs/RoomMembers.qml
++index 95dc9fc3..69f182a3 100644
++--- a/resources/qml/dialogs/RoomMembers.qml
+++++ b/resources/qml/dialogs/RoomMembers.qml
++@@ -10,6 +10,7 @@ import QtQuick.Controls 2.12
++ import QtQuick.Layouts 1.12
++ import QtQuick.Window 2.13
++ import im.nheko 1.0
+++import org.kde.kirigami as Kirigami
++ 
++ ApplicationWindow {
++     id: roomMembersRoot
++@@ -108,6 +109,13 @@ ApplicationWindow {
++                 boundsBehavior: Flickable.StopAtBounds
++                 model: members
++ 
+++                Kirigami.WheelHandler {
+++                    id: wheelHandler
+++                    target: memberList
+++                    filterMouseEvents: true
+++                    keyNavigationEnabled: true
+++                }
+++
++ 
++                 delegate: ItemDelegate {
++                     id: del
++diff --git a/resources/qml/dialogs/UserProfile.qml b/resources/qml/dialogs/UserProfile.qml
++index 6798bc79..532155bc 100644
++--- a/resources/qml/dialogs/UserProfile.qml
+++++ b/resources/qml/dialogs/UserProfile.qml
++@@ -11,6 +11,7 @@ import QtQuick.Layouts 1.2
++ import QtQuick.Window 2.13
++ import QtQml.Models 2.2
++ import im.nheko 1.0
+++import org.kde.kirigami as Kirigami
++ 
++ ApplicationWindow {
++     id: userProfileDialog
++@@ -45,6 +46,13 @@ ApplicationWindow {
++         anchors.margins: 10
++         footerPositioning: ListView.OverlayFooter
++ 
+++        Kirigami.WheelHandler {
+++            id: wheelHandler
+++            target: devicelist
+++            filterMouseEvents: true
+++            keyNavigationEnabled: true
+++        }
+++
++         header: ColumnLayout {
++             id: contentL
++ 
++

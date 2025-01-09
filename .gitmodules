@@ -54,3 +54,7 @@
 	path = fcitx5/upstream
 	url = https://src.fedoraproject.org/rpms/fcitx5
 	branch = f41
+[submodule "nheko/upstream"]
+	path = nheko/upstream
+	url = https://src.fedoraproject.org/rpms/nheko
+	branch = f41
