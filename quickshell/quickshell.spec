@@ -21,7 +21,9 @@ BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
 BuildRequires:      pkgconfig(breakpad)
 BuildRequires:      pkgconfig(CLI11)
+BuildRequires:      pkgconfig(gbm)
 BuildRequires:      pkgconfig(jemalloc)
+BuildRequires:      pkgconfig(libdrm)
 BuildRequires:      pkgconfig(libpipewire-0.3)
 BuildRequires:      pkgconfig(pam)
 BuildRequires:      pkgconfig(wayland-client)
