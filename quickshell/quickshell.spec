@@ -1,6 +1,6 @@
 %bcond_with         asan
 
-%global commit      8b6aa624a294248c352f95e159ebe664e9f282a6
+%global commit      6024c374928aa2679f7a21b0410358ff8dd19e28
 %global snapdate    20250114
 
 Name:               quickshell
