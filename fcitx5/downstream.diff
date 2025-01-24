@@ -1,8 +1,8 @@
 diff --git a/fcitx5.spec b/fcitx5.spec
-index 7bf182f..7223d0c 100644
+index 1093717..8fd2b1f 100644
 --- a/fcitx5.spec
 +++ b/fcitx5.spec
-@@ -14,6 +14,8 @@ Source2:        https://pgp.key-server.io/download/0x8E8B898CBF2412F9
+@@ -15,6 +15,8 @@ Source2:        https://pgp.key-server.io/download/0x8E8B898CBF2412F9
  Source3:        fcitx5-xinput
  Source4:        fcitx5.sh
  
@@ -13,24 +13,23 @@ index 7bf182f..7223d0c 100644
  BuildRequires:  gnupg2
 diff --git a/remove-candidate-label-dot.diff b/remove-candidate-label-dot.diff
 new file mode 100644
-index 0000000..c388c47
+index 0000000..9a1011a
 --- /dev/null
 +++ b/remove-candidate-label-dot.diff
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,84 @@
 +diff --git a/src/lib/fcitx/candidatelist.cpp b/src/lib/fcitx/candidatelist.cpp
-+index 4d1950ed..778be6d3 100644
++index dc8dcc32..eae9cc70 100644
 +--- a/src/lib/fcitx/candidatelist.cpp
 ++++ b/src/lib/fcitx/candidatelist.cpp
-+@@ -431,8 +431,7 @@ std::string keyToLabel(const Key &key) {
-+     } else {
-+         result = Key::keySymToString(key.sym(), KeyStringFormat::Localized);
++@@ -433,7 +433,7 @@ std::string keyToLabel(const Key &key) {
 +     }
-+-    // add a dot as separator
-+-    result += ". ";
-++    result += " ";
++     if (!isApple()) {
++         // add a dot as separator
++-        result += ". ";
+++        result += " ";
++     }
 + 
 +     return result;
-+ }
 +diff --git a/test/testcandidatelist.cpp b/test/testcandidatelist.cpp
 +index a19e35fa..9d547c21 100644
 +--- a/test/testcandidatelist.cpp
