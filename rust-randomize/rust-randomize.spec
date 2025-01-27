@@ -5,7 +5,7 @@
 %global crate randomize
 
 Name:           rust-randomize
-Version:        3.0.1
+Version:        5.1.0
 Release:        %autorelease
 Summary:        Randomization routines
 
