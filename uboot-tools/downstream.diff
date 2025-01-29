@@ -244,14 +244,14 @@ index 0000000..d00c220
 +2.45.2
 +
 diff --git a/uboot-tools.spec b/uboot-tools.spec
-index aefeb8b..a17d733 100644
+index 9eeb08e..b7c8d36 100644
 --- a/uboot-tools.spec
 +++ b/uboot-tools.spec
-@@ -38,6 +38,8 @@ Patch12:  rockchip-Enable-preboot-start-for-pci-usb.patch
- Patch13:  phy-rockchip-inno-usb2-Write-to-correct-GRF.patch
- Patch14:  rockchip-Migrate-to-use-DM_USB_GADGET-on-RK3328.patch
+@@ -38,6 +38,8 @@ Patch15:  Qualcomm-add-support-for-SC7280-and-the-RB3-Gen-2.patch
+ # RPi
+ Patch20:  rpi-Pass-CMA-through-from-firmware-DT.patch
  
-+Patch15:  rpi-disable-USB-support.patch
++Patch1000:  rpi-disable-USB-support.patch
 +
  BuildRequires:  bc
  BuildRequires:  bison
