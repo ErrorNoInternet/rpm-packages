@@ -106,13 +106,13 @@ popd
 mkdir -p %{buildroot}%{bash_completions_dir}
 mkdir -p %{buildroot}%{fish_completions_dir}
 mkdir -p %{buildroot}%{zsh_completions_dir}
-mkdir -p %{buildroot}%{_mandir}/man1
+mkdir -p %{buildroot}%{_mandir}
 
 exe=target/release/%{short_name}
 $exe util completion bash > %{buildroot}%{bash_completions_dir}/%{short_name}
 $exe util completion fish > %{buildroot}%{fish_completions_dir}/%{short_name}.fish
 $exe util completion zsh > %{buildroot}%{zsh_completions_dir}/_%{short_name}
-$exe util mangen > %{buildroot}%{_mandir}/man1/%{short_name}.1
+$exe util install-man-pages %{buildroot}%{_mandir}
 
 cp -a --remove-destination cli/src/config-schema.json docs/
 
@@ -130,7 +130,7 @@ cp -a --remove-destination cli/src/config-schema.json docs/
 %doc README.md
 %doc SECURITY.md
 %{_bindir}/%{short_name}
-%{_mandir}/man1/%{short_name}.1*
+%{_mandir}/man*
 
 %files doc
 %doc docs/*
