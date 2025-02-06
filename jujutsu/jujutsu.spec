@@ -40,6 +40,8 @@ BuildRequires:  openssh
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(zlib)
 
+Recommends:     git
+
 %global _description %{expand:
 Jujutsu is a powerful version control system for software projects. You use it
 to get a copy of your code, track changes to the code, and finally publish those
