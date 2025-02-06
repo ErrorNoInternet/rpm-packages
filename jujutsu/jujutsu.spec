@@ -37,6 +37,7 @@ Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 Provides:       %{short_name} = %{version}-%{release}
 
 BuildRequires:  cargo-rpm-macros >= 24
+BuildRequires:  git
 BuildRequires:  openssh
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(zlib)
