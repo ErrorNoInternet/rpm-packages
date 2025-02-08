@@ -10,4 +10,5 @@ if [ -f "/usr/lib64/vesktop/vesktop" ]; then
     VESKTOP_BIN=/usr/lib64/vesktop/vesktop
 fi
 
-exec "$VESKTOP_BIN" "$VESKTOP_USER_FLAGS" "$@"
+# shellcheck disable=SC2086
+exec $VESKTOP_BIN $VESKTOP_USER_FLAGS "$@"
