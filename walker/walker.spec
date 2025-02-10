@@ -25,7 +25,7 @@ your workflow.}
 %global godocs          README.md cmd/version.txt
 
 Name:           walker
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:        Wayland-native application launcher
 
 License:        MIT
