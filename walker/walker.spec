@@ -43,6 +43,7 @@ BuildRequires:  pkgconfig(gtk4-layer-shell-0)
 BuildRequires:  pkgconfig(pango)
 BuildRequires:  pkgconfig(vips)
 
+Recommends:     qalc
 Recommends:     wl-clipboard
 
 %description %{common_description}
