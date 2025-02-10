@@ -43,10 +43,10 @@ index 0000000..fdab02e
 +             }
 +         } else {
 diff --git a/rust-eza.spec b/rust-eza.spec
-index bcf7205..9c52df4 100644
+index 1854938..b6843f2 100644
 --- a/rust-eza.spec
 +++ b/rust-eza.spec
-@@ -19,6 +19,7 @@ Patch:          eza-fix-metadata-auto.diff
+@@ -20,6 +20,7 @@ Patch:          eza-fix-metadata-auto.diff
  # * drop features that are specific to NixOS packaging
  # * exclude files that are only useful for upstream development
  Patch:          eza-fix-metadata.diff
@@ -54,3 +54,30 @@ index bcf7205..9c52df4 100644
  
  BuildRequires:  cargo-rpm-macros >= 24
  
+@@ -53,6 +54,7 @@ Provides:       exa = %{version}-%{release}
+ %files       -n %{crate}
+ %license LICENCE
+ %license LICENSE.dependencies
++%license cargo-vendor.txt
+ %doc CHANGELOG.md
+ %doc CODE_OF_CONDUCT.md
+ %doc CONTRIBUTING.md
+@@ -122,15 +124,14 @@ use the "git2" feature of the "%{crate}" crate.
+ 
+ %prep
+ %autosetup -n %{crate}-%{version} -p1
+-%cargo_prep
+-
+-%generate_buildrequires
+-%cargo_generate_buildrequires
++cargo vendor
++%cargo_prep -v vendor
+ 
+ %build
+ %cargo_build
+ %{cargo_license_summary}
+ %{cargo_license} > LICENSE.dependencies
++%{cargo_vendor_manifest}
+ 
+ %install
+ %cargo_install
