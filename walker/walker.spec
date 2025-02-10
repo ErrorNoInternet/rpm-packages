@@ -43,6 +43,10 @@ BuildRequires:  pkgconfig(gtk4-layer-shell-0)
 BuildRequires:  pkgconfig(pango)
 BuildRequires:  pkgconfig(vips)
 
+Requires:       gsettings-desktop-schemas
+Requires:       libglvnd-gles
+Requires:       wayland-devel
+
 Recommends:     qalc
 Recommends:     wl-clipboard
 
