@@ -25,7 +25,7 @@ your workflow.}
 %global godocs          README.md cmd/version.txt
 
 Name:           walker
-Release:        %autorelease
+Release:        3%{?dist}
 Summary:        Wayland-native application launcher
 
 License:        MIT
@@ -43,7 +43,15 @@ BuildRequires:  pkgconfig(gtk4-layer-shell-0)
 BuildRequires:  pkgconfig(pango)
 BuildRequires:  pkgconfig(vips)
 
+Requires:       gsettings-desktop-schemas
+Requires:       libglvnd-gles
+Requires:       wayland-devel
+
+Recommends:     fd-find
+Recommends:     qalc
+Recommends:     slurp
 Recommends:     wl-clipboard
+Recommends:     xdg-utils
 
 %description %{common_description}
 
