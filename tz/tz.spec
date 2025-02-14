@@ -12,7 +12,7 @@
 
 # https://github.com/oz/tz
 %global goipath         github.com/oz/tz
-%global commit          a0820b3dfb1911ed81532574482f2dc9adace491
+%global commit          7dc9ad0b251e128b85c84ca5ccb96b4e4a4a3bd4
 %global latest          0.7.0
 
 %gometa -f
