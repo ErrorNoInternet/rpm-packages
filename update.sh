@@ -27,7 +27,6 @@ declare -A anitya_ids=(
     ["rust-random-fast-rng/rust-random-fast-rng.spec"]=76396
     ["rust-random-trait/rust-random-trait.spec"]=109580
     ["rust-randomize/rust-randomize.spec"]=109578
-    ["satty/satty.spec"]=372795
     ["scrcpy/scrcpy.spec"]=226924
     ["songrec/songrec.spec"]=376030
     ["swaylock-effects/swaylock-effects.spec"]=312399
