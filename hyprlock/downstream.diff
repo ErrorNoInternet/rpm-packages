@@ -38,7 +38,7 @@ index 0000000..118ac74
 +         replaceInString(in, "$FAIL", FAIL.has_value() ? FAIL.value() : "");
 +
 diff --git a/hyprlock.spec b/hyprlock.spec
-index 4691bef..d329dbd 100644
+index 4691bef..26936b0 100644
 --- a/hyprlock.spec
 +++ b/hyprlock.spec
 @@ -1,10 +1,14 @@
@@ -46,9 +46,8 @@ index 4691bef..d329dbd 100644
 +
  Name:           hyprlock
 -Version:        0.4.1
--Release:        %autorelease
-+Version:        0.6.2
-+Release:        %autorelease -b2
++Version:        0.7.0
+ Release:        %autorelease
  Summary:        Hyprland's GPU-accelerated screen locking utility
  License:        BSD-3-Clause
  URL:            https://github.com/hyprwm/hyprlock
