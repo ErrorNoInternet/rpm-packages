@@ -57,12 +57,9 @@ Kite, Oxygen/Breeze, and Redmond icon styles.
 %install
 %cmake_install
 
-mkdir -p %{buildroot}%{_datarootdir}/licenses
-install -Dpm644 LICENSES/* %{buildroot}%{_datarootdir}/licenses
-
 %files
 %doc README.md AUTHORS
-%license *.txt
+%license LICENSES/*.txt
 %{_bindir}/klassy-settings
 %{_datadir}/applications/kcm_klassydecoration.desktop
 %{_datadir}/applications/klassy-settings.desktop
@@ -81,6 +78,7 @@ install -Dpm644 LICENSES/* %{buildroot}%{_datarootdir}/licenses
 %{_prefix}/%{_lib}/qt5/plugins/styles/klassy5.so
 %{_prefix}/%{_lib}/qt6/plugins/kstyle_config/klassystyleconfig.so
 %{_prefix}/%{_lib}/qt6/plugins/org.kde.kdecoration2.kcm/kcm_klassydecoration.so
+%{_prefix}/%{_lib}/qt6/plugins/org.kde.kdecoration2.kcm/klassydecoration/presets/*.klpw
 %{_prefix}/%{_lib}/qt6/plugins/org.kde.kdecoration2/org.kde.klassy.so
 %{_prefix}/%{_lib}/qt6/plugins/styles/klassy6.so
 
