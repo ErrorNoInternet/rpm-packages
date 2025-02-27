@@ -71,16 +71,16 @@ Kite, Oxygen/Breeze, and Redmond icon styles.
 %{_datadir}/plasma/desktoptheme/klassy
 %{_datadir}/plasma/layout-templates/org.kde.klassy*
 %{_datadir}/plasma/look-and-feel/org.kde.klassy*
-%{_prefix}/%{_lib}/cmake/Klassy/KlassyConfig.cmake
-%{_prefix}/%{_lib}/cmake/Klassy/KlassyConfigVersion.cmake
-%{_prefix}/%{_lib}/libklassycommon5.so*
-%{_prefix}/%{_lib}/libklassycommon6.so*
-%{_prefix}/%{_lib}/qt5/plugins/styles/klassy5.so
-%{_prefix}/%{_lib}/qt6/plugins/kstyle_config/klassystyleconfig.so
-%{_prefix}/%{_lib}/qt6/plugins/org.kde.kdecoration2.kcm/kcm_klassydecoration.so
-%{_prefix}/%{_lib}/qt6/plugins/org.kde.kdecoration2.kcm/klassydecoration/presets/*.klpw
-%{_prefix}/%{_lib}/qt6/plugins/org.kde.kdecoration2/org.kde.klassy.so
-%{_prefix}/%{_lib}/qt6/plugins/styles/klassy6.so
+%{_libdir}/cmake/Klassy/KlassyConfig.cmake
+%{_libdir}/cmake/Klassy/KlassyConfigVersion.cmake
+%{_libdir}/libklassycommon5.so*
+%{_libdir}/libklassycommon6.so*
+%{_libdir}/qt5/plugins/styles/klassy5.so
+%{_libdir}/qt6/plugins/kstyle_config/klassystyleconfig.so
+%{_libdir}/qt6/plugins/org.kde.kdecoration2.kcm/kcm_klassydecoration.so
+%{_libdir}/qt6/plugins/org.kde.kdecoration2.kcm/klassydecoration/presets/*.klpw
+%{_libdir}/qt6/plugins/org.kde.kdecoration2/org.kde.klassy.so
+%{_libdir}/qt6/plugins/styles/klassy6.so
 
 %changelog
 %autochangelog
