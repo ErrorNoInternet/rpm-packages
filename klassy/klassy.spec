@@ -1,14 +1,15 @@
 Name:           klassy
 Version:        6.2.breeze6.2.1
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:        A highly customizable KDE Plasma Window Decoration
 
 License:        BSD-3-Clause AND CC0-1.0 AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND MIT
 URL:            https://github.com/paulmcauley/klassy
 Source:         %{url}/archive/%{version}.tar.gz
+Patch:          klassy-6.3-update.diff
 
 BuildRequires:  cmake
-BuildRequires:  cmake(KDecoration2)
+BuildRequires:  cmake(KDecoration3)
 BuildRequires:  cmake(KF5Config)
 BuildRequires:  cmake(KF5CoreAddons)
 BuildRequires:  cmake(KF5FrameworkIntegration)
@@ -77,9 +78,9 @@ Kite, Oxygen/Breeze, and Redmond icon styles.
 %{_libdir}/libklassycommon6.so*
 %{_libdir}/qt5/plugins/styles/klassy5.so
 %{_libdir}/qt6/plugins/kstyle_config/klassystyleconfig.so
-%{_libdir}/qt6/plugins/org.kde.kdecoration2.kcm/kcm_klassydecoration.so
+%{_libdir}/qt6/plugins/org.kde.kdecoration3.kcm/kcm_klassydecoration.so
 %{_libdir}/qt6/plugins/org.kde.kdecoration2.kcm/klassydecoration/presets/*.klpw
-%{_libdir}/qt6/plugins/org.kde.kdecoration2/org.kde.klassy.so
+%{_libdir}/qt6/plugins/org.kde.kdecoration3/org.kde.klassy.so
 %{_libdir}/qt6/plugins/styles/klassy6.so
 
 %changelog
