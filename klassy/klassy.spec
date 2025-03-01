@@ -51,7 +51,7 @@ Kite, Oxygen/Breeze, and Redmond icon styles.
 %cmake \
     -DBUILD_TESTING=OFF \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr \
+    -DCMAKE_INSTALL_PREFIX=%{_prefix} \
     -DKDE_INSTALL_USE_QT_SYS_PATHS=ON
 %cmake_build
 
