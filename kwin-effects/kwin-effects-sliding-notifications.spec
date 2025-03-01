@@ -1,39 +1,46 @@
-Name: kwin-effects-sliding-notifications
-Version: 1.5.0
-Release: 4%{?dist}
-Summary: Sliding animation for notification windows
+%global commit      1fd1a3fdf9cb0b6d43c89926f760d4e84d8f31d5
+%global snapdate    20240704
 
-License: GPL-3.0-or-later
-URL: https://github.com/zzag/kwin-effects-sliding-notifications
-Source0: %{url}/archive/%{version}.tar.gz
+Name:               kwin-effects-sliding-notifications
+Version:            1.5.0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
+Release:            %autorelease
+Summary:            Sliding animation for notification windows
 
-BuildRequires: cmake extra-cmake-modules kf5-kconfig-devel kf5-kconfigwidgets-devel kf5-kcoreaddons-devel kf5-kwindowsystem-devel kwin-devel libepoxy-devel qt5-qtbase-devel
+License:            GPL-3.0-or-later AND MIT
+URL:                https://github.com/zzag/kwin-effects-sliding-notifications
+Source:             %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
+
+BuildRequires:      cmake
+BuildRequires:      cmake(KF6Config)
+BuildRequires:      cmake(KF6ConfigWidgets)
+BuildRequires:      cmake(KF6CoreAddons)
+BuildRequires:      cmake(KF6WindowSystem)
+BuildRequires:      cmake(KWin)
+BuildRequires:      cmake(Qt6)
+BuildRequires:      extra-cmake-modules
+BuildRequires:      pkgconfig(epoxy)
+BuildRequires:      pkgconfig(wayland-server)
 
 %description
-This is a simple effect that makes notification windows slide in and out when they are shown or hidden.
+This is a simple effect that makes notification windows slide in and
+out when they are shown or hidden.
 
 %prep
-%autosetup -n %{name}-%{version}
+%autosetup -n %{name}-%{commit} -p1
 
 %build
-mkdir build
-cd build
-cmake .. \
+%cmake \
     -DCMAKE_BUILD_TYPE=Release \
-    -DCMAKE_INSTALL_PREFIX=/usr
-%make_build
+    -DCMAKE_INSTALL_PREFIX=%{_prefix}
+%cmake_build
 
 %install
-cd build
-%make_install
+%cmake_install
 
 %files
+%license LICENSES/*
 %doc README.md
-%{_prefix}/%{_lib}/qt5/plugins/kwin/effects/plugins/kwin4_effect_slidingnotifications.so
+%{_libdir}/qt6/plugins/kwin/effects/plugins/slidingnotifications.so
 
 %changelog
-* Fri Jun 30 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.0-3
-- Add README.md
-
-* Fri Apr 21 2023 ErrorNoInternet <errornointernet@envs.net> - 1.5.0-1
-- Hello, world!
+%autochangelog
