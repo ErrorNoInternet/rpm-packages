@@ -9,8 +9,8 @@ Version:        1.1.2
 Release:        %autorelease
 Summary:        More intuitive version of du
 
-SourceLicense:  Apache-2.0
 License:        Apache-2.0 AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND BSD-2-Clause AND MIT AND (MIT OR Apache-2.0) AND (Unlicense OR MIT)
+SourceLicense:  Apache-2.0
 
 URL:            https://github.com/bootandy/dust
 Source:         %{url}/archive/refs/tags/v%{version}.tar.gz
@@ -72,7 +72,6 @@ cargo vendor
 %cargo_install
 
 install -Dpm644 man-page/dust.1 %{buildroot}%{_mandir}/man1/dust.1
-
 install -Dpm644 completions/dust.bash %{buildroot}%{bash_completions_dir}/dust
 install -Dpm644 completions/dust.fish %{buildroot}%{fish_completions_dir}/dust.fish
 install -Dpm644 completions/_dust %{buildroot}%{zsh_completions_dir}/_dust
@@ -83,9 +82,7 @@ install -Dpm644 completions/_dust %{buildroot}%{zsh_completions_dir}/_dust
 %endif
 
 %files
-%license LICENSE
-%license LICENSE.dependencies
-%license cargo-vendor.txt
+%license LICENSE LICENSE.dependencies cargo-vendor.txt
 %doc README.md
 %{_bindir}/dust
 %{_mandir}/man1/dust.1*
