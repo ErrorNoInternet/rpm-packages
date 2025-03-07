@@ -5,7 +5,7 @@
 %global crate oorandom
 
 Name:           rust-oorandom
-Version:        11.1.4
+Version:        11.1.5
 Release:        %autorelease
 Summary:        Tiny, robust PRNG implementation
 
