@@ -79,20 +79,21 @@ index 0000000..8accab3
 +
 diff --git a/thicker-braille-dots.diff b/thicker-braille-dots.diff
 new file mode 100644
-index 0000000..2fc9591
+index 0000000..4c6ec41
 --- /dev/null
 +++ b/thicker-braille-dots.diff
-@@ -0,0 +1,13 @@
-+diff --git a/kitty/fonts/box_drawing.py b/kitty/fonts/box_drawing.py
-+index 284b6642a..848c28cef 100644
-+--- a/kitty/fonts/box_drawing.py
-++++ b/kitty/fonts/box_drawing.py
-+@@ -813,6 +813,8 @@ def braille_dot(buf: BufType, width: int, height: int, col: int, row: int) -> No
-+             offset = y * width
-+             for x in range(x_start, min(width, x_start + dot_width)):
-+                 buf[offset + x] = 255
-++                if (width, height) == (7, 16):
-++                    buf[offset + x + 1] = 255
-+ 
-+ 
-+ def braille(buf: BufType, width: int, height: int, which: int = 0) -> None:
+@@ -0,0 +1,14 @@
++diff --git a/kitty/decorations.c b/kitty/decorations.c
++index 27530d42e..3192bc8f4 100644
++--- a/kitty/decorations.c
+++++ b/kitty/decorations.c
++@@ -1374,6 +1374,8 @@ braille_dot(Canvas *self, uint col, uint row) {
++     unsigned x_gaps[num_x_dots * 2], y_gaps[num_y_dots * 2];
++     unsigned dot_width = distribute_dots(self->width, num_x_dots, x_gaps, x_gaps + num_x_dots);
++     unsigned dot_height = distribute_dots(self->height, num_y_dots, y_gaps, y_gaps + num_y_dots);
+++    if (self->width == 7 && self->height == 16)
+++        dot_width += 1;
++     uint x_start = x_gaps[col] + col * dot_width;
++     uint y_start = y_gaps[row] + row * dot_height;
++     if (y_start < self->height && x_start < self->width) {
++
