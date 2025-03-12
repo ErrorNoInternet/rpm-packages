@@ -22,10 +22,6 @@
 	path = neovim/upstream
 	url = https://src.fedoraproject.org/rpms/neovim
 	branch = f41
-[submodule "openrgb/upstream"]
-	path = openrgb/upstream
-	url = https://src.fedoraproject.org/rpms/openrgb
-	branch = f41
 [submodule "strace/upstream"]
 	path = strace/upstream
 	url = https://src.fedoraproject.org/rpms/strace
