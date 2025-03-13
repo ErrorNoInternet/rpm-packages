@@ -2,9 +2,7 @@
 %bcond check 1
 
 # prevent library files from being installed
-%global cargo_install_lib 0
-
-%global archive_version 1.6.2-dev
+%global cargo_install_lib   0
 
 Name:           lowfi
 Version:        1.6.3~dev
@@ -15,7 +13,7 @@ SourceLicense:  MIT
 License:        (BSD-3-Clause OR MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND (Apache-2.0 OR ISC OR MIT) AND ISC AND (BSD-2-Clause OR MIT OR Apache-2.0) AND (Apache-2.0 OR MIT) AND MIT AND (Apache-2.0 OR BSL-1.0) AND BSD-2-Clause AND (MIT OR Apache-2.0 OR Zlib) AND Apache-2.0 AND (Unlicense OR MIT) AND (BSD-2-Clause OR Apache-2.0 OR MIT) AND (Zlib OR Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND (MIT OR Apache-2.0) AND MPL-2.0 AND (0BSD OR MIT OR Apache-2.0)
 
 URL:            https://github.com/talwat/lowfi
-Source:         %{url}/archive/%{archive_version}/%{name}-%{archive_version}.tar.gz
+Source:         %{url}/archive/%(v=%{version}; echo ${v//\~/-})/%{name}-%(v=%{version}; echo ${v//\~/-}).tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  pkgconfig(alsa)
@@ -27,7 +25,7 @@ An extremely simple lofi player.}
 %description %{_description}
 
 %prep
-%autosetup -n %{name}-%{archive_version} -p1
+%autosetup -n %{name}-%(v=%{version}; echo ${v//\~/-}) -p1
 cargo vendor
 %cargo_prep -v vendor
 
