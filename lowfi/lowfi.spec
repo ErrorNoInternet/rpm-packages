@@ -7,7 +7,7 @@
 %global archive_version 1.6.2-dev
 
 Name:           lowfi
-Version:        1.6.2~dev
+Version:        1.6.3~dev
 Release:        %autorelease
 Summary:        Extremely simple lofi player
 
