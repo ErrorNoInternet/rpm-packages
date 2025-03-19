@@ -1,5 +1,5 @@
 diff --git a/man/hwatch.1 b/man/hwatch.1
-index fffb607..24814f9 100644
+index 070f42b..f1200d6 100644
 --- a/man/hwatch.1
 +++ b/man/hwatch.1
 @@ -211,10 +211,10 @@ F3
@@ -16,10 +16,10 @@ index fffb607..24814f9 100644
  Tab
  Switch the target(\f[I]history\f[R] or \f[I]watch\f[R] pad).
 diff --git a/man/man.md b/man/man.md
-index 45b8557..94bf8b9 100644
+index ce2a210..6d6ed88 100644
 --- a/man/man.md
 +++ b/man/man.md
-@@ -247,11 +247,11 @@ F3
+@@ -305,11 +305,11 @@ Shif+S
  
  \+
  
@@ -34,32 +34,30 @@ index 45b8557..94bf8b9 100644
  Tab
  
 diff --git a/src/app.rs b/src/app.rs
-index 1c1b8d1..1261e7c 100644
+index 8956d48..cee63c0 100644
 --- a/src/app.rs
 +++ b/src/app.rs
-@@ -606,14 +606,14 @@ impl<'a> App<'a> {
+@@ -710,13 +710,13 @@ impl App<'_> {
+ 
      ///
      fn increase_interval(&mut self) {
-         let cur_interval = *self.interval.read().unwrap();
--        self.set_interval(cur_interval + 0.5);
-+        self.set_interval(cur_interval + 0.1);
+-        self.interval.write().unwrap().increase(0.5);
++        self.interval.write().unwrap().increase(0.1);
+         self.header_area.update();
      }
  
      ///
      fn decrease_interval(&mut self) {
-         let cur_interval = *self.interval.read().unwrap();
--        if cur_interval > 0.5 {
--            self.set_interval(cur_interval - 0.5);
-+        if cur_interval >= 0.1 {
-+            self.set_interval(cur_interval - 0.1);
-         }
+-        self.interval.write().unwrap().decrease(0.5);
++        self.interval.write().unwrap().decrease(0.1);
+         self.header_area.update();
      }
  
 diff --git a/src/keymap.rs b/src/keymap.rs
-index 169dc91..42c8803 100644
+index 9c14598..b6ccd75 100644
 --- a/src/keymap.rs
 +++ b/src/keymap.rs
-@@ -540,8 +540,8 @@ pub fn get_input_action_description(input_action: InputAction) -> String {
+@@ -800,8 +800,8 @@ pub fn get_input_action_description(input_action: InputAction) -> String {
          InputAction::ToggleHistorySummary => "Toggle history summary".to_string(),
  
          // Interval
@@ -67,7 +65,7 @@ index 169dc91..42c8803 100644
 -        InputAction::IntervalMinus => "Interval -0.5sec".to_string(),
 +        InputAction::IntervalPlus => "Interval +0.1sec".to_string(),
 +        InputAction::IntervalMinus => "Interval -0.1sec".to_string(),
+         InputAction::TogglePause => "Toggle Execution Pause".to_string(),
  
-         // Command
-         InputAction::ChangeFilterMode => "Change filter mode".to_string(),
+         // Command/Filter
 

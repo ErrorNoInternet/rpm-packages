@@ -15,7 +15,7 @@ License:        MIT
 URL:            https://github.com/blacknon/hwatch
 Source:         %{url}/archive/refs/tags/%{version}.tar.gz
 
-Patch0:         precise-intervals.diff
+Patch0:         granular-intervals.diff
 
 BuildRequires:  cargo-rpm-macros >= 26
 
