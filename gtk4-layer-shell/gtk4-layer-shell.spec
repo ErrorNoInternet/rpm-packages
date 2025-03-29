@@ -1,7 +1,7 @@
 %bcond_with check
 
 Name:           gtk4-layer-shell
-Version:        1.1.0
+Version:        1.1.1
 Release:        %autorelease
 Summary:        Library to create panels and other desktop components for Wayland
 
