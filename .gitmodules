@@ -50,3 +50,7 @@
 	path = nheko/upstream
 	url = https://src.fedoraproject.org/rpms/nheko
 	branch = f41
+[submodule "elinks/upstream"]
+	path = elinks/upstream
+	url = https://src.fedoraproject.org/rpms/elinks
+	branch = f41
