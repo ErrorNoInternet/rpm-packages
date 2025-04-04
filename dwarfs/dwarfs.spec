@@ -35,6 +35,14 @@ BuildRequires:  pkgconfig(nlohmann_json)
 The Deduplicating Warp-speed Advanced Read-only File System.
 A fast high compression read-only file system for Linux and Windows.
 
+%package devel
+Summary:    Development files for %{name}
+BuildArch:  noarch
+Requires:   %{name}%{?_isa} = %{version}-%{release}
+
+%description devel
+Header files necessary for developing programs using DwarFS.
+
 %prep
 %autosetup -p1
 
@@ -54,8 +62,6 @@ A fast high compression read-only file system for Linux and Windows.
 %{_bindir}/dwarfsck
 %{_bindir}/dwarfsextract
 %{_bindir}/mkdwarfs
-%{_includedir}/dwarfs/*
-%{_libdir}/cmake/dwarfs/*
 %{_libdir}/libdwarfs*
 %{_mandir}/man1/*
 %{_mandir}/man5/*
@@ -66,6 +72,10 @@ A fast high compression read-only file system for Linux and Windows.
 %{_bindir}/dwarfs
 %{_bindir}/mount.dwarfs
 %endif
+
+%files devel
+%{_includedir}/dwarfs/*
+%{_libdir}/cmake/dwarfs/*
 
 %changelog
 %autochangelog
