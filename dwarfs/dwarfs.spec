@@ -59,8 +59,13 @@ A fast high compression read-only file system for Linux and Windows.
 %{_libdir}/libdwarfs*
 %{_mandir}/man1/*
 %{_mandir}/man5/*
+%if 0%{?fedora} && 0%{?fedora} < 42
 %{_prefix}/sbin/dwarfs
 %{_prefix}/sbin/mount.dwarfs
+%else
+%{_bindir}/dwarfs
+%{_bindir}/mount.dwarfs
+%endif
 
 %changelog
 %autochangelog
