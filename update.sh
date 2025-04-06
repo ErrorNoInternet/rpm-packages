@@ -21,7 +21,6 @@ declare -A anitya_ids=(
     ["peaclock/peaclock.spec"]=375777
     ["prismlauncher/prismlauncher.spec"]=301949
     ["ripdrag/ripdrag.spec"]=372793
-    ["rofi-emoji/rofi-emoji.spec"]=242096
     ["rsbkb/rsbkb.spec"]=374101
     ["rust-libvips/rust-libvips.spec"]=373523
     ["rust-oorandom/rust-oorandom.spec"]=80802
