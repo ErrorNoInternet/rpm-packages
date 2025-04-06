@@ -1,0 +1,48 @@
+diff --git a/rofimoji.spec b/rofimoji.spec
+index 7f97844..b363dad 100644
+--- a/rofimoji.spec
++++ b/rofimoji.spec
+@@ -18,17 +18,6 @@ BuildRequires:  sed
+ 
+ %py_provides    python3-picker
+ 
+-# Requirements for X11
+-Requires:       rofi
+-Requires:       xsel
+-Requires:       xclip
+-Requires:       xdotool
+-
+-# Requirements for Wayland
+-Requires:       wofi
+-Requires:       wl-clipboard
+-Requires:       wtype
+-
+ %description
+ How often did you want to insert one of those Unicode emoji only to learn that
+ there is no nice picker for Linux? Fear no more, this script uses the power of
+@@ -39,25 +28,20 @@ And you can use it to pick any weird character someone got into Unicode, too.
+ %prep
+ %autosetup -n %{srcname}-%{version}
+ 
+-
+ %generate_buildrequires
+ %pyproject_buildrequires
+ 
+-
+ %build
+ %pyproject_wheel
+ 
+-
+ %install
+ %pyproject_install
+ %pyproject_save_files picker
+ 
+-
+ %files -n %{srcname} -f %{pyproject_files}
+ %license LICENSE
+ %doc README.md
+ %{_bindir}/rofimoji
+ 
+-
+ %changelog
+ %autochangelog

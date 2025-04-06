@@ -54,3 +54,7 @@
 	path = elinks/upstream
 	url = https://src.fedoraproject.org/rpms/elinks
 	branch = f41
+[submodule "rofimoji/upstream"]
+	path = rofimoji/upstream
+	url = https://src.fedoraproject.org/rpms/rofimoji
+	branch = f41
