@@ -5,7 +5,7 @@
 %global short_name jj
 
 Name:           jujutsu
-Version:        0.28.1
+Version:        0.28.2
 Release:        %autorelease
 Summary:        An experimental version control system
 
