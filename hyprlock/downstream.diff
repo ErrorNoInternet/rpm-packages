@@ -38,7 +38,7 @@ index 0000000..118ac74
 +         replaceInString(in, "$FAIL", FAIL.has_value() ? FAIL.value() : "");
 +
 diff --git a/hyprlock.spec b/hyprlock.spec
-index 4691bef..26936b0 100644
+index 4691bef..ad31514 100644
 --- a/hyprlock.spec
 +++ b/hyprlock.spec
 @@ -1,10 +1,14 @@
@@ -46,7 +46,7 @@ index 4691bef..26936b0 100644
 +
  Name:           hyprlock
 -Version:        0.4.1
-+Version:        0.7.0
++Version:        0.8.0
  Release:        %autorelease
  Summary:        Hyprland's GPU-accelerated screen locking utility
  License:        BSD-3-Clause
@@ -93,6 +93,7 @@ index 4691bef..26936b0 100644
 +tar -xf %{SOURCE1} -C subprojects/sdbus-cpp --strip=1
  
  %build
+-%cmake
 +pushd subprojects/sdbus-cpp
 +%cmake \
 +    -DCMAKE_INSTALL_PREFIX=%{_builddir}/sdbus \
@@ -104,7 +105,7 @@ index 4691bef..26936b0 100644
 +popd
 +export PKG_CONFIG_PATH=%{_builddir}/sdbus/%{_lib}/pkgconfig
 +
- %cmake
++%cmake -DCMAKE_BUILD_TYPE=Release
  %cmake_build
  
  %install
