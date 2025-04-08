@@ -19,7 +19,6 @@ declare -A anitya_ids=(
     ["mergerfs/mergerfs.spec"]=372789
     ["par2cmdline-turbo/par2cmdline-turbo.spec"]=372791
     ["peaclock/peaclock.spec"]=375777
-    ["prismlauncher/prismlauncher.spec"]=301949
     ["ripdrag/ripdrag.spec"]=372793
     ["rsbkb/rsbkb.spec"]=374101
     ["rust-libvips/rust-libvips.spec"]=373523
