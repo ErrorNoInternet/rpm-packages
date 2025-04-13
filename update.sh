@@ -44,6 +44,7 @@ declare -A git_forges=(
     ["asmfetch/asmfetch.spec"]=github
     ["hsize/hsize.spec"]=github
     ["kwin-effects/kwin-effects-sliding-notifications.spec"]=github
+    ["minefetch/minefetch.spec"]=github
     ["overmask/overmask.spec"]=github
     ["quickshell/quickshell.spec"]=github
     ["try/try-git.spec"]=github
