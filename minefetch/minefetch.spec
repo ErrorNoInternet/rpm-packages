@@ -2,7 +2,7 @@
 %bcond check 1
 
 %global cargo_install_lib   0
-%global commit              e723c96b8451499998e8b3539425b6df7839f29d
+%global commit              a41cefa5ddda18a6e245c2422b4acc1289908e17
 %global snapdate            20250414
 
 Name:           minefetch
