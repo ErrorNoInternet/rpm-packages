@@ -68,6 +68,7 @@ cargo vendor
 %cargo_prep -v vendor
 
 %build
+export RUSTONIG_DYNAMIC_LIBONIG=1
 export YAZI_GEN_COMPLETIONS=1
 %cargo_build
 %{cargo_license_summary}
