@@ -1,8 +1,8 @@
-diff --git a/detect-renamed-and-clone-dest.diff b/detect-renamed-and-clone-dest.diff
+diff --git a/clone-dest_detect-renamed.diff b/clone-dest_detect-renamed.diff
 new file mode 100644
 index 0000000..d3b4611
 --- /dev/null
-+++ b/detect-renamed-and-clone-dest.diff
++++ b/clone-dest_detect-renamed.diff
 @@ -0,0 +1,1021 @@
 +diff --git a/Makefile.in b/Makefile.in
 +index 7c75c261..18649c12 100644
@@ -1026,25 +1026,30 @@ index 0000000..d3b4611
 + 		}
 +
 diff --git a/rsync.spec b/rsync.spec
-index 4505377..de2439e 100644
+index 13bfbeb..aa29113 100644
 --- a/rsync.spec
 +++ b/rsync.spec
-@@ -41,6 +41,7 @@ Provides: bundled(zlib) = 1.2.8
- License: GPL-3.0-or-later
+@@ -44,7 +44,8 @@ License: GPL-3.0-or-later
  
  Patch1: rsync-3.2.2-runtests.patch
-+Patch2: detect-renamed-and-clone-dest.diff
+ Patch2: rsync-3.4.1-rrsync-man.patch
+-Patch3: rsync-3.4.1-gcc15-fixes.patch
++Patch3: clone-dest_detect-renamed.diff
++Patch4: rsync-3.4.1-gcc15-fixes.patch
  
  %description
  Rsync uses a reliable algorithm to bring remote and host files into
-@@ -72,9 +73,7 @@ package provides the anonymous rsync service.
- %endif
+@@ -86,11 +87,8 @@ may be used to setup a restricted rsync users via ssh logins.
  
  %patch 1 -p1 -b .runtests
+ %patch 2 -p1 -b .rrsync
 -
 -patch -p1 -i patches/detect-renamed.diff
 -patch -p1 -i patches/detect-renamed-lax.diff
-+%patch 2 -p1
+-
+-%patch 3 -p1 -b .gcc15
++%patch 3 -p1
++%patch 4 -p1 -b .gcc15
  
  %build
  %configure \
