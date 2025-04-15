@@ -12,6 +12,7 @@ declare -A anitya_ids=(
     ["git-graph/git-graph.spec"]=372785
     ["gtk4-layer-shell/gtk4-layer-shell.spec"]=359774
     ["hwatch/hwatch.spec"]=372787
+    ["hyprlock/hyprlock.spec"]=374768
     ["iamb/iamb.spec"]=372778
     ["jujutsu/jujutsu.spec"]=376676
     ["klassy/klassy.spec"]=372810

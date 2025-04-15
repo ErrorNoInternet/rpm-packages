@@ -1,0 +1,33 @@
+diff --git a/src/renderer/widgets/IWidget.cpp b/src/renderer/widgets/IWidget.cpp
+index 6d03aa5..ac6bb0f 100644
+--- a/src/renderer/widgets/IWidget.cpp
++++ b/src/renderer/widgets/IWidget.cpp
+@@ -167,6 +167,15 @@ static std::string getTime12h() {
+         (HRS < 12 ? " AM" : " PM");
+ }
+ 
++static std::string getDate() {
++    std::time_t t = std::time(nullptr);
++    char        buffer[50];
++    strftime(buffer, sizeof(buffer), "%A, %B %d, %Y", std::localtime(&t));
++    std::stringstream ss;
++    ss << buffer;
++    return ss.str();
++}
++
+ IWidget::SFormatResult IWidget::formatString(std::string in) {
+ 
+     auto  uidPassword = getpwuid(getuid());
+@@ -204,6 +213,11 @@ IWidget::SFormatResult IWidget::formatString(std::string in) {
+         result.allowForceUpdate = true;
+     }
+ 
++    if (in.contains("$DATE")) {
++        replaceInString(in, "$DATE", getDate());
++        result.updateEveryMs = result.updateEveryMs != 0 && result.updateEveryMs < 1000 ? result.updateEveryMs : 1000;
++    }
++
+     if (in.contains("$FAIL")) {
+         const auto FAIL = g_pAuth->getCurrentFailText();
+         replaceInString(in, "$FAIL", FAIL);
+

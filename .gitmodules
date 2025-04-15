@@ -34,10 +34,6 @@
 	path = uboot-tools/upstream
 	url = https://src.fedoraproject.org/rpms/uboot-tools
 	branch = f41
-[submodule "hyprlock/upstream"]
-	path = hyprlock/upstream
-	url = https://src.fedoraproject.org/rpms/hyprlock
-	branch = f41
 [submodule "coreutils/upstream"]
 	path = coreutils/upstream
 	url = https://src.fedoraproject.org/rpms/coreutils
