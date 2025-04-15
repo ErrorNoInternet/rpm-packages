@@ -5,7 +5,7 @@
 %global cargo_install_lib 0
 
 Name:           wallust
-Version:        3.1.0
+Version:        3.3.0
 Release:        1%{?dist}
 Summary:        Generate a 16 color scheme based on an image
 License:        MIT

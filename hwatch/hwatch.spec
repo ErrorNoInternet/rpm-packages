@@ -7,7 +7,7 @@
 %global cargo_install_lib 0
 
 Name:           hwatch
-Version:        0.3.18
+Version:        0.3.19
 Release:        %autorelease
 Summary:        Modern alternative to the watch command
 License:        MIT
@@ -15,7 +15,7 @@ License:        MIT
 URL:            https://github.com/blacknon/hwatch
 Source:         %{url}/archive/refs/tags/%{version}.tar.gz
 
-Patch0:         precise-intervals.diff
+Patch0:         granular-intervals.diff
 
 BuildRequires:  cargo-rpm-macros >= 26
 

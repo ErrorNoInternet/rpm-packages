@@ -12,7 +12,7 @@
 
 # https://github.com/abenz1267/walker
 %global goipath         github.com/abenz1267/walker
-Version:                0.12.15
+Version:                0.12.21
 
 %gometa -L -f
 
@@ -25,7 +25,7 @@ your workflow.}
 %global godocs          README.md cmd/version.txt
 
 Name:           walker
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        Wayland-native application launcher
 
 License:        MIT

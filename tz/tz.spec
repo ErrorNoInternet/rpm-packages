@@ -12,8 +12,10 @@
 
 # https://github.com/oz/tz
 %global goipath         github.com/oz/tz
-%global commit          a0820b3dfb1911ed81532574482f2dc9adace491
-%global latest          0.7.0
+
+%global snapdate        20250214
+%global date            %{snapdate}
+%global commit          7dc9ad0b251e128b85c84ca5ccb96b4e4a4a3bd4
 
 %gometa -f
 
@@ -25,8 +27,8 @@ TUI program that displays time across the time zones of your choosing.}
 %global godocs          docs README.md
 
 Name:           tz
-Version:        %{latest}
-Release:        %autorelease -p
+Version:        0.8.0
+Release:        %autorelease
 Summary:        A time zone helper
 
 License:        GPL-3.0-only

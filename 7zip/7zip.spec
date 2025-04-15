@@ -2,7 +2,7 @@
 
 Name:           7zip
 Version:        24.09
-Release:        1%{?dist}
+Release:        %autorelease
 Summary:        The official 7-Zip console version for Linux
 
 License:        LGPL-2.1-or-later AND BSD-3-Clause
@@ -17,14 +17,14 @@ BuildRequires:  make
 A file archiver with a high compression ratio.
 
 %prep
-tar xf %{SOURCE0}
+tar xvf %{SOURCE0}
 
 %build
-cd CPP/7zip/Bundles/Alone2
+pushd CPP/7zip/Bundles/Alone2
 %make_build -f ../../cmpl_gcc.mak DISABLE_RAR_COMPRESS=1
 
 %install
-install -Dp CPP/7zip/Bundles/Alone2/b/g/7zz %{buildroot}%{_bindir}/7zz
+install -Dpm755 CPP/7zip/Bundles/Alone2/b/g/7zz %{buildroot}%{_bindir}/7zz
 
 %files
 %license DOC/copying.txt DOC/License.txt

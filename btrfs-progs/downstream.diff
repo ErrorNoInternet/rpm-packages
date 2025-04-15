@@ -1,8 +1,40 @@
-diff --git a/add-dump-csum.diff b/add-dump-csum.diff
+diff --git a/btrfs-progs.spec b/btrfs-progs.spec
+index 591eb86..e728e93 100644
+--- a/btrfs-progs.spec
++++ b/btrfs-progs.spec
+@@ -16,6 +16,9 @@ Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
+ ## Disable RAID56 modes (RHEL-only)
+ Source1001:     1001-balance-mkfs-Disable-raid56-modes.patch
+ 
++Patch1:         dump-csum.diff
++Patch2:         ignore-receive-errors.diff
++
+ BuildRequires:  gnupg2
+ BuildRequires:  gcc, autoconf, automake, make
+ BuildRequires:  git-core
+@@ -93,7 +96,7 @@ btrfs filesystem-specific programs in Python.
+ 
+ %prep
+ xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data=-
+-%autosetup -n %{name}-v%{version_no_tilde} -S git_am
++%autosetup -n %{name}-v%{version_no_tilde} -p1 -S git_am
+ 
+ %if 0%{?rhel}
+ # Specially apply this source
+@@ -102,7 +105,7 @@ xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}
+ 
+ %build
+ ./autogen.sh
+-%configure CFLAGS="%{optflags} -fno-strict-aliasing" --with-crypto=libgcrypt --disable-python
++%configure CFLAGS="%{optflags} -fno-strict-aliasing" --with-crypto=libgcrypt --disable-python --enable-experimental
+ %make_build
+ 
+ pushd libbtrfsutil/python
+diff --git a/dump-csum.diff b/dump-csum.diff
 new file mode 100644
 index 0000000..7f3b177
 --- /dev/null
-+++ b/add-dump-csum.diff
++++ b/dump-csum.diff
 @@ -0,0 +1,347 @@
 +diff --git a/Makefile b/Makefile
 +index c0428c57..35e26c34 100644
@@ -351,39 +383,11 @@ index 0000000..7f3b177
 + #define BTRFS_BCONF_QUIET	 0
 + /*
 +
-diff --git a/btrfs-progs.spec b/btrfs-progs.spec
-index 0d77cbb..3466539 100644
---- a/btrfs-progs.spec
-+++ b/btrfs-progs.spec
-@@ -12,6 +12,9 @@ Source0:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{n
- Source1:        https://www.kernel.org/pub/linux/kernel/people/kdave/%{name}/%{name}-v%{version_no_tilde}.tar.sign
- Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
- 
-+Patch1:         add-dump-csum.diff
-+Patch2:         remove-receive-errors.diff
-+
- BuildRequires:  gnupg2
- BuildRequires:  gcc, autoconf, automake, make
- BuildRequires:  git-core
-@@ -89,11 +92,11 @@ btrfs filesystem-specific programs in Python.
- 
- %prep
- xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}' --data=-
--%autosetup -n %{name}-v%{version_no_tilde} -S git_am
-+%autosetup -n %{name}-v%{version_no_tilde} -p1 -S git_am
- 
- %build
- ./autogen.sh
--%configure CFLAGS="%{optflags} -fno-strict-aliasing" --with-crypto=libgcrypt --disable-python
-+%configure CFLAGS="%{optflags} -fno-strict-aliasing" --with-crypto=libgcrypt --disable-python --enable-experimental
- %make_build
- 
- pushd libbtrfsutil/python
-diff --git a/remove-receive-errors.diff b/remove-receive-errors.diff
+diff --git a/ignore-receive-errors.diff b/ignore-receive-errors.diff
 new file mode 100644
 index 0000000..a6a7c6a
 --- /dev/null
-+++ b/remove-receive-errors.diff
++++ b/ignore-receive-errors.diff
 @@ -0,0 +1,15 @@
 +diff --git a/cmds/receive.c b/cmds/receive.c
 +index e4430b07..8110ea54 100644

@@ -1,7 +1,7 @@
 %global alt_pkg_name swayosd
 
 Name:           SwayOSD
-Version:        0.1.0
+Version:        0.2.0
 Release:        %autorelease
 Summary:        GTK based on screen display
 License:        GPL-3.0-or-later
@@ -9,16 +9,22 @@ License:        GPL-3.0-or-later
 URL:            https://github.com/ErikReider/SwayOSD
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
+Provides:       sway-on-screen-display = %{version}-%{release}
+Provides:       %{alt_pkg_name} = %{version}-%{release}
+
 BuildRequires:  cargo-rpm-macros >= 25
 BuildRequires:  meson
-BuildRequires:  pkgconfig(atk)
+BuildRequires:  pkgconfig(cairo)
 BuildRequires:  pkgconfig(cairo-gobject)
-BuildRequires:  pkgconfig(glib-2.0)
-BuildRequires:  pkgconfig(gtk+-3.0)
-BuildRequires:  pkgconfig(gtk-layer-shell-0)
+BuildRequires:  pkgconfig(dbus-1)
+BuildRequires:  pkgconfig(gdk-pixbuf-2.0)
+BuildRequires:  pkgconfig(graphene-gobject-1.0)
+BuildRequires:  pkgconfig(gtk4)
+BuildRequires:  pkgconfig(gtk4-layer-shell-0)
 BuildRequires:  pkgconfig(libevdev)
 BuildRequires:  pkgconfig(libinput)
 BuildRequires:  pkgconfig(libudev)
+BuildRequires:  pkgconfig(pango)
 BuildRequires:  pulseaudio-libs
 BuildRequires:  sassc
 
@@ -57,6 +63,8 @@ mv %{buildroot}%{_libdir}/udev/rules.d/99-swayosd.rules %{buildroot}%{_prefix}/l
 %{_datadir}/polkit-1/rules.d/org.erikreider.swayosd.rules
 %{_prefix}/lib/systemd/system/swayosd-libinput-backend.service
 %{_prefix}/lib/udev/rules.d/99-swayosd.rules
+%{_sysconfdir}/xdg/swayosd/backend.toml
+%{_sysconfdir}/xdg/swayosd/config.toml
 %{_sysconfdir}/xdg/swayosd/style.css
 
 %changelog

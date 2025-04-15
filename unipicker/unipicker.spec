@@ -5,7 +5,7 @@
 
 Name:               unipicker
 Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
-Release:            4%{dist}
+Release:            5%{dist}
 Summary:            Search unicode characters in console and copy to clipboard
 
 License:            MIT
@@ -24,6 +24,14 @@ Recommends:         fzf
 A CLI utility for searching unicode characters by description and
 optionally copying them to clipboard.
 
+%package rofi
+Summary:    Rofi support for %{name}
+BuildArch:  noarch
+Requires:   %{name}%{?_isa} = %{version}-%{release}
+
+%description rofi
+Extra symbol files for picking characters in Rofi.
+
 %prep
 %autosetup -n %{name}-%{commit} -p1
 
@@ -38,7 +46,10 @@ optionally copying them to clipboard.
 %doc README.md
 %config %{_sysconfdir}/unipickerrc
 %{_bindir}/unipicker
-%{_datadir}/unipicker/symbols*
+%{_datadir}/unipicker/symbols
+
+%files rofi
+%{_datadir}/unipicker/symbols-rofi
 
 %changelog
 %autochangelog

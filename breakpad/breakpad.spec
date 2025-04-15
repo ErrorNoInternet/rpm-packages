@@ -1,5 +1,5 @@
 Name:               breakpad
-Version:            2023.06.01
+Version:            2024.02.16
 Release:            %autorelease
 Summary:            Google Breakpad crash-reporting system
 License:            BSD-3-Clause
@@ -7,7 +7,6 @@ License:            BSD-3-Clause
 URL:                https://chromium.googlesource.com/breakpad/breakpad
 Source0:            %{url}/+archive/v%{version}.tar.gz
 Source1:            https://chromium.googlesource.com/linux-syscall-support/+archive/v2024.02.01.tar.gz
-Patch:              breakpad-fix-missing-include.patch
 
 BuildRequires:      gcc-c++
 BuildRequires:      pkgconfig(gmock)

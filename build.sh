@@ -4,7 +4,7 @@ set -x
 
 dnf install -y git fedpkg
 git config --global --add safe.directory "$PWD"
-git checkout f41
+git checkout f42
 
 patch -p1 <../downstream.diff || {
     echo "downstream diff failed to apply"

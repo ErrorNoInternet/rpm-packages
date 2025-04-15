@@ -8,14 +8,14 @@ Version:                1.0.5
 %gometa -L -f
 
 %global common_description %{expand:
-:dog: Command-line DNS Client for Humans. Written in Golang.}
+Command-line DNS Client for Humans. Written in Golang.}
 
 %global golicenses      LICENSE
 %global godocs          docs README.md TODO.md www/api/api.md
 
 Name:           doggo
 Release:        %autorelease
-Summary:        :dog: Command-line DNS Client for Humans. Written in Golang
+Summary:        Command-line DNS Client for Humans
 
 License:        GPL-3.0-only
 URL:            %{gourl}
@@ -54,7 +54,7 @@ chmod -R u+w %{gobuilddir}/pkg
 
 %files
 %license LICENSE
-%doc docs README.md TODO.md www/api/api.md
+%doc docs README.md TODO.md
 %{_bindir}/*
 
 %gopkgfiles

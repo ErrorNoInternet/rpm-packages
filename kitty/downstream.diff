@@ -19,12 +19,12 @@ index 0000000..e8f04cc
 +             changed = not self.needs_attention
 +
 diff --git a/kitty.spec b/kitty.spec
-index b8cd317..6a5e395 100644
+index e61dd6c..7842de7 100644
 --- a/kitty.spec
 +++ b/kitty.spec
-@@ -65,6 +65,10 @@ Source1:        https://raw.githubusercontent.com/kovidgoyal/kitty/46c0951751444
- 
- Source2:        https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/NerdFontsSymbolsOnly.tar.xz
+@@ -35,6 +35,10 @@ Source4:        go-vendor-tools.toml
+ Source5:        https://raw.githubusercontent.com/kovidgoyal/kitty/46c0951751444e4f4994008f0d2dcb41e49389f4/kitty/data/%{name}.appdata.xml
+ Source6:        https://github.com/ryanoasis/nerd-fonts/releases/download/v3.3.0/NerdFontsSymbolsOnly.tar.xz
  
 +Patch: shade-transparency.diff
 +Patch: thicker-braille-dots.diff
@@ -35,90 +35,65 @@ index b8cd317..6a5e395 100644
  
 diff --git a/shade-transparency.diff b/shade-transparency.diff
 new file mode 100644
-index 0000000..f6bd4e4
+index 0000000..8accab3
 --- /dev/null
 +++ b/shade-transparency.diff
-@@ -0,0 +1,64 @@
-+diff --git a/kitty/fonts/box_drawing.py b/kitty/fonts/box_drawing.py
-+index ecc99a3de..5ef1f7ea8 100644
-+--- a/kitty/fonts/box_drawing.py
-++++ b/kitty/fonts/box_drawing.py
-+@@ -650,9 +650,19 @@ def inner_corner(buf: BufType, width: int, height: int, which: str = 'tl', level
+@@ -0,0 +1,38 @@
++diff --git a/kitty/decorations.c b/kitty/decorations.c
++index 27530d42e..d40cead24 100644
++--- a/kitty/decorations.c
+++++ b/kitty/decorations.c
++@@ -927,6 +927,7 @@ typedef struct Shade {
++     bool light, invert, fill_blank;
++     Edge which_half;
++     uint xnum, ynum;
+++    uint level;
++ } Shade;
 + 
++ #define is_odd(x) ((x) & 1u)
++@@ -960,6 +961,11 @@ shade(Canvas *self, Shade s) {
++         case RIGHT_EDGE: cols.start = number_of_cols / 2; square_width_extension *= 2; break;
++     }
 + 
-+ def shade(
-+-    buf: BufType, width: int, height: int, light: bool = False, invert: bool = False, which_half: str = '', fill_blank: bool = False,
-++    buf: BufType, width: int, height: int,  light: bool = False, invert: bool = False, level: Literal["light", "medium", "dark"] = "medium", which_half: str = '', fill_blank: bool = False,
-+     xnum: int = 12, ynum: int = 0
-+ ) -> None:
-++    if not which_half and not fill_blank:
-++        if level == "light":
-++            const = 64
-++        elif level == "medium":
-++            const = 128
-++        else:
-++            const = 192
-++        for i in range(len(buf)):
-++            buf[i] = const
-++        return
+++    if (s.level) {
+++        for (uint r = rows.start; r < rows.end; r++) memset(self->mask + r * self->width + cols.start, s.level, cols.end - cols.start + 1);
+++        return;
+++    }
+++
++     bool extra_row = false;
++     uint ey = 0, old_ey = 0, drawn_rows = 0;
 + 
-+     square_width = max(1, width // xnum)
-+     square_height = max(1, (height // ynum) if ynum else square_width)
-+@@ -1097,9 +1107,9 @@ def braille(buf: BufType, width: int, height: int, which: int = 0) -> None:
-+     '▏': [p(eight_bar)],
-+     '▐': [p(eight_block, which=(4, 5, 6, 7))],
-+ 
-+-    '░': [p(shade, light=True)],
-+-    '▒': [shade],
-+-    '▓': [p(shade, light=True, invert=True)],
-++    '░': [p(shade, level="light")],
-++    '▒': [p(shade, level="medium")],
-++    '▓': [p(shade, level="dark")],
-+     '🮌': [p(shade, which_half='left')],
-+     '🮍': [p(shade, which_half='right')],
-+     '🮎': [p(shade, which_half='top')],
-+diff --git a/kitty_tests/fonts.py b/kitty_tests/fonts.py
-+index ed8cd5d55..55c7970f2 100644
-+--- a/kitty_tests/fonts.py
-++++ b/kitty_tests/fonts.py
-+@@ -50,13 +50,13 @@ def test_sprite_map(self):
-+         self.ae(test_sprite_position_for(0, 1), (0, 0, 2))
-+         self.ae(test_sprite_position_for(0, 2), (1, 0, 2))
-+ 
-+-    def test_box_drawing(self):
-+-        prerendered = len(self.sprites)
-+-        s = self.create_screen(cols=len(box_chars) + 1, lines=1, scrollback=0)
-+-        s.draw(''.join(box_chars))
-+-        line = s.line(0)
-+-        test_render_line(line)
-+-        self.assertEqual(len(self.sprites) - prerendered, len(box_chars))
-++    # def test_box_drawing(self):
-++    #     prerendered = len(self.sprites)
-++    #     s = self.create_screen(cols=len(box_chars) + 1, lines=1, scrollback=0)
-++    #     s.draw(''.join(box_chars))
-++    #     line = s.line(0)
-++    #     test_render_line(line)
-++    #     self.assertEqual(len(self.sprites) - prerendered, len(box_chars))
-+ 
-+     def test_font_rendering(self):
-+         render_string('ab\u0347\u0305你好|\U0001F601|\U0001F64f|\U0001F63a|')
++@@ -1566,9 +1572,9 @@ START_ALLOW_CASE_RANGE
++         EV(L'▐', 4, 5, 6, 7);
++ #undef EV
++ #define SH(ch, ...) C(ch, shade, (Shade){ __VA_ARGS__ });
++-        SH(L'░', .xnum=12, .light=true);
++-        SH(L'▒', .xnum=12);
++-        SH(L'▓', .xnum=12, .light=true, .invert=true);
+++        SH(L'░', .xnum=12, .level=64);
+++        SH(L'▒', .xnum=12, .level=128);
+++        SH(L'▓', .xnum=12, .level=192);
++         SH(L'🮌', .xnum=12, .which_half=LEFT_EDGE);
++         SH(L'🮍', .xnum=12, .which_half=RIGHT_EDGE);
++         SH(L'🮎', .xnum=12, .which_half=TOP_EDGE);
 +
 diff --git a/thicker-braille-dots.diff b/thicker-braille-dots.diff
 new file mode 100644
-index 0000000..2fc9591
+index 0000000..4c6ec41
 --- /dev/null
 +++ b/thicker-braille-dots.diff
-@@ -0,0 +1,13 @@
-+diff --git a/kitty/fonts/box_drawing.py b/kitty/fonts/box_drawing.py
-+index 284b6642a..848c28cef 100644
-+--- a/kitty/fonts/box_drawing.py
-++++ b/kitty/fonts/box_drawing.py
-+@@ -813,6 +813,8 @@ def braille_dot(buf: BufType, width: int, height: int, col: int, row: int) -> No
-+             offset = y * width
-+             for x in range(x_start, min(width, x_start + dot_width)):
-+                 buf[offset + x] = 255
-++                if (width, height) == (7, 16):
-++                    buf[offset + x + 1] = 255
-+ 
-+ 
-+ def braille(buf: BufType, width: int, height: int, which: int = 0) -> None:
+@@ -0,0 +1,14 @@
++diff --git a/kitty/decorations.c b/kitty/decorations.c
++index 27530d42e..3192bc8f4 100644
++--- a/kitty/decorations.c
+++++ b/kitty/decorations.c
++@@ -1374,6 +1374,8 @@ braille_dot(Canvas *self, uint col, uint row) {
++     unsigned x_gaps[num_x_dots * 2], y_gaps[num_y_dots * 2];
++     unsigned dot_width = distribute_dots(self->width, num_x_dots, x_gaps, x_gaps + num_x_dots);
++     unsigned dot_height = distribute_dots(self->height, num_y_dots, y_gaps, y_gaps + num_y_dots);
+++    if (self->width == 7 && self->height == 16)
+++        dot_width += 1;
++     uint x_start = x_gaps[col] + col * dot_width;
++     uint y_start = y_gaps[row] + row * dot_height;
++     if (y_start < self->height && x_start < self->width) {
++

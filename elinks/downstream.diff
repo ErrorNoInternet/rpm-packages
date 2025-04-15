@@ -1,0 +1,12 @@
+diff --git a/elinks.spec b/elinks.spec
+index 56b229e..d2daa3b 100644
+--- a/elinks.spec
++++ b/elinks.spec
+@@ -81,6 +81,7 @@ CFLAGS="$CFLAGS -DLUA_COMPAT_5_3"
+ %configure \
+     --enable-256-colors             \
+     --enable-bittorrent             \
++    --enable-gemini                 \
+     --with-gssapi                   \
+     --with-lua                      \
+     --with-openssl                  \
