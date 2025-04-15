@@ -1,18 +1,7 @@
 diff --git a/elinks.spec b/elinks.spec
-index 1f6a09e..d2daa3b 100644
+index 56b229e..d2daa3b 100644
 --- a/elinks.spec
 +++ b/elinks.spec
-@@ -6,8 +6,8 @@
- 
- Name:      elinks
- Summary:   A text-mode Web browser
--Version:   0.17.0
--Release:   5%{?dist}
-+Version:   0.18.0
-+Release:   2%{?dist}
- License:   GPL-2.0-only
- URL:       https://github.com/rkd77/elinks
- Source:    https://github.com/rkd77/elinks/releases/download/v%{version}/elinks-%{version}.tar.xz
 @@ -81,6 +81,7 @@ CFLAGS="$CFLAGS -DLUA_COMPAT_5_3"
  %configure \
      --enable-256-colors             \
@@ -21,26 +10,3 @@ index 1f6a09e..d2daa3b 100644
      --with-gssapi                   \
      --with-lua                      \
      --with-openssl                  \
-@@ -136,6 +137,15 @@ exit 0
- %{_mandir}/man5/*
- 
- %changelog
-+* Thu Jan 16 2025 Fedora Release Engineering <releng@fedoraproject.org> - 0.18.0-2
-+- Rebuilt for https://fedoraproject.org/wiki/Fedora_42_Mass_Rebuild
-+
-+* Thu Jan 02 2025 Lukáš Zaoral <lzaoral@redhat.com> - 0.18.0-1
-+- rebase to latest upstream version (rhbz#2334226)
-+
-+* Mon Oct 07 2024 Lukáš Zaoral <lzaoral@redhat.com> - 0.17.1.1-1
-+- rebase to latest upstream version (rhbz#2316746)
-+
- * Wed Jul 17 2024 Fedora Release Engineering <releng@fedoraproject.org> - 0.17.0-5
- - Rebuilt for https://fedoraproject.org/wiki/Fedora_41_Mass_Rebuild
- 
-diff --git a/sources b/sources
-index d26b583..02ecbd4 100644
---- a/sources
-+++ b/sources
-@@ -1 +1 @@
--SHA512 (elinks-0.17.0.tar.xz) = 276c648174d067cdd92cbbf25e8a353a3a482a65a4f1080ff42f932cdc0239e5110a51653f5136188a0b9135be2928f2bd1a92f37fa83ce14d8fc1267b87cf56
-+SHA512 (elinks-0.18.0.tar.xz) = e0ff737e06d4b591d362257b9a375b938f9d6222cf6ee4df2065c7b47f883a5eacf76dabae8fc7c0b32cf9b7df56267752217d6999b0ae24c2482763b5b0ccb9
