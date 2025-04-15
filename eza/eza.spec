@@ -24,6 +24,7 @@ SourceLicense:  EUPL-1.2
 
 URL:            https://github.com/eza-community/eza
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+Patch:          directory-size-optimization.diff
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  pandoc
