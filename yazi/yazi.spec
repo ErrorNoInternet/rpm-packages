@@ -1,8 +1,9 @@
 %bcond_without check
 
-%global __brp_mangle_shebangs /usr/bin/true
-%global _default_patch_fuzz 2
-%global cargo_install_lib   0
+%global __brp_mangle_shebangs   /usr/bin/true
+%global _default_patch_fuzz     2
+%global build_cflags            %{build_cflags} -std=gnu17
+%global cargo_install_lib       0
 
 Name:           yazi
 Version:        25.4.8
@@ -68,7 +69,6 @@ cargo vendor
 %cargo_prep -v vendor
 
 %build
-export RUSTONIG_DYNAMIC_LIBONIG=1
 export YAZI_GEN_COMPLETIONS=1
 %cargo_build
 %{cargo_license_summary}
@@ -99,9 +99,13 @@ done
 %endif
 
 %files
-%license LICENSE LICENSE-ICONS
-%license LICENSE.dependencies cargo-vendor.txt
-%doc README.md CONTRIBUTING.md
+%license cargo-vendor.txt
+%license LICENSE
+%license LICENSE-ICONS
+%license LICENSE.dependencies
+%doc CODE_OF_CONDUCT.md
+%doc CONTRIBUTING.md
+%doc README.md
 %{_bindir}/ya
 %{_bindir}/%{name}
 %{_datadir}/applications/%{name}.desktop
@@ -110,11 +114,11 @@ done
 %files bash-completion
 %{bash_completions_dir}/%{name}
 
-%files zsh-completion
-%{zsh_completions_dir}/_%{name}
-
 %files fish-completion
 %{fish_completions_dir}/%{name}.fish
+
+%files zsh-completion
+%{zsh_completions_dir}/_%{name}
 
 %changelog
 %autochangelog
