@@ -44,6 +44,8 @@ Source:         %{gosource}
 
 BuildRequires:  git
 
+Recommends:     git
+
 %description %{common_description}
 
 %gopkg
@@ -90,6 +92,10 @@ go mod vendor
 
 %if %{without bootstrap}
 %build
+export GO_BUILDTAGS="noupgrade"
+export GO_LDFLAGS="-X main.version=%{version}
+                   -X main.date=${SOURCE_DATE_EPOCH:-}
+                   -X main.builtBy=copr"
 %gobuild -o %{gobuilddir}/bin/chezmoi %{goipath}
 %endif
 
