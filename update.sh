@@ -45,6 +45,7 @@ declare -A git_forges=(
     ["minefetch/minefetch.spec"]=github
     ["overmask/overmask.spec"]=github
     ["quickshell/quickshell.spec"]=github
+    ["swaync/swaync-git.spec"]=github
     ["try/try-git.spec"]=github
     ["tz/tz.spec"]=github
     ["unipicker/unipicker.spec"]=github
