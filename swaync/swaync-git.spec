@@ -1,12 +1,12 @@
 %global commit          f55b433e05bf2f7d9772b86a9f613571efc3ae34
 %global snapdate        20250413
-%global latest          0.10.1
+%global latest          0.11.0
 %global alt_pkg_name    swaync-git
 
 Name:           SwayNotificationCenter-git
 Version:        %{latest}^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
 Release:        %autorelease
-Summary:        Notification daemon with GTK GUI
+Summary:        A simple GTK based notification daemon for Wayland
 
 License:        GPL-3.0-or-later
 URL:            https://github.com/ErikReider/SwayNotificationCenter
@@ -17,24 +17,23 @@ Provides:       sway-notification-center = %{version}-%{release}
 Provides:       %{alt_pkg_name} = %{version}-%{release}
 Obsoletes:      SwayNotificationCenter <= %{latest}
 
-BuildRequires:  meson >= 0.51.0
-BuildRequires:  vala >= 0.56
-BuildRequires:  scdoc
-BuildRequires:  pkgconfig(gtk+-3.0) >= 3.22
-BuildRequires:  pkgconfig(gtk-layer-shell-0) >= 0.1
-BuildRequires:  pkgconfig(json-glib-1.0) >= 1.0
-BuildRequires:  pkgconfig(libhandy-1) >= 1.4.0
-BuildRequires:  pkgconfig(glib-2.0) >= 2.50
-BuildRequires:  pkgconfig(gobject-introspection-1.0) >= 1.68
-BuildRequires:  pkgconfig(gee-0.8) >= 0.20
+BuildRequires:  blueprint-compiler
+BuildRequires:  cmake
+BuildRequires:  meson
+BuildRequires:  ninja-build
 BuildRequires:  pkgconfig(bash-completion)
 BuildRequires:  pkgconfig(fish)
+BuildRequires:  pkgconfig(granite-7)
+BuildRequires:  pkgconfig(gtk4-layer-shell-0)
+BuildRequires:  pkgconfig(json-glib-1.0)
+BuildRequires:  pkgconfig(libadwaita-1)
 BuildRequires:  pkgconfig(libpulse)
-BuildRequires:  pkgconfig(granite)
-BuildRequires:  systemd-devel
-BuildRequires:  systemd
+BuildRequires:  pkgconfig(libsystemd)
+BuildRequires:  pkgconfig(wayland-scanner)
 BuildRequires:  sassc
-BuildRequires:  granite-devel
+BuildRequires:  scdoc
+BuildRequires:  systemd
+BuildRequires:  vala
 
 Requires:       gvfs
 Requires:       libnotify
@@ -42,7 +41,8 @@ Requires:       dbus
 %{?systemd_requires}
 
 %description
-A simple notification daemon with a GTK gui for notifications and the control center
+A simple notification daemon with a GTK GUI for notifications and a
+control center.
 
 %package bash-completion
 BuildArch:      noarch
@@ -55,17 +55,6 @@ Requires:       %{name} = %{version}-%{release}
 %description bash-completion
 This package installs Bash completion files for %{name}
 
-%package zsh-completion
-BuildArch:      noarch
-Summary:        Zsh completion files for %{name}
-Provides:       %{alt_pkg_name}-zsh-completion = %{version}-%{release}
-
-Requires:       zsh
-Requires:       %{name} = %{version}-%{release}
-
-%description zsh-completion
-This package installs Zsh completion files for %{name}
-
 %package fish-completion
 BuildArch:      noarch
 Summary:        Fish completion files for %{name}
@@ -76,6 +65,17 @@ Requires:       %{name} = %{version}-%{release}
 
 %description fish-completion
 This package installs Fish completion files for %{name}
+
+%package zsh-completion
+BuildArch:      noarch
+Summary:        Zsh completion files for %{name}
+Provides:       %{alt_pkg_name}-zsh-completion = %{version}-%{release}
+
+Requires:       zsh
+Requires:       %{name} = %{version}-%{release}
+
+%description zsh-completion
+This package installs Zsh completion files for %{name}
 
 %prep
 %autosetup -n SwayNotificationCenter-%{commit} -p1
@@ -94,10 +94,10 @@ This package installs Fish completion files for %{name}
 %systemd_user_preun swaync.service
 
 %files
+%license COPYING
 %doc README.md
 %{_bindir}/swaync-client
 %{_bindir}/swaync
-%license COPYING
 %config(noreplace) %{_sysconfdir}/xdg/swaync/configSchema.json
 %config(noreplace) %{_sysconfdir}/xdg/swaync/config.json
 %config(noreplace) %{_sysconfdir}/xdg/swaync/style.css
@@ -112,13 +112,13 @@ This package installs Fish completion files for %{name}
 %{bash_completions_dir}/swaync
 %{bash_completions_dir}/swaync-client
 
-%files zsh-completion
-%{zsh_completions_dir}/_swaync
-%{zsh_completions_dir}/_swaync-client
-
 %files fish-completion
 %{fish_completions_dir}/swaync-client.fish
 %{fish_completions_dir}/swaync.fish
+
+%files zsh-completion
+%{zsh_completions_dir}/_swaync
+%{zsh_completions_dir}/_swaync-client
 
 %changelog
 %autochangelog
