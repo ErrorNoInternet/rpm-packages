@@ -15,7 +15,6 @@ Source:         %{url}/archive/%{commit}/SwayNotificationCenter-%{commit}.tar.gz
 Provides:       desktop-notification-daemon
 Provides:       sway-notification-center = %{version}-%{release}
 Provides:       %{alt_pkg_name} = %{version}-%{release}
-Obsoletes:      SwayNotificationCenter <= %{latest}
 
 BuildRequires:  blueprint-compiler
 BuildRequires:  cmake
