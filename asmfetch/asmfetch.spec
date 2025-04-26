@@ -10,6 +10,8 @@ License:            LGPL-3.0-or-later
 URL:                https://github.com/ErrorNoInternet/asmfetch
 Source:             %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
 
+ExclusiveArch:      x86_64
+
 BuildRequires:      gcc
 
 %description
