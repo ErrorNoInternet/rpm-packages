@@ -59,8 +59,11 @@ Wayland and X11.
 %cmake_install
 
 %files
-%license LICENSE LICENSE-GPL
-%doc BUILD.md CONTRIBUTING.md README.md
+%license LICENSE
+%license LICENSE-GPL
+%doc BUILD.md
+%doc CONTRIBUTING.md
+%doc README.md
 %{_bindir}/qs
 %{_bindir}/quickshell
 %{_libdir}/qt6/qml/Quickshell
