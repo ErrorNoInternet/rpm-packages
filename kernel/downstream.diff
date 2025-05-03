@@ -513,13 +513,13 @@ index 000000000..0bcf73b77
 +
 diff --git a/bbr3.patch b/bbr3.patch
 new file mode 100644
-index 000000000..95ff45eb1
+index 000000000..1556a81e6
 --- /dev/null
 +++ b/bbr3.patch
 @@ -0,0 +1,3387 @@
-+From 768ec00d141959898429a82cf6f7d610b8c90577 Mon Sep 17 00:00:00 2001
++From 80dc4099b588a797f599a17fe3b897d133c0d18e Mon Sep 17 00:00:00 2001
 +From: Peter Jung <admin@ptr1337.dev>
-+Date: Sun, 20 Apr 2025 15:32:06 +0200
++Date: Fri, 2 May 2025 18:59:34 +0200
 +Subject: [PATCH 4/9] bbr3
 +
 +Signed-off-by: Peter Jung <admin@ptr1337.dev>
@@ -3902,7 +3902,7 @@ index 000000000..95ff45eb1
 + 	event = icsk->icsk_pending;
 + 
 +-- 
-+2.49.0.391.g4bbb303af6
++2.49.0.503.g6c0bd1fc70
 +
 diff --git a/bore.patch b/bore.patch
 new file mode 100644
@@ -4917,7 +4917,7 @@ index 000000000..bc8df93e2
 +2.48.0.rc1
 +
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
-index daf090c23..231260abc 100644
+index 9f768cba8..bb32ac2d5 100644
 --- a/kernel-x86_64-fedora.config
 +++ b/kernel-x86_64-fedora.config
 @@ -49,6 +49,7 @@ CONFIG_ACPI_APEI=y
@@ -4961,7 +4961,7 @@ index daf090c23..231260abc 100644
  # CONFIG_MODULE_SIG_FORCE is not set
  CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
 diff --git a/kernel.spec b/kernel.spec
-index 4fb414ee8..471efbdd7 100644
+index ac33db8a8..f019f7de6 100644
 --- a/kernel.spec
 +++ b/kernel.spec
 @@ -312,8 +312,6 @@ Summary: The Linux kernel
@@ -5025,13 +5025,13 @@ index 431487955..a9a71e897 100755
  
 diff --git a/zstd.patch b/zstd.patch
 new file mode 100644
-index 000000000..0be90ceb9
+index 000000000..7c3a8da56
 --- /dev/null
 +++ b/zstd.patch
 @@ -0,0 +1,23554 @@
-+From a9a81256578740771f346d17be439ace9250643a Mon Sep 17 00:00:00 2001
++From 92e8510ae078896a9f60c9547a524ed2290d34ad Mon Sep 17 00:00:00 2001
 +From: Peter Jung <admin@ptr1337.dev>
-+Date: Sun, 20 Apr 2025 15:34:05 +0200
++Date: Fri, 2 May 2025 19:00:31 +0200
 +Subject: [PATCH 9/9] zstd
 +
 +Signed-off-by: Peter Jung <admin@ptr1337.dev>
@@ -28581,5 +28581,5 @@ index 000000000..0be90ceb9
 + EXPORT_SYMBOL(zstd_reset_dstream);
 + 
 +-- 
-+2.49.0.391.g4bbb303af6
++2.49.0.503.g6c0bd1fc70
 +
