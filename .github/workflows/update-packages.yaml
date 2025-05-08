@@ -1,28 +1,32 @@
 name: Update packages
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: '0 */12 * * *'
+    workflow_dispatch:
+    schedule:
+        - cron: "0 */12 * * *"
 permissions:
-  contents: write
+    contents: write
+
 jobs:
-  update-packages:
-    name: Update packages
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Clone repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Fetch submodules
-        run: |
-          git submodule update --init
-      - name: Configure Git user
-        run: |
-          git config --local user.name "github-actions[bot]"
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-      - name: Run update.sh
-        run: ./update.sh
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          COPR_API_CREDENTIALS: ${{ secrets.COPR_API_CREDENTIALS }}
+    update-packages:
+        name: Update packages
+        runs-on: ubuntu-22.04
+
+        steps:
+            - name: Clone repository
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Fetch submodules
+              run: git submodule update --init
+
+            - name: Configure Git user
+              run: |
+                  git config --local user.name "github-actions[bot]"
+                  git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+            - name: Run update.sh
+              run: ./update.sh
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+                  COPR_API_CREDENTIALS: ${{ secrets.COPR_API_CREDENTIALS }}
