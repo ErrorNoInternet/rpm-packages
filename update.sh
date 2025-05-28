@@ -5,6 +5,7 @@ declare -A anitya_ids=(
     ["bandwhich/bandwhich.spec"]=236376
     ["breakpad/breakpad.spec"]=373970
     ["btdu/btdu.spec"]=372783
+    ["chezmoi/chezmoi.spec"]=232604
     ["croc/croc.spec"]=350834
     ["doggo/doggo.spec"]=373317
     ["du-dust/du-dust.spec"]=141344
@@ -26,7 +27,6 @@ declare -A anitya_ids=(
     ["rust-libvips/rust-libvips.spec"]=373523
     ["scrcpy/scrcpy.spec"]=226924
     ["songrec/songrec.spec"]=376030
-    ["swaylock-effects/swaylock-effects.spec"]=312399
     ["swaync/swaync.spec"]=242061
     ["swayosd/swayosd.spec"]=374840
     ["try/try.spec"]=372797
@@ -45,6 +45,7 @@ declare -A git_forges=(
     ["minefetch/minefetch.spec"]=github
     ["overmask/overmask.spec"]=github
     ["quickshell/quickshell.spec"]=github
+    ["swaync/swaync-git.spec"]=github
     ["try/try-git.spec"]=github
     ["tz/tz.spec"]=github
     ["unipicker/unipicker.spec"]=github
@@ -126,7 +127,7 @@ for file in "${!git_forges[@]}"; do
         sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
 
         git add "$file"
-        git commit -F<(echo -e "$name: ${current_snapdate}g${current_commit:0:7} -> ${latest_snapdate}g${latest_commit:0:7}\n\n$url\n< $current_commit\n> $latest_commit")
+        git commit -F<(echo -e "$name: ${current_snapdate}g${current_commit:0:7} -> ${latest_snapdate}g${latest_commit:0:7}\n\n$url\n- $current_commit\n+ $latest_commit")
     fi
 done
 

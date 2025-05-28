@@ -1,14 +1,11 @@
 Name:           par2cmdline-turbo
-Version:        1.2.0
+Version:        1.3.0
 Release:        %autorelease
 Summary:        Speed focused par2cmdline fork
 
 License:        GPL-2.0-or-later
 URL:            https://github.com/animetosho/par2cmdline-turbo
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
-
-Obsoletes:      par2cmdline <= 0.8.1
-Provides:       par2cmdline = %{version}-%{release}
 
 BuildRequires:  automake
 BuildRequires:  gcc-c++
@@ -22,7 +19,6 @@ performance on x86/ARM platforms.
 %autosetup -p1
 
 %build
-export CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
 ./automake.sh
 %configure
 %make_build
@@ -34,7 +30,9 @@ export CFLAGS="$CFLAGS -Wno-error=implicit-function-declaration"
 %make_build check-TESTS
 
 %files
-%doc AUTHORS ChangeLog README.md
+%doc AUTHORS
+%doc ChangeLog
+%doc README.md
 %license COPYING
 %{_bindir}/par2
 %{_bindir}/par2create

@@ -1,7 +1,7 @@
 %bcond_with         asan
 
-%global commit      ed528268e0c0a2f6be2b5aca7089ebc3e214d446
-%global snapdate    20250406
+%global commit      2e3c15f7a1e76da788c89ac1e252aaf4885bda5d
+%global snapdate    20250528
 
 Name:               quickshell
 Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
@@ -59,8 +59,11 @@ Wayland and X11.
 %cmake_install
 
 %files
-%license LICENSE LICENSE-GPL
-%doc BUILD.md CONTRIBUTING.md README.md
+%license LICENSE
+%license LICENSE-GPL
+%doc BUILD.md
+%doc CONTRIBUTING.md
+%doc README.md
 %{_bindir}/qs
 %{_bindir}/quickshell
 %{_libdir}/qt6/qml/Quickshell
