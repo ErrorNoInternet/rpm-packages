@@ -513,13 +513,13 @@ index 000000000..0bcf73b77
 +
 diff --git a/bbr3.patch b/bbr3.patch
 new file mode 100644
-index 000000000..1556a81e6
+index 000000000..4b43326bc
 --- /dev/null
 +++ b/bbr3.patch
 @@ -0,0 +1,3387 @@
-+From 80dc4099b588a797f599a17fe3b897d133c0d18e Mon Sep 17 00:00:00 2001
++From d221b4b9939f83a4df2ca8d037a2b73d49041a40 Mon Sep 17 00:00:00 2001
 +From: Peter Jung <admin@ptr1337.dev>
-+Date: Fri, 2 May 2025 18:59:34 +0200
++Date: Thu, 22 May 2025 16:19:46 +0200
 +Subject: [PATCH 4/9] bbr3
 +
 +Signed-off-by: Peter Jung <admin@ptr1337.dev>
@@ -3902,7 +3902,7 @@ index 000000000..1556a81e6
 + 	event = icsk->icsk_pending;
 + 
 +-- 
-+2.49.0.503.g6c0bd1fc70
++2.49.0.634.g8613c2bb6c
 +
 diff --git a/bore.patch b/bore.patch
 new file mode 100644
@@ -4917,7 +4917,7 @@ index 000000000..bc8df93e2
 +2.48.0.rc1
 +
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
-index 9f768cba8..bb32ac2d5 100644
+index c6819937d..c512d7e79 100644
 --- a/kernel-x86_64-fedora.config
 +++ b/kernel-x86_64-fedora.config
 @@ -49,6 +49,7 @@ CONFIG_ACPI_APEI=y
@@ -4951,7 +4951,7 @@ index 9f768cba8..bb32ac2d5 100644
  CONFIG_IKHEADERS=m
  CONFIG_IMA_APPRAISE_BOOTPARAM=y
  # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
-@@ -4376,7 +4378,7 @@ CONFIG_MODULE_COMPRESS=y
+@@ -4377,7 +4379,7 @@ CONFIG_MODULE_COMPRESS=y
  # CONFIG_MODULE_DEBUG is not set
  CONFIG_MODULE_DECOMPRESS=y
  # CONFIG_MODULE_FORCE_LOAD is not set
@@ -4961,7 +4961,7 @@ index 9f768cba8..bb32ac2d5 100644
  # CONFIG_MODULE_SIG_FORCE is not set
  CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
 diff --git a/kernel.spec b/kernel.spec
-index ac33db8a8..f019f7de6 100644
+index 349fdd1a8..4ddc9128f 100644
 --- a/kernel.spec
 +++ b/kernel.spec
 @@ -312,8 +312,6 @@ Summary: The Linux kernel
@@ -5025,13 +5025,13 @@ index 431487955..a9a71e897 100755
  
 diff --git a/zstd.patch b/zstd.patch
 new file mode 100644
-index 000000000..7c3a8da56
+index 000000000..b47cba604
 --- /dev/null
 +++ b/zstd.patch
 @@ -0,0 +1,23554 @@
-+From 92e8510ae078896a9f60c9547a524ed2290d34ad Mon Sep 17 00:00:00 2001
++From 2e674186d8b03209dca74867e2d4c885190243fe Mon Sep 17 00:00:00 2001
 +From: Peter Jung <admin@ptr1337.dev>
-+Date: Fri, 2 May 2025 19:00:31 +0200
++Date: Thu, 22 May 2025 16:36:17 +0200
 +Subject: [PATCH 9/9] zstd
 +
 +Signed-off-by: Peter Jung <admin@ptr1337.dev>
@@ -5104,7 +5104,7 @@ index 000000000..7c3a8da56
 + create mode 100644 lib/zstd/compress/zstd_preSplit.h
 +
 +diff --git a/MAINTAINERS b/MAINTAINERS
-+index 2b1f3e8bdbdd..11b706953286 100644
++index 161dd28ca25b..de1f3f463548 100644
 +--- a/MAINTAINERS
 ++++ b/MAINTAINERS
 +@@ -26310,6 +26310,7 @@ F:	mm/zsmalloc.c
@@ -28581,5 +28581,5 @@ index 000000000..7c3a8da56
 + EXPORT_SYMBOL(zstd_reset_dstream);
 + 
 +-- 
-+2.49.0.503.g6c0bd1fc70
++2.49.0.634.g8613c2bb6c
 +
