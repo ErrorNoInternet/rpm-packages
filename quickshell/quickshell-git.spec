@@ -1,13 +1,19 @@
 %bcond_with         asan
 
-Name:               quickshell
-Version:            0.1.0
+%global commit      2b01a75679a03bd6557cf11c20b1588f436d6b94
+%global snapdate    20250610
+%global tag         0.1.0
+
+Name:               quickshell-git
+Version:            %{tag}^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
 Release:            %autorelease
 Summary:            Flexible QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
 URL:                https://github.com/quickshell-mirror/quickshell
-Source0:            %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+Source0:            %{url}/archive/%{commit}/quickshell-%{commit}.tar.gz
+
+Obsoletes:          quickshell <= %{tag}
 
 BuildRequires:      cmake
 BuildRequires:      cmake(Qt6Core)
@@ -37,7 +43,7 @@ Flexible toolkit for making desktop shells with QtQuick, targeting
 Wayland and X11.
 
 %prep
-%autosetup -p1
+%autosetup -n quickshell-%{commit} -p1
 
 %build
 %cmake  -GNinja \
