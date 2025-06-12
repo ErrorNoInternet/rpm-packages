@@ -13,7 +13,7 @@ License:            LGPL-3.0-only AND GPL-3.0-only
 URL:                https://github.com/quickshell-mirror/quickshell
 Source0:            %{url}/archive/%{commit}/quickshell-%{commit}.tar.gz
 
-Obsoletes:          quickshell <= %{tag}
+Conflicts:          quickshell <= %{tag}
 
 BuildRequires:      cmake
 BuildRequires:      cmake(Qt6Core)
