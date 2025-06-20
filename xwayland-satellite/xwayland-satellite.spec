@@ -1,5 +1,5 @@
-%global commit      da2ecb5be816de35e2efe23a408a1c49fe8b11ba
-%global snapdate    20250607
+%global commit      b98fa84524e52a2051382b3ea2cbbaeea287b0e3
+%global snapdate    20250619
 
 Name:               xwayland-satellite
 Version:            0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
