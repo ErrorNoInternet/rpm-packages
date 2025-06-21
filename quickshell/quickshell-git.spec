@@ -1,6 +1,6 @@
 %bcond_with         asan
 
-%global commit      e0457dda90778e7bebf78334b00fc0e71cb7999b
+%global commit      788658d500aad8368d203fac32b61d33d3c3d51d
 %global snapdate    20250620
 %global tag         0.1.0
 
