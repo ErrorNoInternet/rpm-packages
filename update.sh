@@ -53,7 +53,17 @@ declare -A git_forges=(
     ["xwayland-satellite/xwayland-satellite.spec"]=github
 )
 
+found=false
+
 for file in "${!anitya_ids[@]}"; do
+    if [[ -n "$1" ]]; then
+        if [[ $1 != *$file ]]; then
+            continue
+        fi
+        file="$1"
+    fi
+    found=true
+
     name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$file" | head -1)
     if grep -q "pypi_name" "$file"; then
         pypi_name=$(sed -n "s|^%global\s\+pypi_name\s\+\(.*\)\$|\1|p" "$file")
@@ -85,12 +95,22 @@ for file in "${!anitya_ids[@]}"; do
         sed -i "s|^Version:\(\s\+\)$current_version$|Version:\1$latest_version|" "$file"
         sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
 
-        git add "$file"
-        git commit -m "$name: $current_version -> $latest_version"
+        if [[ "$NO_GIT" != "1" ]]; then
+            git add "$file"
+            git commit -m "$name: $current_version -> $latest_version"
+        fi
     fi
 done
 
 for file in "${!git_forges[@]}"; do
+    if [[ -n "$1" ]]; then
+        if [[ $1 != *$file ]]; then
+            continue
+        fi
+        file="$1"
+    fi
+    found=true
+
     name=$(sed -n "s|^Name:\s\+\(.*\)$|\1|p" "$file" | head -1)
     echo "> querying commits for $name ($file)..."
 
@@ -99,57 +119,76 @@ for file in "${!git_forges[@]}"; do
         url=$(sed -n "s|^URL:\s\+\(.*\)$|\1|p" "$file" | head -1)
         owner_repo=$(echo "$url" | sed -n "s|^https://github.com/\(.*\)$|\1|p")
 
-        if ! api_response=$(curl -fsSL "https://api.github.com/repos/$owner_repo/commits") ||
-            [[ -z "$api_response" ]]; then
-            echo -e "couldn't query github api for $name! api response: $api_response"
+        {
+            IFS=$'\n' read -r -d '' api_response_stderr
+            IFS=$'\n' read -r -d '' api_response_stdout
+        } < <((printf '\0%s\0' "$(curl -fsSLD/dev/stderr "https://api.github.com/repos/$owner_repo/commits?per_page=1&page=1")" 1>&2) 2>&1)
+        if [[ -z "$api_response_stderr" ]] || [[ -z "$api_response_stdout" ]]; then
+            echo -e "couldn't query github api for $name! api response: $api_response_stderr $api_response_stdout"
             continue
         fi
 
-        if ! latest_commit=$(echo "$api_response" | jq -r ".[0].sha") || [[ -z "$latest_commit" ]]; then
-            echo -e "couldn't parse commit hash for $name! api response: $api_response"
+        if ! latest_commit=$(echo "$api_response_stdout" | jq -r ".[0].sha") || [[ -z "$latest_commit" ]]; then
+            echo -e "couldn't parse commit hash for $name! api response: $api_response_stderr $api_response_stdout"
             continue
         fi
 
-        if ! latest_snapdate=$(date +"%Y%m%d" -d"$(echo "$api_response" | jq -r ".[0].commit.committer.date")") ||
+        if ! latest_commits=$(echo "$api_response_stderr" | sed -n 's|.*&page=\([0-9]\+\)>; rel="last"\r$|\1|p') ||
+            [[ -z "$latest_commits" ]]; then
+            echo -e "couldn't parse commit count for $name! api response: $api_response_stderr $api_response_stdout"
+            continue
+        fi
+
+        if ! latest_snapdate=$(date +"%Y%m%d" -d"$(echo "$api_response_stdout" | jq -r ".[0].commit.committer.date")") ||
             [[ -z "$latest_snapdate" ]]; then
-            echo -e "couldn't parse commit date for $name! api response: $api_response"
+            echo -e "couldn't parse commit date for $name! api response: $api_response_stderr $api_response_stdout"
             continue
         fi
         ;;
     esac
 
     current_commit=$(sed -n "s|^%global\s\+commit\s\+\(.*\)$|\1|p" "$file" | head -1)
+    current_commits=$(sed -n "s|^%global\s\+commits\s\+\(.*\)$|\1|p" "$file" | head -1)
     current_snapdate=$(sed -n "s|^%global\s\+snapdate\s\+\(.*\)$|\1|p" "$file" | head -1)
 
-    if [[ "$current_commit" != "$latest_commit" ]]; then
+    if [[ "$current_commit" != "$latest_commit" ]] || { [[ -n "$current_commits" ]] && [[ "$current_commits" < "$latest_commits" ]]; }; then
         echo "$name is not up-to-date ($current_commit @ $current_snapdate -> $latest_commit @ $latest_snapdate)! modifying attributes..."
 
         sed -i "s|^%global\(\s\+\)commit\(\s\+\)$current_commit$|%global\1commit\2$latest_commit|" "$file"
+        sed -i "s|^%global\(\s\+\)commits\(\s\+\)$current_commits$|%global\1commits\2$latest_commits|" "$file"
         sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
 
-        git add "$file"
-        git commit -F<(echo -e "$name: ${current_snapdate}g${current_commit:0:7} -> ${latest_snapdate}g${latest_commit:0:7}\n\n$url\n- $current_commit\n+ $latest_commit")
+        if [[ "$NO_GIT" != "1" ]]; then
+            git add "$file"
+            git commit -F<(echo -e "$name: ${current_snapdate}g${current_commit:0:7} -> ${latest_snapdate}g${latest_commit:0:7}\n\n$url\n- $current_commit\n+ $latest_commit")
+        fi
     fi
 done
 
-echo "> updating submodules..."
-git submodule update --recursive --remote --init
-if [[ "$(git status -s)" ]]; then
-    modified_submodules=$(git diff --name-status | grep "^M" | cut -f2 | cut -d'/' -f1)
-    git add .
-    git commit -m "treewide: update submodules"
+if [[ "$NO_GIT" != "1" ]]; then
+    echo "> updating submodules..."
+    git submodule update --recursive --remote --init
+    if [[ "$(git status -s)" ]]; then
+        modified_submodules=$(git diff --name-status | grep "^M" | cut -f2 | cut -d'/' -f1)
+        git add .
+        git commit -m "treewide: update submodules"
+    fi
+
+    git pull
+    git push
+
+    if [[ -n "$modified_submodules" ]] && [[ -n "$COPR_API_CREDENTIALS" ]]; then
+        echo "> triggering copr builds..."
+
+        pip install copr-cli
+        echo -e "$COPR_API_CREDENTIALS" >~/.config/copr
+
+        for package in $modified_submodules; do
+            ~/.local/bin/copr-cli build-package errornointernet/packages --nowait --name "$package"
+        done
+    fi
 fi
 
-git pull
-git push
-
-if [[ -n "$modified_submodules" ]] && [[ -n "$COPR_API_CREDENTIALS" ]]; then
-    echo "> triggering copr builds..."
-
-    pip install copr-cli
-    echo -e "$COPR_API_CREDENTIALS" >~/.config/copr
-
-    for package in $modified_submodules; do
-        ~/.local/bin/copr-cli build-package errornointernet/packages --nowait --name "$package"
-    done
+if ! $found; then
+    exit 2
 fi
