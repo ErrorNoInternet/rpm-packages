@@ -1,16 +1,24 @@
 diff --git a/nheko.spec b/nheko.spec
-index d31d1b4..e527ff2 100644
+index 58723d8..e2c98ab 100644
 --- a/nheko.spec
 +++ b/nheko.spec
+@@ -1,6 +1,6 @@
+ Name: nheko
+ Version: 0.12.0
+-Release: %autorelease
++Release: 15%{?dist}
+ 
+ License: GPL-3.0-or-later
+ Summary: Desktop client for the Matrix protocol
 @@ -9,6 +9,7 @@ Source0: %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
  
  # https://github.com/Nheko-Reborn/nheko/pull/1776
  Patch100: %{name}-0.12.0-fmt11-fix.patch
 +Patch101: use-kirigami-scrolling.diff
  
- BuildRequires: cmake(KDSingleApplication-qt6) >= 1.0.0
- BuildRequires: cmake(MatrixClient) >= 0.10.0
-@@ -27,6 +28,7 @@ BuildRequires: cmake(httplib) >= 0.5.12
+ # https://fedoraproject.org/wiki/Changes/EncourageI686LeafRemoval
+ %if 0%{?fedora} && 0%{?fedora} >= 42
+@@ -32,6 +33,7 @@ BuildRequires: cmake(httplib) >= 0.5.12
  BuildRequires: cmake(mpark_variant)
  BuildRequires: cmake(nlohmann_json) >= 3.11.0
  BuildRequires: cmake(spdlog) >= 1.0.0
