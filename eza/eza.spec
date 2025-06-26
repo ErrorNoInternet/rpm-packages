@@ -3,7 +3,7 @@
 %global cargo_install_lib 0
 
 Name:           eza
-Version:        0.21.5
+Version:        0.21.6
 Release:        %autorelease
 Summary:        A modern alternative to ls 
 
