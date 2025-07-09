@@ -1,7 +1,7 @@
 %bcond_with         asan
 
-%global commit      5d7e07508ae3e5487edb1ac5a152120434f091d5
-%global snapdate    20250707
+%global commit      3d594e16dd3850973336c70014a948dc97837d39
+%global snapdate    20250708
 %global tag         0.1.0
 
 Name:               quickshell-git
