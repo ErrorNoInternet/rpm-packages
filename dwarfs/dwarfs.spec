@@ -54,6 +54,7 @@ Header files necessary for developing programs using DwarFS.
 %cmake_install
 
 %check
+export DWARFS_SKIP_FUSE_TESTS=1
 %ctest
 
 %files

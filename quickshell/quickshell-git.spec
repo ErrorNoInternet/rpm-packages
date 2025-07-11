@@ -1,8 +1,8 @@
 %bcond_with         asan
 
-%global commit      20c3da01f1b2bc038582eee831e4f5055b4f71ff
-%global commits     594
-%global snapdate    20250622
+%global commit      49a3752b9d79bf9f56d8372de594d54312315470
+%global commits     618
+%global snapdate    20250711
 %global tag         0.1.0
 
 Name:               quickshell-git
@@ -70,6 +70,8 @@ Wayland and X11.
 %doc README.md
 %{_bindir}/qs
 %{_bindir}/quickshell
+%{_datadir}/applications/org.quickshell.desktop
+%{_datadir}/icons/hicolor/scalable/apps/org.quickshell.svg
 %{_libdir}/qt6/qml/Quickshell
 
 %changelog

@@ -1,7 +1,7 @@
 %global alt_pkg_name swayosd
 
 Name:           SwayOSD
-Version:        0.2.0
+Version:        0.2.1
 Release:        %autorelease
 Summary:        GTK based on screen display
 License:        GPL-3.0-or-later
@@ -45,7 +45,6 @@ cargo vendor
 
 %install
 %meson_install
-rm %{buildroot}%{_datadir}/licenses/swayosd/LICENSE
 mkdir -p %{buildroot}%{_prefix}/lib/systemd/system
 mv %{buildroot}%{_libdir}/systemd/system/swayosd-libinput-backend.service %{buildroot}%{_prefix}/lib/systemd/system/swayosd-libinput-backend.service
 mkdir -p %{buildroot}%{_prefix}/lib/udev/rules.d

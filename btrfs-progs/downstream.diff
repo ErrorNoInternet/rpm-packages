@@ -1,5 +1,5 @@
 diff --git a/btrfs-progs.spec b/btrfs-progs.spec
-index 591eb86..e728e93 100644
+index 934fd22..4613c1d 100644
 --- a/btrfs-progs.spec
 +++ b/btrfs-progs.spec
 @@ -16,6 +16,9 @@ Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
@@ -32,17 +32,17 @@ index 591eb86..e728e93 100644
  pushd libbtrfsutil/python
 diff --git a/dump-csum.diff b/dump-csum.diff
 new file mode 100644
-index 0000000..7f3b177
+index 0000000..f7a05e2
 --- /dev/null
 +++ b/dump-csum.diff
 @@ -0,0 +1,347 @@
 +diff --git a/Makefile b/Makefile
-+index c0428c57..35e26c34 100644
++index 523b8349..309b2d38 100644
 +--- a/Makefile
 ++++ b/Makefile
 +@@ -258,8 +258,8 @@ cmds_objects = cmds/subvolume.o cmds/subvolume-list.o \
 + 	       cmds/restore.o cmds/rescue.o cmds/rescue-chunk-recover.o \
-+ 	       cmds/rescue-super-recover.o \
++ 	       cmds/rescue-super-recover.o cmds/rescue-fix-data-checksum.o \
 + 	       cmds/property.o cmds/filesystem-usage.o cmds/inspect-dump-tree.o \
 +-	       cmds/inspect-dump-super.o cmds/inspect-tree-stats.o cmds/filesystem-du.o \
 +-	       cmds/reflink.o \
@@ -336,7 +336,7 @@ index 0000000..7f3b177
 ++}
 ++DEFINE_SIMPLE_COMMAND(inspect_dump_csum, "dump-csum");
 +diff --git a/cmds/inspect.c b/cmds/inspect.c
-+index d689e085..188eb526 100644
++index 04c466c8..85001925 100644
 +--- a/cmds/inspect.c
 ++++ b/cmds/inspect.c
 +@@ -1561,6 +1561,7 @@ static const struct cmd_group inspect_cmd_group = {
@@ -348,10 +348,10 @@ index 0000000..7f3b177
 + 		&cmd_struct_inspect_list_chunks,
 + 		NULL
 +diff --git a/common/utils.c b/common/utils.c
-+index 3ca7cff3..81338b43 100644
++index 9515abd4..17d87542 100644
 +--- a/common/utils.c
 ++++ b/common/utils.c
-+@@ -1399,3 +1399,17 @@ out:
++@@ -1400,3 +1400,17 @@ out:
 + 
 + 	return ret;
 + }
@@ -370,10 +370,10 @@ index 0000000..7f3b177
 ++	return 0;
 ++}
 +diff --git a/common/utils.h b/common/utils.h
-+index 56d00ed8..ee62d82c 100644
++index 1419850d..cc66fe01 100644
 +--- a/common/utils.h
 ++++ b/common/utils.h
-+@@ -87,6 +87,8 @@ unsigned long total_memory(void);
++@@ -86,6 +86,8 @@ unsigned long total_memory(void);
 + void print_device_info(struct btrfs_device *device, char *prefix);
 + void print_all_devices(struct list_head *devices);
 + 
@@ -385,15 +385,15 @@ index 0000000..7f3b177
 +
 diff --git a/ignore-receive-errors.diff b/ignore-receive-errors.diff
 new file mode 100644
-index 0000000..a6a7c6a
+index 0000000..a4bd33c
 --- /dev/null
 +++ b/ignore-receive-errors.diff
-@@ -0,0 +1,15 @@
+@@ -0,0 +1,16 @@
 +diff --git a/cmds/receive.c b/cmds/receive.c
-+index e4430b07..8110ea54 100644
++index 4ac76015..8df27f99 100644
 +--- a/cmds/receive.c
 ++++ b/cmds/receive.c
-+@@ -868,8 +868,8 @@ static int process_remove_xattr(const char *path, const char *name, void *user)
++@@ -880,8 +880,8 @@ static int process_remove_xattr(const char *path, const char *name, void *user)
 + 
 + 	ret = lremovexattr(full_path, name);
 + 	if (ret < 0) {
@@ -404,3 +404,4 @@ index 0000000..a6a7c6a
 + 		goto out;
 + 	}
 + 
++

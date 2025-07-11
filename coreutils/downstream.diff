@@ -1119,10 +1119,10 @@ index 91bc5b5..0000000
 -2.48.1
 -
 diff --git a/coreutils.spec b/coreutils.spec
-index 23eb924..933326d 100644
+index 47c546e..e89eca0 100644
 --- a/coreutils.spec
 +++ b/coreutils.spec
-@@ -44,7 +44,10 @@ Patch106: coreutils-9.6-who-m-systemd.patch
+@@ -58,7 +58,10 @@ Patch109: coreutils-9.6-ls-selinux-crash-2.patch
  Patch800: coreutils-i18n.patch
  
  # downstream SELinux options deprecated since 2009
