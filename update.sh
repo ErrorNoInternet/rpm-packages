@@ -124,7 +124,13 @@ for file in "${!git_forges[@]}"; do
             IFS=$'\n' read -r -d '' api_response_stdout
         } < <((printf '\0%s\0' "$(curl -fsSLD/dev/stderr "https://api.github.com/repos/$owner_repo/commits?per_page=1&page=1")" 1>&2) 2>&1)
         if [[ -z "$api_response_stderr" ]] || [[ -z "$api_response_stdout" ]]; then
-            echo -e "couldn't query github api for $name! api response: $api_response_stderr $api_response_stdout"
+            echo -e "couldn't query commits from github api for $name! api response: $api_response_stderr $api_response_stdout"
+            continue
+        fi
+
+        if ! latest_tag=$(curl -fsSL "https://api.github.com/repos/$owner_repo/tags" | jq -r '.[0].name' | sed -n 's|^v\(.*\)$|\1|p') ||
+            [[ -z "$latest_tag" ]]; then
+            echo -e "couldn't query tags from github api for $name! api response: $api_response"
             continue
         fi
 
@@ -147,6 +153,7 @@ for file in "${!git_forges[@]}"; do
         ;;
     esac
 
+    current_tag=$(sed -n "s|^%global\s\+tag\s\+\(.*\)$|\1|p" "$file" | head -1)
     current_commit=$(sed -n "s|^%global\s\+commit\s\+\(.*\)$|\1|p" "$file" | head -1)
     current_commits=$(sed -n "s|^%global\s\+commits\s\+\(.*\)$|\1|p" "$file" | head -1)
     current_snapdate=$(sed -n "s|^%global\s\+snapdate\s\+\(.*\)$|\1|p" "$file" | head -1)
@@ -154,6 +161,7 @@ for file in "${!git_forges[@]}"; do
     if [[ "$current_commit" != "$latest_commit" ]] || { [[ -n "$current_commits" ]] && [[ "$current_commits" < "$latest_commits" ]]; }; then
         echo "$name is not up-to-date ($current_commit @ $current_snapdate -> $latest_commit @ $latest_snapdate)! modifying attributes..."
 
+        sed -i "s|^%global\(\s\+\)tag\(\s\+\)$current_tag$|%global\1tag\2$latest_tag|" "$file"
         sed -i "s|^%global\(\s\+\)commit\(\s\+\)$current_commit$|%global\1commit\2$latest_commit|" "$file"
         sed -i "s|^%global\(\s\+\)commits\(\s\+\)$current_commits$|%global\1commits\2$latest_commits|" "$file"
         sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
