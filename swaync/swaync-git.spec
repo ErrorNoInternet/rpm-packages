@@ -1,5 +1,5 @@
-%global commit          7e34c7525c3869aa72bf7cfb998f0b406fa0aa92
-%global snapdate        20250715
+%global commit          18bc45700681256cb07f7f9530a60bfe0ca4f45f
+%global snapdate        20250716
 %global latest          0.12.0
 %global alt_pkg_name    swaync-git
 
