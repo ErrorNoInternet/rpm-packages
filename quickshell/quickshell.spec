@@ -1,7 +1,7 @@
 %bcond_with         asan
 
 Name:               quickshell
-Version:            0.1.0
+Version:            0.2.0
 Release:            %autorelease
 Summary:            Flexible QtQuick based desktop shell toolkit
 
@@ -63,6 +63,8 @@ Wayland and X11.
 %doc README.md
 %{_bindir}/qs
 %{_bindir}/quickshell
+%{_datadir}/applications/org.quickshell.desktop
+%{_datadir}/icons/hicolor/scalable/apps/org.quickshell.svg
 %{_libdir}/qt6/qml/Quickshell
 
 %changelog

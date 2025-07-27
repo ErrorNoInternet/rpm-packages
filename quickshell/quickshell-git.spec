@@ -1,11 +1,12 @@
 %bcond_with         asan
 
-%global commit      0416032a7c2f2fdab2abdd262a4e4f8a5c6dcea5
+%global commit      a5431dd02dc23d9ef1680e67777fed00fe5f7cda
+%global commits     665
 %global snapdate    20250727
-%global tag         0.1.0
+%global tag         0.2.0
 
 Name:               quickshell-git
-Version:            %{tag}^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
+Version:            %{tag}^%{commits}.git%(c=%{commit}; echo ${c:0:7})
 Release:            %autorelease
 Summary:            Flexible QtQuick based desktop shell toolkit
 
