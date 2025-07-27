@@ -68,6 +68,7 @@ Wayland and X11.
 %doc BUILD.md
 %doc CONTRIBUTING.md
 %doc README.md
+%doc changelog/v%{tag}.md
 %{_bindir}/qs
 %{_bindir}/quickshell
 %{_datadir}/applications/org.quickshell.desktop
