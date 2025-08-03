@@ -1,5 +1,5 @@
 %global goipath         github.com/schollz/croc
-Version:                10.2.2
+Version:                10.2.3
 
 %gometa -L -f
 
