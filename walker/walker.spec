@@ -12,23 +12,23 @@
 
 # https://github.com/abenz1267/walker
 %global goipath         github.com/abenz1267/walker
-Version:                1.0.0~beta~5
+Version:                1.0.0-beta-5
 
 %gometa -L -f
 
 %global common_description %{expand:
-Walker is a highly extendable application launcher that does not hold
-back on features and usability. Fast. Unclutters your brain. Improves
-your workflow.}
+A fast, customizable application launcher built with GTK4 and Rust, designed
+for Linux desktop environments. Walker provides a clean, modern interface for
+launching applications, running commands, performing calculations, and more.}
 
 %global golicenses      LICENSE
 %global godocs          README.md cmd/version.txt
 
 Name:           walker
 Release:        1%{?dist}
-Summary:        Wayland-native application launcher
+Summary:        Multi-Purpose Launcher with a lot of features
 
-License:        MIT
+License:        GPL-3.0-only
 URL:            %{gourl}
 Source:         %{gosource}
 
