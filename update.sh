@@ -10,6 +10,7 @@ declare -A anitya_ids=(
     ["doggo/doggo.spec"]=373317
     ["du-dust/du-dust.spec"]=141344
     ["dwarfs/dwarfs.spec"]=377534
+    ["elephant/elephant.spec"]=383324
     ["eza/eza.spec"]=370028
     ["git-graph/git-graph.spec"]=372785
     ["gtk4-layer-shell/gtk4-layer-shell.spec"]=359774
