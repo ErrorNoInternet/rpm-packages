@@ -30,7 +30,7 @@ Summary:        Multi-Purpose Launcher with a lot of features
 
 License:        GPL-3.0-only
 URL:            %{gourl}
-Source:         %{gosource}
+Source:         %(s=%{gosource}; echo ${s//\~/-})
 
 BuildRequires:  git
 BuildRequires:  pkgconfig(cairo-gobject)
