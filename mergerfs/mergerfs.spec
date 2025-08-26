@@ -1,6 +1,6 @@
 Name:           mergerfs
-Version:        2.40.2
-Release:        3%{?dist}
+Version:        2.41.0~rc0
+Release:        1%{?dist}
 Summary:        A featureful union filesystem
 
 License:        ISC
