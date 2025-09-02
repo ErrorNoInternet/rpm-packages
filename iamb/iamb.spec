@@ -12,7 +12,7 @@ Summary:        Matrix chat client that uses Vim keybindings
 License:        Apache-2.0
 
 URL:            https://github.com/ulyssa/iamb
-Source:         %{url}/archive/refs/tags/v%{version}.tar.gz
+Source:         %{url}/archive/refs/tags/v%(v=%{version}; echo ${v//\~/-}).tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
 
