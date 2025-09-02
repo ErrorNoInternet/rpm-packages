@@ -1,5 +1,5 @@
 diff --git a/btrfs-progs.spec b/btrfs-progs.spec
-index 934fd22..4613c1d 100644
+index 20c9fbb..bae9d4c 100644
 --- a/btrfs-progs.spec
 +++ b/btrfs-progs.spec
 @@ -16,6 +16,9 @@ Source2:        gpgkey-F2B41200C54EFB30380C1756C565D5F9D76D583B.gpg
@@ -23,13 +23,13 @@ index 934fd22..4613c1d 100644
  # Specially apply this source
 @@ -102,7 +105,7 @@ xzcat '%{SOURCE0}' | %{gpgverify} --keyring='%{SOURCE2}' --signature='%{SOURCE1}
  
- %build
+ # this generates version.py so we have to run it early
  ./autogen.sh
 -%configure CFLAGS="%{optflags} -fno-strict-aliasing" --with-crypto=libgcrypt --disable-python
 +%configure CFLAGS="%{optflags} -fno-strict-aliasing" --with-crypto=libgcrypt --disable-python --enable-experimental
- %make_build
  
- pushd libbtrfsutil/python
+ %generate_buildrequires
+ pushd libbtrfsutil/python >/dev/null
 diff --git a/dump-csum.diff b/dump-csum.diff
 new file mode 100644
 index 0000000..f7a05e2
