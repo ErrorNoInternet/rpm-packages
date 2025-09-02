@@ -22,7 +22,7 @@ A Matrix chat client that uses Vim keybindings.}
 %description %{_description}
 
 %prep
-%autosetup -n %{crate}-%{version} -p1
+%autosetup -n %{crate}-%(v=%{version}; echo ${v//\~/-}) -p1
 cargo vendor
 %cargo_prep -v vendor
 
