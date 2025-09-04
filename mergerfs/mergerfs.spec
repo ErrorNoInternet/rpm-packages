@@ -5,7 +5,7 @@ Summary:        A featureful union filesystem
 
 License:        ISC
 URL:            https://github.com/trapexit/mergerfs
-Source:         %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Source:         %{url}/archive/%(v=%{version}; echo ${v//\~/-})/%{name}-%(v=%{version}; echo ${v//\~/-}).tar.gz
 
 BuildRequires:  gcc-c++
 BuildRequires:  git
@@ -17,7 +17,7 @@ management of files across numerous commodity storage devices. It is
 similar to mhddfs, unionfs, and aufs.
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n %{name}-%(v=%{version}; echo ${v//\~/-})
 
 %build
 sed -i 's/chown root/# chown root/' libfuse/Makefile

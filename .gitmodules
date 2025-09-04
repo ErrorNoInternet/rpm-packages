@@ -38,10 +38,6 @@
 	path = fcitx5/upstream
 	url = https://src.fedoraproject.org/rpms/fcitx5
 	branch = f42
-[submodule "nheko/upstream"]
-	path = nheko/upstream
-	url = https://src.fedoraproject.org/rpms/nheko
-	branch = f42
 [submodule "elinks/upstream"]
 	path = elinks/upstream
 	url = https://src.fedoraproject.org/rpms/elinks
