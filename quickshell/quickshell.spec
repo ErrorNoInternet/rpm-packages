@@ -9,6 +9,9 @@ License:            LGPL-3.0-only AND GPL-3.0-only
 URL:                https://github.com/quickshell-mirror/quickshell
 Source0:            %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
+%if 0%{fedora} >= 43
+BuildRequires:      breakpad-static
+%endif
 BuildRequires:      cmake
 BuildRequires:      cmake(Qt6Core)
 BuildRequires:      cmake(Qt6Qml)

@@ -16,6 +16,9 @@ Source0:            %{url}/archive/%{commit}/quickshell-%{commit}.tar.gz
 
 Conflicts:          quickshell <= %{tag}
 
+%if 0%{fedora} >= 43
+BuildRequires:      breakpad-static
+%endif
 BuildRequires:      cmake
 BuildRequires:      cmake(Qt6Core)
 BuildRequires:      cmake(Qt6Qml)
