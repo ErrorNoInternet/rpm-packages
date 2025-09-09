@@ -42,6 +42,8 @@ BuildRequires:      spirv-tools
 BuildRequires:      libasan
 %endif
 
+Provides:           desktop-notification-daemon
+
 %description
 Flexible toolkit for making desktop shells with QtQuick, targeting
 Wayland and X11.
