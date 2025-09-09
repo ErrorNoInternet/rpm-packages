@@ -2,7 +2,7 @@
 %global cargo_install_lib 0
 
 Name:           wl-screenrec
-Version:        0.1.7
+Version:        0.2.0
 Release:        %autorelease
 Summary:        High performance screen/audio recorder for wlroots
 
