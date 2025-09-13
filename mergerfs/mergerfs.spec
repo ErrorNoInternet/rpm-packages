@@ -20,7 +20,7 @@ similar to mhddfs, unionfs, and aufs.
 %autosetup -p1 -n %{name}-%(v=%{version}; echo ${v//\~/-})
 
 %build
-sed -i 's/chown root/# chown root/' libfuse/Makefile
+sed -i 's/$(CHOWN) root/# $(CHOWN) root/' libfuse/Makefile
 %make_build
 
 %install
