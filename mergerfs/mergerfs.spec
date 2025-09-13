@@ -30,11 +30,10 @@ mv %{buildroot}/sbin/mount.mergerfs %{buildroot}%{_bindir}
 chmod +s %{buildroot}%{_bindir}/mergerfs
 
 %files
-%doc README.md
 %license LICENSE
-%{_bindir}/mergerfs
-%{_bindir}/mergerfs-fusermount
-%{_bindir}/mount.mergerfs
+%doc README.md
+%{_bindir}/*.mergerfs
+%{_bindir}/mergerfs*
 %{_libdir}/mergerfs/preload.so
 %{_mandir}/*
 
