@@ -9,7 +9,7 @@ Version:        1.0.3
 Release:        %autorelease
 Summary:        Multi-Purpose Launcher with a lot of features
 
-License:        # FIXME
+License:        ((Apache-2.0 OR MIT) AND BSD-3-Clause) AND (0BSD OR MIT OR Apache-2.0) AND Apache-2.0 AND (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND CC0-1.0 AND ISC AND MIT AND (MIT OR Apache-2.0) AND (MIT OR Zlib OR Apache-2.0) AND MPL-2.0 AND (Unlicense OR MIT) AND Zlib
 SourceLicense:  GPL-3.0-only
 
 URL:            https://github.com/abenz1267/walker
