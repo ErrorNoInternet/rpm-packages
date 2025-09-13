@@ -6,8 +6,6 @@ Version:        0.2.0
 Release:        %autorelease
 Summary:        High performance screen/audio recorder for wlroots
 
-SourceLicense:  Apache-2.0
-
 # Apache-2.0 OR MIT
 # Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT
 # ISC
@@ -16,6 +14,7 @@ SourceLicense:  Apache-2.0
 # Unlicense OR MIT
 # WTFPL
 License:        Apache-2.0 AND (Apache-2.0 OR MIT) AND (Apache-2.0 WITH LLVM-exception OR Apache-2.0 OR MIT) AND ISC AND MIT AND (MIT OR Apache-2.0) AND (Unlicense OR MIT) and WTFPL
+SourceLicense:  Apache-2.0
 
 URL:            https://github.com/russelltg/wl-screenrec
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
@@ -35,17 +34,19 @@ High performance screen/audio recorder for wlroots.}
 %description %{_description}
 
 %prep
-%autosetup -n %{name}-%{version} -p1
+%autosetup -p1
 cargo vendor
 %cargo_prep -v vendor
 
 %build
+export CARGO_NET_OFFLINE=false
 %cargo_build
 %{cargo_license_summary}
 %{cargo_license} > LICENSE.dependencies
 %{cargo_vendor_manifest}
 
 %install
+export CARGO_NET_OFFLINE=false
 %cargo_install
 
 %files
