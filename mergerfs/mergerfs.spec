@@ -9,6 +9,8 @@ Source:         %{url}/archive/%(v=%{version}; echo ${v//\~/-})/%{name}-%(v=%{ve
 
 BuildRequires:  gcc-c++
 BuildRequires:  git
+BuildRequires:  libatomic
+
 Requires:       fuse
 
 %description
