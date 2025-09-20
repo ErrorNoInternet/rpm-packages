@@ -33,6 +33,10 @@ License:        GPL-3.0-only
 URL:            %{gourl}
 Source:         %{gosource}
 
+Patch:          elephant-golang-1.24.7.patch
+
+BuildRequires:  git
+
 %description %{common_description}
 
 %gopkg
