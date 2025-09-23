@@ -10,6 +10,8 @@
 %global __requires_exclude %{?__requires_exclude:%{__requires_exclude}|}^golang\\(.*\\)$
 %endif
 
+%global providers archlinuxpkgs calc clipboard desktopapplications files menus providerlist runner symbols todo unicode websearch
+
 # https://github.com/abenz1267/elephant
 %global goipath         github.com/abenz1267/elephant
 Version:                1.0.7
@@ -26,7 +28,7 @@ productivity tools, or desktop widgets.}
 %global godocs          README.md cmd/elephant/version.txt
 
 Name:           elephant
-Release:        %autorelease
+Release:        2%{?dist}
 Summary:        Unified backend service that aggregates data
 
 License:        GPL-3.0-only
@@ -41,6 +43,16 @@ BuildRequires:  git
 
 %gopkg
 
+%{lua:
+for prov in string.gmatch(macros.providers, "%S+") do
+  print("%package "..prov.."\n")
+  print("Summary: "..prov.." provider for elephant\n")
+  print("\n%description "..prov.."\n"..prov.." provider for elephant.\n")
+  print("%files "..prov.."\n")
+  print("/etc/xdg/elephant/providers/"..prov..".so\n\n")
+end
+}
+
 %prep
 %goprep -A
 %autopatch -p1
@@ -51,8 +63,14 @@ go mod vendor
 
 %if %{without bootstrap}
 %build
+%define gomodulesmode GO111MODULE=on
 for cmd in cmd/* ; do
   %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
+done
+for prov in internal/providers/*/; do
+  pushd $prov
+  %gobuild -buildmode=plugin
+  popd
 done
 %endif
 
@@ -61,6 +79,7 @@ done
 %if %{without bootstrap}
 install -m 0755 -vd                     %{buildroot}%{_bindir}
 install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
+install -Dm755 internal/providers/*/*.so -t %{buildroot}/etc/xdg/elephant/providers/
 %endif
 
 %if %{without bootstrap}
@@ -75,6 +94,7 @@ install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 %license LICENSE vendor/modules.txt
 %doc README.md cmd/elephant/version.txt
 %{_bindir}/*
+%ghost /etc/xdg/elephant/
 %endif
 
 %gopkgfiles
