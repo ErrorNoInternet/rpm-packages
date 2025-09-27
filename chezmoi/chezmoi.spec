@@ -94,6 +94,7 @@ go mod vendor
 
 %if %{without bootstrap}
 %build
+%define gomodulesmode GO111MODULE=on
 export GO_BUILDTAGS="noupgrade"
 export GO_LDFLAGS="-X main.version=%{version}
                    -X main.date=${SOURCE_DATE_EPOCH:-}
