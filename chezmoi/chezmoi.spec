@@ -42,6 +42,8 @@ License:        MIT
 URL:            %{gourl}
 Source:         %{gosource}
 
+Patch:          chezmoi-golang-1.24.7.patch
+
 BuildRequires:  git
 
 Recommends:     git

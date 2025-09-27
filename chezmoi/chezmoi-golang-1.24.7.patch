@@ -1,0 +1,13 @@
+diff --git a/go.mod b/go.mod
+index 4dd6c120d..2a2fe5581 100644
+--- a/go.mod
++++ b/go.mod
+@@ -1,6 +1,6 @@
+ module chezmoi.io/chezmoi
+ 
+-go 1.25.1
++go 1.24.7
+ 
+ tool (
+ 	chezmoi.io/chezmoi
+
