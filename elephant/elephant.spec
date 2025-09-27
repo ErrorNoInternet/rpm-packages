@@ -39,6 +39,12 @@ Patch:          elephant-golang-1.24.7.patch
 
 BuildRequires:  git
 
+%{lua:
+for prov in string.gmatch(macros.providers, "%S+") do
+  print("Recommends: elephant-"..prov.."\n")
+end
+}
+
 %description %{common_description}
 
 %gopkg
