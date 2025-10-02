@@ -28,7 +28,7 @@ productivity tools, or desktop widgets.}
 %global godocs          README.md cmd/elephant/version.txt
 
 Name:           elephant
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Unified backend service that aggregates data
 
 License:        GPL-3.0-only
@@ -100,7 +100,6 @@ install -Dm755 internal/providers/*/*.so -t %{buildroot}/etc/xdg/elephant/provid
 %license LICENSE vendor/modules.txt
 %doc README.md cmd/elephant/version.txt
 %{_bindir}/*
-%ghost /etc/xdg/elephant/
 %endif
 
 %gopkgfiles
