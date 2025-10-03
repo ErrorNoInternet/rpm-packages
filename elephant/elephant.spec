@@ -10,7 +10,7 @@
 %global __requires_exclude %{?__requires_exclude:%{__requires_exclude}|}^golang\\(.*\\)$
 %endif
 
-%global providers archlinuxpkgs calc clipboard desktopapplications files menus providerlist runner symbols todo unicode websearch
+%global providers archlinuxpkgs bluetooth calc clipboard desktopapplications files menus providerlist runner symbols todo unicode websearch
 
 # https://github.com/abenz1267/elephant
 %global goipath         github.com/abenz1267/elephant
