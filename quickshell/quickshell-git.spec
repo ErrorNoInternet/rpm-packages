@@ -1,7 +1,7 @@
 %bcond_with         asan
 
-%global commit      c9d3ffb6043c5bf3f3009202bad7e0e5132c4a25
-%global commits     693
+%global commit      1e8cc2e78da0cdfa98aafb02d9c1b22e71e07dff
+%global commits     695
 %global snapdate    20251012
 %global tag         0.2.1
 
