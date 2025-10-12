@@ -3,7 +3,7 @@
 %global commit      f12f0e7c7d883f737ac45b88c5993090b3c87cce
 %global commits     692
 %global snapdate    20251011
-%global tag         0.2.0
+%global tag         0.2.1
 
 Name:               quickshell-git
 Version:            %{tag}^%{commits}.git%(c=%{commit}; echo ${c:0:7})
