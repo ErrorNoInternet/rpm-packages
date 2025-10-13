@@ -54,6 +54,24 @@ for prov in string.gmatch(macros.providers, "%S+") do
   print("%package "..prov.."\n")
   print("Summary: "..prov.." provider for elephant\n")
   print("\n%description "..prov.."\n"..prov.." provider for elephant.\n")
+
+  if prov == "bluetooth" then
+    print("Recommends: bluez")
+  elseif prov == "calc" then
+    print("Recommends: qalculate")
+    print("Recommends: wl-clipboard")
+  elseif prov == "clipboard" then
+    print("Recommends: wl-clipboard")
+  elseif prov == "files" then
+    print("Recommends: fd")
+  elseif prov == "symbols" then
+    print("Recommends: wl-clipboard")
+  elseif prov == "todo" then
+    print("Recommends: libnotify")
+  elseif prov == "libnotify" then
+    print("Recommends: wl-clipboard")
+  end
+
   print("%files "..prov.."\n")
   print("/etc/xdg/elephant/providers/"..prov..".so\n\n")
 end

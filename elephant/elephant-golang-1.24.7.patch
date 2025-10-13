@@ -1,9 +1,9 @@
 diff --git a/go.mod b/go.mod
-index 32ae26c..9de6199 100644
+index 7deae1a..b703868 100644
 --- a/go.mod
 +++ b/go.mod
 @@ -1,6 +1,6 @@
- module github.com/abenz1267/elephant
+ module github.com/abenz1267/elephant/v2
  
 -go 1.25.0
 +go 1.24.7
