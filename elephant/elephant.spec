@@ -14,7 +14,7 @@
 
 # https://github.com/abenz1267/elephant
 %global goipath         github.com/abenz1267/elephant
-Version:                2.1.7
+Version:                2.1.8
 
 %gometa -L -f
 
