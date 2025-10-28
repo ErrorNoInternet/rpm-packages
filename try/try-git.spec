@@ -1,4 +1,4 @@
-%global commit          1d5160e3312ae2e853411c9b7150044b8e63feec
+%global commit          7d9d59d7df2c50d8011a08086db142cd7b20f218
 %global snapdate        20251027
 %global latest          0.2.0
 
