@@ -43,6 +43,25 @@ Requires:   %{name}%{?_isa} = %{version}-%{release}
 %description devel
 Header files necessary for developing programs using DwarFS.
 
+%package bash-completion
+BuildArch:      noarch
+Summary:        Bash completion files for %{name}
+Provides:       %{name}-bash-completion = %{version}-%{release}
+
+Requires:       bash-completion
+Requires:       %{name} = %{version}-%{release}
+
+%description bash-completion
+This package installs Bash completion files for %{name}
+
+%package zsh-completion
+BuildArch:      noarch
+Summary:        Zsh completion files for %{name}
+Provides:       %{name}-zsh-completion = %{version}-%{release}
+
+Requires:       zsh
+Requires:       %{name} = %{version}-%{release}
+
 %prep
 %autosetup -p1
 
@@ -63,9 +82,11 @@ export DWARFS_SKIP_FUSE_TESTS=1
 %{_bindir}/dwarfsck
 %{_bindir}/dwarfsextract
 %{_bindir}/mkdwarfs
+%{_datadir}/applications/*.desktop
 %{_libdir}/libdwarfs*
 %{_mandir}/man1/*
 %{_mandir}/man5/*
+%{_mandir}/man7/*
 %if 0%{?fedora} && 0%{?fedora} < 42
 %{_prefix}/sbin/dwarfs
 %{_prefix}/sbin/mount.dwarfs
@@ -77,6 +98,12 @@ export DWARFS_SKIP_FUSE_TESTS=1
 %files devel
 %{_includedir}/dwarfs/*
 %{_libdir}/cmake/dwarfs/*
+
+%files bash-completion
+%{bash_completions_dir}/*
+
+%files zsh-completion
+%{zsh_completions_dir}/*
 
 %changelog
 %autochangelog
