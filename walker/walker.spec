@@ -5,7 +5,7 @@
 %global cargo_install_lib 0
 
 Name:           walker
-Version:        2.7.1
+Version:        2.7.2
 Release:        %autorelease
 Summary:        Multi-Purpose Launcher with a lot of features
 
