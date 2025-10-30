@@ -34,6 +34,7 @@ BuildRequires:      pkgconfig(jemalloc)
 BuildRequires:      pkgconfig(libdrm)
 BuildRequires:      pkgconfig(libpipewire-0.3)
 BuildRequires:      pkgconfig(pam)
+BuildRequires:      pkgconfig(polkit-agent-1)
 BuildRequires:      pkgconfig(wayland-client)
 BuildRequires:      pkgconfig(wayland-protocols)
 BuildRequires:      qt6-qtbase-private-devel
