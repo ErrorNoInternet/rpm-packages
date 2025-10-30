@@ -29,6 +29,7 @@ BuildRequires:      ninja-build
 BuildRequires:      pkgconfig(breakpad)
 BuildRequires:      pkgconfig(CLI11)
 BuildRequires:      pkgconfig(gbm)
+BuildRequires:      pkgconfig(glib-2.0)
 BuildRequires:      pkgconfig(jemalloc)
 BuildRequires:      pkgconfig(libdrm)
 BuildRequires:      pkgconfig(libpipewire-0.3)
