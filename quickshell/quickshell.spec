@@ -2,7 +2,7 @@
 
 Name:               quickshell
 Version:            0.2.1
-Release:            1%{?dist}
+Release:            2%{?dist}
 Summary:            Flexible QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
