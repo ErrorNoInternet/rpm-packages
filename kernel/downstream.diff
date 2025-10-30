@@ -513,13 +513,13 @@ index 000000000..0bcf73b77
 +
 diff --git a/bbr3.patch b/bbr3.patch
 new file mode 100644
-index 000000000..ced54653c
+index 000000000..e6eae3668
 --- /dev/null
 +++ b/bbr3.patch
 @@ -0,0 +1,3404 @@
-+From f134ee18c49208ae3b5f56086ab0e2862c5ad8ff Mon Sep 17 00:00:00 2001
++From a39e2324ad0b4d8ca76c33fedaf18d82204e7068 Mon Sep 17 00:00:00 2001
 +From: Peter Jung <admin@ptr1337.dev>
-+Date: Thu, 28 Aug 2025 18:19:23 +0200
++Date: Sat, 25 Oct 2025 09:17:42 +0200
 +Subject: [PATCH 2/6] bbr3
 +
 +Signed-off-by: Peter Jung <admin@ptr1337.dev>
@@ -543,10 +543,10 @@ index 000000000..ced54653c
 + 16 files changed, 1941 insertions(+), 555 deletions(-)
 +
 +diff --git a/include/linux/tcp.h b/include/linux/tcp.h
-+index 29f59d50dc73..811850c240cc 100644
++index 57e478bfaef2..0ea92792629c 100644
 +--- a/include/linux/tcp.h
 ++++ b/include/linux/tcp.h
-+@@ -248,7 +248,8 @@ struct tcp_sock {
++@@ -247,7 +247,8 @@ struct tcp_sock {
 + 	void (*tcp_clean_acked)(struct sock *sk, u32 acked_seq);
 + #endif
 + 	u32	snd_ssthresh;	/* Slow start size threshold		*/
@@ -556,7 +556,7 @@ index 000000000..ced54653c
 + 	__cacheline_group_end(tcp_sock_read_rx);
 + 
 + 	/* TX read-write hotpath cache lines */
-+@@ -305,7 +306,8 @@ struct tcp_sock {
++@@ -304,7 +305,8 @@ struct tcp_sock {
 +  */
 + 	struct tcp_options_received rx_opt;
 + 	u8	nonagle     : 4,/* Disable Nagle algorithm?             */
@@ -582,10 +582,10 @@ index 000000000..ced54653c
 + 
 + #define ICSK_TIME_RETRANS	1	/* Retransmit timer */
 +diff --git a/include/net/tcp.h b/include/net/tcp.h
-+index 5078ad868fee..de404e4370d4 100644
++index 526a26e7a150..564084c537c7 100644
 +--- a/include/net/tcp.h
 ++++ b/include/net/tcp.h
-+@@ -379,11 +379,14 @@ static inline void tcp_dec_quickack_mode(struct sock *sk)
++@@ -378,11 +378,14 @@ static inline void tcp_dec_quickack_mode(struct sock *sk)
 + #define	TCP_ECN_DEMAND_CWR	BIT(2)
 + #define	TCP_ECN_SEEN		BIT(3)
 + #define	TCP_ECN_MODE_ACCECN	BIT(4)
@@ -600,7 +600,7 @@ index 000000000..ced54653c
 + static inline bool tcp_ecn_mode_any(const struct tcp_sock *tp)
 + {
 + 	return tp->ecn_flags & TCP_ECN_MODE_ANY;
-+@@ -841,6 +844,15 @@ static inline void tcp_fast_path_check(struct sock *sk)
++@@ -840,6 +843,15 @@ static inline void tcp_fast_path_check(struct sock *sk)
 + 
 + u32 tcp_delack_max(const struct sock *sk);
 + 
@@ -616,7 +616,7 @@ index 000000000..ced54653c
 + /* Compute the actual rto_min value */
 + static inline u32 tcp_rto_min(const struct sock *sk)
 + {
-+@@ -946,6 +958,11 @@ static inline u32 tcp_stamp_us_delta(u64 t1, u64 t0)
++@@ -945,6 +957,11 @@ static inline u32 tcp_stamp_us_delta(u64 t1, u64 t0)
 + 	return max_t(s64, t1 - t0, 0);
 + }
 + 
@@ -628,7 +628,7 @@ index 000000000..ced54653c
 + /* provide the departure time in us unit */
 + static inline u64 tcp_skb_timestamp_us(const struct sk_buff *skb)
 + {
-+@@ -1044,9 +1061,14 @@ struct tcp_skb_cb {
++@@ -1043,9 +1060,14 @@ struct tcp_skb_cb {
 + 			/* pkts S/ACKed so far upon tx of skb, incl retrans: */
 + 			__u32 delivered;
 + 			/* start of send pipeline phase */
@@ -645,7 +645,7 @@ index 000000000..ced54653c
 + 		} tx;   /* only used for outgoing skbs */
 + 		union {
 + 			struct inet_skb_parm	h4;
-+@@ -1159,6 +1181,7 @@ enum tcp_ca_event {
++@@ -1158,6 +1180,7 @@ enum tcp_ca_event {
 + 	CA_EVENT_LOSS,		/* loss timeout */
 + 	CA_EVENT_ECN_NO_CE,	/* ECT set, but not CE marked */
 + 	CA_EVENT_ECN_IS_CE,	/* received CE marked IP packet */
@@ -653,7 +653,7 @@ index 000000000..ced54653c
 + };
 + 
 + /* Information about inbound ACK, passed to cong_ops->in_ack_event() */
-+@@ -1181,7 +1204,11 @@ enum tcp_ca_ack_event_flags {
++@@ -1180,7 +1203,11 @@ enum tcp_ca_ack_event_flags {
 + #define TCP_CONG_NON_RESTRICTED		BIT(0)
 + /* Requires ECN/ECT set on all packets */
 + #define TCP_CONG_NEEDS_ECN		BIT(1)
@@ -666,7 +666,7 @@ index 000000000..ced54653c
 + 
 + union tcp_cc_info;
 + 
-+@@ -1201,10 +1228,13 @@ struct ack_sample {
++@@ -1200,10 +1227,13 @@ struct ack_sample {
 +  */
 + struct rate_sample {
 + 	u64  prior_mstamp; /* starting timestamp for interval */
@@ -681,7 +681,7 @@ index 000000000..ced54653c
 + 	long interval_us;	/* time for tp->delivered to incr "delivered" */
 + 	u32 snd_interval_us;	/* snd interval for delivered packets */
 + 	u32 rcv_interval_us;	/* rcv interval for delivered packets */
-+@@ -1215,7 +1245,9 @@ struct rate_sample {
++@@ -1214,7 +1244,9 @@ struct rate_sample {
 + 	u32  last_end_seq;	/* end_seq of most recently ACKed packet */
 + 	bool is_app_limited;	/* is sample from packet with bubble in pipe? */
 + 	bool is_retrans;	/* is sample from retransmission? */
@@ -691,7 +691,7 @@ index 000000000..ced54653c
 + };
 + 
 + struct tcp_congestion_ops {
-+@@ -1239,8 +1271,11 @@ struct tcp_congestion_ops {
++@@ -1238,8 +1270,11 @@ struct tcp_congestion_ops {
 + 	/* hook for packet ack accounting (optional) */
 + 	void (*pkts_acked)(struct sock *sk, const struct ack_sample *sample);
 + 
@@ -705,7 +705,7 @@ index 000000000..ced54653c
 + 
 + 	/* call when packets are delivered to update cwnd and pacing rate,
 + 	 * after all the ca_state processing. (optional)
-+@@ -1306,6 +1341,14 @@ static inline char *tcp_ca_get_name_by_key(u32 key, char *buffer)
++@@ -1305,6 +1340,14 @@ static inline char *tcp_ca_get_name_by_key(u32 key, char *buffer)
 + }
 + #endif
 + 
@@ -720,7 +720,7 @@ index 000000000..ced54653c
 + static inline bool tcp_ca_needs_ecn(const struct sock *sk)
 + {
 + 	const struct inet_connection_sock *icsk = inet_csk(sk);
-+@@ -1325,6 +1368,7 @@ static inline void tcp_ca_event(struct sock *sk, const enum tcp_ca_event event)
++@@ -1324,6 +1367,7 @@ static inline void tcp_ca_event(struct sock *sk, const enum tcp_ca_event event)
 + void tcp_set_ca_state(struct sock *sk, const u8 ca_state);
 + 
 + /* From tcp_rate.c */
@@ -728,7 +728,7 @@ index 000000000..ced54653c
 + void tcp_rate_skb_sent(struct sock *sk, struct sk_buff *skb);
 + void tcp_rate_skb_delivered(struct sock *sk, struct sk_buff *skb,
 + 			    struct rate_sample *rs);
-+@@ -1337,6 +1381,21 @@ static inline bool tcp_skb_sent_after(u64 t1, u64 t2, u32 seq1, u32 seq2)
++@@ -1336,6 +1380,21 @@ static inline bool tcp_skb_sent_after(u64 t1, u64 t2, u32 seq1, u32 seq2)
 + 	return t1 > t2 || (t1 == t2 && after(seq1, seq2));
 + }
 + 
@@ -750,7 +750,7 @@ index 000000000..ced54653c
 + /* These functions determine how the current flow behaves in respect of SACK
 +  * handling. SACK is negotiated with the peer, and therefore it can vary
 +  * between different flows.
-+@@ -2490,7 +2549,7 @@ struct tcp_plb_state {
++@@ -2483,7 +2542,7 @@ struct tcp_plb_state {
 + 	u8	consec_cong_rounds:5, /* consecutive congested rounds */
 + 		unused:3;
 + 	u32	pause_until; /* jiffies32 when PLB can resume rerouting */
@@ -880,10 +880,10 @@ index 000000000..ced54653c
 + 	.undo_cwnd = bpf_tcp_ca_undo_cwnd,
 + 	.sndbuf_expand = bpf_tcp_ca_sndbuf_expand,
 +diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-+index 461a9ab540af..02ae796fa17e 100644
++index ba36f558f144..fda4c8deb5d8 100644
 +--- a/net/ipv4/tcp.c
 ++++ b/net/ipv4/tcp.c
-+@@ -3442,6 +3442,7 @@ int tcp_disconnect(struct sock *sk, int flags)
++@@ -3444,6 +3444,7 @@ int tcp_disconnect(struct sock *sk, int flags)
 + 	tp->rx_opt.dsack = 0;
 + 	tp->rx_opt.num_sacks = 0;
 + 	tp->rcv_ooopack = 0;
@@ -891,7 +891,7 @@ index 000000000..ced54653c
 + 
 + 
 + 	/* Clean up fastopen related fields */
-+@@ -4189,6 +4190,8 @@ void tcp_get_info(struct sock *sk, struct tcp_info *info)
++@@ -4200,6 +4201,8 @@ void tcp_get_info(struct sock *sk, struct tcp_info *info)
 + 		info->tcpi_options |= TCPI_OPT_ECN;
 + 	if (tp->ecn_flags & TCP_ECN_SEEN)
 + 		info->tcpi_options |= TCPI_OPT_ECN_SEEN;
@@ -3559,7 +3559,7 @@ index 000000000..ced54653c
 + 		icsk->icsk_ca_ops->init(sk);
 + 	if (tcp_ca_needs_ecn(sk))
 +diff --git a/net/ipv4/tcp_input.c b/net/ipv4/tcp_input.c
-+index 94391f32a5d8..6d9963172fbe 100644
++index a88e82f7ec48..37cf722b6a0a 100644
 +--- a/net/ipv4/tcp_input.c
 ++++ b/net/ipv4/tcp_input.c
 +@@ -381,7 +381,7 @@ static void tcp_data_ecn_check(struct sock *sk, const struct sk_buff *skb)
@@ -3593,7 +3593,7 @@ index 000000000..ced54653c
 + }
 + 
 + void tcp_mark_skb_lost(struct sock *sk, struct sk_buff *skb)
-+@@ -1506,6 +1511,17 @@ static bool tcp_shifted_skb(struct sock *sk, struct sk_buff *prev,
++@@ -1498,6 +1503,17 @@ static bool tcp_shifted_skb(struct sock *sk, struct sk_buff *prev,
 + 	WARN_ON_ONCE(tcp_skb_pcount(skb) < pcount);
 + 	tcp_skb_pcount_add(skb, -pcount);
 + 
@@ -3611,9 +3611,9 @@ index 000000000..ced54653c
 + 	/* When we're adding to gso_segs == 1, gso_size will be zero,
 + 	 * in theory this shouldn't be necessary but as long as DSACK
 + 	 * code can come after this skb later on it's better to keep
-+@@ -3856,7 +3872,8 @@ static int tcp_replace_ts_recent(struct tcp_sock *tp, u32 seq)
++@@ -3716,7 +3732,8 @@ static int tcp_replace_ts_recent(struct tcp_sock *tp, u32 seq)
 + /* This routine deals with acks during a TLP episode and ends an episode by
-+  * resetting tlp_high_seq. Ref: TLP algorithm in draft-ietf-tcpm-rack
++  * resetting tlp_high_seq. Ref: TLP algorithm in RFC8985
 +  */
 +-static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
 ++static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag,
@@ -3621,7 +3621,7 @@ index 000000000..ced54653c
 + {
 + 	struct tcp_sock *tp = tcp_sk(sk);
 + 
-+@@ -3873,6 +3890,7 @@ static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
++@@ -3733,6 +3750,7 @@ static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
 + 		/* ACK advances: there was a loss, so reduce cwnd. Reset
 + 		 * tlp_high_seq in tcp_init_cwnd_reduction()
 + 		 */
@@ -3629,7 +3629,7 @@ index 000000000..ced54653c
 + 		tcp_init_cwnd_reduction(sk);
 + 		tcp_set_ca_state(sk, TCP_CA_CWR);
 + 		tcp_end_cwnd_reduction(sk);
-+@@ -3883,6 +3901,11 @@ static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
++@@ -3743,6 +3761,11 @@ static void tcp_process_tlp_ack(struct sock *sk, u32 ack, int flag)
 + 			     FLAG_NOT_DUP | FLAG_DATA_SACKED))) {
 + 		/* Pure dupack: original and TLP probe arrived; no loss */
 + 		tp->tlp_high_seq = 0;
@@ -3641,7 +3641,7 @@ index 000000000..ced54653c
 + 	}
 + }
 + 
-+@@ -4002,6 +4025,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
++@@ -3862,6 +3885,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
 + 
 + 	prior_fack = tcp_is_sack(tp) ? tcp_highest_sack_seq(tp) : tp->snd_una;
 + 	rs.prior_in_flight = tcp_packets_in_flight(tp);
@@ -3649,7 +3649,7 @@ index 000000000..ced54653c
 + 
 + 	/* ts_recent update must be made after we are sure that the packet
 + 	 * is in window.
-+@@ -4067,7 +4091,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
++@@ -3927,7 +3951,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
 + 	tcp_in_ack_event(sk, flag);
 + 
 + 	if (tp->tlp_high_seq)
@@ -3658,7 +3658,7 @@ index 000000000..ced54653c
 + 
 + 	if (tcp_ack_is_dubious(sk, flag)) {
 + 		if (!(flag & (FLAG_SND_UNA_ADVANCED |
-+@@ -4091,6 +4115,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
++@@ -3951,6 +3975,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
 + 	delivered = tcp_newly_delivered(sk, delivered, flag);
 + 	lost = tp->lost - lost;			/* freshly marked lost */
 + 	rs.is_ack_delayed = !!(flag & FLAG_ACK_MAYBE_DELAYED);
@@ -3666,7 +3666,7 @@ index 000000000..ced54653c
 + 	tcp_rate_gen(sk, delivered, lost, is_sack_reneg, sack_state.rate);
 + 	tcp_cong_control(sk, ack, delivered, flag, sack_state.rate);
 + 	tcp_xmit_recovery(sk, rexmit);
-+@@ -4111,7 +4136,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
++@@ -3971,7 +3996,7 @@ static int tcp_ack(struct sock *sk, const struct sk_buff *skb, int flag)
 + 	tcp_ack_probe(sk);
 + 
 + 	if (tp->tlp_high_seq)
@@ -3675,7 +3675,7 @@ index 000000000..ced54653c
 + 	return 1;
 + 
 + old_ack:
-+@@ -5795,13 +5820,14 @@ static void __tcp_ack_snd_check(struct sock *sk, int ofo_possible)
++@@ -5688,13 +5713,14 @@ static void __tcp_ack_snd_check(struct sock *sk, int ofo_possible)
 + 
 + 	    /* More than one full frame received... */
 + 	if (((tp->rcv_nxt - tp->rcv_wup) > inet_csk(sk)->icsk_ack.rcv_mss &&
@@ -3693,7 +3693,7 @@ index 000000000..ced54653c
 + 	    tcp_in_quickack_mode(sk) ||
 + 	    /* Protocol state mandates a one-time immediate ACK */
 +diff --git a/net/ipv4/tcp_minisocks.c b/net/ipv4/tcp_minisocks.c
-+index 43d7852ce07e..df386419b9bf 100644
++index 2994c9222c9c..a53af9d32e09 100644
 +--- a/net/ipv4/tcp_minisocks.c
 ++++ b/net/ipv4/tcp_minisocks.c
 +@@ -475,6 +475,8 @@ void tcp_ca_openreq_child(struct sock *sk, const struct dst_entry *dst)
@@ -3706,7 +3706,7 @@ index 000000000..ced54653c
 + 		const struct tcp_congestion_ops *ca;
 + 
 +diff --git a/net/ipv4/tcp_output.c b/net/ipv4/tcp_output.c
-+index 3ac8d2d17e1f..cc75963b5a4c 100644
++index 16251d8e1b59..797c57156689 100644
 +--- a/net/ipv4/tcp_output.c
 ++++ b/net/ipv4/tcp_output.c
 +@@ -339,10 +339,9 @@ static void tcp_ecn_send_syn(struct sock *sk, struct sk_buff *skb)
@@ -3741,7 +3741,7 @@ index 000000000..ced54653c
 + 			/* ACK or retransmitted segment: clear ECT|CE */
 + 			INET_ECN_dontxmit(sk);
 + 		}
-+@@ -1614,7 +1617,7 @@ int tcp_fragment(struct sock *sk, enum tcp_queue tcp_queue,
++@@ -1609,7 +1612,7 @@ int tcp_fragment(struct sock *sk, enum tcp_queue tcp_queue,
 + {
 + 	struct tcp_sock *tp = tcp_sk(sk);
 + 	struct sk_buff *buff;
@@ -3750,7 +3750,7 @@ index 000000000..ced54653c
 + 	long limit;
 + 	u16 flags;
 + 	int nlen;
-+@@ -1689,6 +1692,30 @@ int tcp_fragment(struct sock *sk, enum tcp_queue tcp_queue,
++@@ -1684,6 +1687,30 @@ int tcp_fragment(struct sock *sk, enum tcp_queue tcp_queue,
 + 
 + 		if (diff)
 + 			tcp_adjust_pcount(sk, skb, diff);
@@ -3781,7 +3781,7 @@ index 000000000..ced54653c
 + 	}
 + 
 + 	/* Link BUFF into the send queue. */
-+@@ -2045,13 +2072,12 @@ static u32 tcp_tso_autosize(const struct sock *sk, unsigned int mss_now,
++@@ -2040,13 +2067,12 @@ static u32 tcp_tso_autosize(const struct sock *sk, unsigned int mss_now,
 + static u32 tcp_tso_segs(struct sock *sk, unsigned int mss_now)
 + {
 + 	const struct tcp_congestion_ops *ca_ops = inet_csk(sk)->icsk_ca_ops;
@@ -3800,7 +3800,7 @@ index 000000000..ced54653c
 + 	return min_t(u32, tso_segs, sk->sk_gso_max_segs);
 + }
 + 
-+@@ -2776,6 +2802,7 @@ static bool tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
++@@ -2782,6 +2808,7 @@ static bool tcp_write_xmit(struct sock *sk, unsigned int mss_now, int nonagle,
 + 			skb_set_delivery_time(skb, tp->tcp_wstamp_ns, SKB_CLOCK_MONOTONIC);
 + 			list_move_tail(&skb->tcp_tsorted_anchor, &tp->tsorted_sent_queue);
 + 			tcp_init_tso_segs(skb, mss_now);
@@ -3808,7 +3808,7 @@ index 000000000..ced54653c
 + 			goto repair; /* Skip network transmission */
 + 		}
 + 
-+@@ -2988,6 +3015,7 @@ void tcp_send_loss_probe(struct sock *sk)
++@@ -2994,6 +3021,7 @@ void tcp_send_loss_probe(struct sock *sk)
 + 	if (WARN_ON(!skb || !tcp_skb_pcount(skb)))
 + 		goto rearm_timer;
 + 
@@ -3897,7 +3897,7 @@ index 000000000..ced54653c
 + 	rs->interval_us = max(snd_us, ack_us);
 + 
 +diff --git a/net/ipv4/tcp_timer.c b/net/ipv4/tcp_timer.c
-+index bb37e24b97a7..9adfc1131d1f 100644
++index a207877270fb..0e67c7281410 100644
 +--- a/net/ipv4/tcp_timer.c
 ++++ b/net/ipv4/tcp_timer.c
 +@@ -565,7 +565,7 @@ void tcp_retransmit_timer(struct sock *sk)
@@ -3919,17 +3919,17 @@ index 000000000..ced54653c
 + 	event = icsk->icsk_pending;
 + 
 +-- 
-+2.51.0
++2.51.1
 +
 diff --git a/bore.patch b/bore.patch
 new file mode 100644
-index 000000000..df1e6cde1
+index 000000000..6f5d98eed
 --- /dev/null
 +++ b/bore.patch
-@@ -0,0 +1,1124 @@
-+From 802e9d2940336ceb5b06335ba4bb4b60d9f98cf2 Mon Sep 17 00:00:00 2001
+@@ -0,0 +1,1152 @@
++From cebc809e02d7708961f858368ac32ee0a9864f88 Mon Sep 17 00:00:00 2001
 +From: Piotr Gorski <lucjan.lucjanov@gmail.com>
-+Date: Wed, 27 Aug 2025 07:10:16 +0200
++Date: Mon, 20 Oct 2025 09:13:36 +0200
 +Subject: [PATCH] bore
 +
 +Signed-off-by: Piotr Gorski <lucjan.lucjanov@gmail.com>
@@ -3943,19 +3943,19 @@ index 000000000..df1e6cde1
 + kernel/sched/Makefile      |   1 +
 + kernel/sched/bore.c        | 393 +++++++++++++++++++++++++++++++++++++
 + kernel/sched/core.c        |  12 ++
-+ kernel/sched/debug.c       |  61 +++++-
-+ kernel/sched/fair.c        | 111 +++++++++--
++ kernel/sched/debug.c       |  61 ++++++
++ kernel/sched/fair.c        | 124 ++++++++++--
 + kernel/sched/features.h    |   3 +
 + kernel/sched/sched.h       |   9 +
-+ 13 files changed, 699 insertions(+), 12 deletions(-)
++ 13 files changed, 712 insertions(+), 12 deletions(-)
 + create mode 100644 include/linux/sched/bore.h
 + create mode 100644 kernel/sched/bore.c
 +
 +diff --git a/include/linux/sched.h b/include/linux/sched.h
-+index aa9c5be7a..09d401d88 100644
++index e4ce0a768..fa9c48412 100644
 +--- a/include/linux/sched.h
 ++++ b/include/linux/sched.h
-+@@ -809,6 +809,32 @@ struct kmap_ctrl {
++@@ -813,6 +813,32 @@ struct kmap_ctrl {
 + #endif
 + };
 + 
@@ -3988,7 +3988,7 @@ index 000000000..df1e6cde1
 + struct task_struct {
 + #ifdef CONFIG_THREAD_INFO_IN_TASK
 + 	/*
-+@@ -869,6 +895,9 @@ struct task_struct {
++@@ -871,6 +897,9 @@ struct task_struct {
 + #ifdef CONFIG_SCHED_CLASS_EXT
 + 	struct sched_ext_entity		scx;
 + #endif
@@ -4000,7 +4000,7 @@ index 000000000..df1e6cde1
 + #ifdef CONFIG_SCHED_CORE
 +diff --git a/include/linux/sched/bore.h b/include/linux/sched/bore.h
 +new file mode 100644
-+index 000000000..5afb5fed4
++index 000000000..ff768c320
 +--- /dev/null
 ++++ b/include/linux/sched/bore.h
 +@@ -0,0 +1,39 @@
@@ -4016,7 +4016,7 @@ index 000000000..df1e6cde1
 ++#define SCHED_BORE_AUTHOR   "Masahito Suzuki"
 ++#define SCHED_BORE_PROGNAME "BORE CPU Scheduler modification"
 ++
-++#define SCHED_BORE_VERSION  "6.5.2"
+++#define SCHED_BORE_VERSION  "6.5.8"
 ++
 ++extern u8   __read_mostly sched_bore;
 ++extern u8   __read_mostly sched_burst_inherit_type;
@@ -4044,10 +4044,10 @@ index 000000000..df1e6cde1
 ++
 ++#endif /* _KERNEL_SCHED_BORE_H */
 +diff --git a/init/Kconfig b/init/Kconfig
-+index 2e15b4a84..62792c19c 100644
++index 87c868f86..ae34ed300 100644
 +--- a/init/Kconfig
 ++++ b/init/Kconfig
-+@@ -1381,6 +1381,23 @@ config CHECKPOINT_RESTORE
++@@ -1413,6 +1413,23 @@ config CHECKPOINT_RESTORE
 + 
 + 	  If unsure, say N here.
 + 
@@ -4097,10 +4097,10 @@ index 000000000..df1e6cde1
 ++	 an unnecessarily large base slice, resulting in high scheduling
 ++	 latency and poor system responsiveness.
 +diff --git a/kernel/fork.c b/kernel/fork.c
-+index 1ee8eb11f..a3d068af5 100644
++index bb86c57cc..e951c0320 100644
 +--- a/kernel/fork.c
 ++++ b/kernel/fork.c
-+@@ -115,6 +115,10 @@
++@@ -116,6 +116,10 @@
 + /* For dup_mmap(). */
 + #include "../mm/internal.h"
 + 
@@ -4111,7 +4111,7 @@ index 000000000..df1e6cde1
 + #include <trace/events/sched.h>
 + 
 + #define CREATE_TRACE_POINTS
-+@@ -2313,6 +2317,10 @@ __latent_entropy struct task_struct *copy_process(
++@@ -2319,6 +2323,10 @@ __latent_entropy struct task_struct *copy_process(
 + 	 * Need tasklist lock for parent etc handling!
 + 	 */
 + 	write_lock_irq(&tasklist_lock);
@@ -4123,7 +4123,7 @@ index 000000000..df1e6cde1
 + 	/* CLONE_PARENT re-uses the old parent */
 + 	if (clone_flags & (CLONE_PARENT|CLONE_THREAD)) {
 +diff --git a/kernel/futex/waitwake.c b/kernel/futex/waitwake.c
-+index e2bbe5509..84812b787 100644
++index e2bbe5509..6484ad583 100644
 +--- a/kernel/futex/waitwake.c
 ++++ b/kernel/futex/waitwake.c
 +@@ -4,6 +4,9 @@
@@ -4132,7 +4132,7 @@ index 000000000..df1e6cde1
 + #include <linux/freezer.h>
 ++#ifdef CONFIG_SCHED_BORE
 ++#include <linux/sched/bore.h>
-++#endif // CONFIG_SCHED_BORE
+++#endif /* CONFIG_SCHED_BORE */
 + 
 + #include "futex.h"
 + 
@@ -4143,12 +4143,12 @@ index 000000000..df1e6cde1
 ++#ifdef CONFIG_SCHED_BORE
 ++		{
 ++			current->bore.futex_waiting = true;
-++#endif // CONFIG_SCHED_BORE
+++#endif /* CONFIG_SCHED_BORE */
 + 			schedule();
 ++#ifdef CONFIG_SCHED_BORE
 ++			current->bore.futex_waiting = false;
 ++		}
-++#endif // CONFIG_SCHED_BORE
+++#endif /* CONFIG_SCHED_BORE */
 + 	}
 + 	__set_current_state(TASK_RUNNING);
 + }
@@ -4561,12 +4561,12 @@ index 000000000..df1e6cde1
 ++#endif // CONFIG_SYSCTL
 ++#endif /* CONFIG_SCHED_BORE */
 +diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-+index 81c6df746..5b325a5a6 100644
++index ccba6fc3c..5bd3d55af 100644
 +--- a/kernel/sched/core.c
 ++++ b/kernel/sched/core.c
-+@@ -97,6 +97,10 @@
-+ #include "../../io_uring/io-wq.h"
++@@ -98,6 +98,10 @@
 + #include "../smpboot.h"
++ #include "../locking/mutex.h"
 + 
 ++#ifdef CONFIG_SCHED_BORE
 ++#include <linux/sched/bore.h>
@@ -4575,7 +4575,7 @@ index 000000000..df1e6cde1
 + EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpu);
 + EXPORT_TRACEPOINT_SYMBOL_GPL(ipi_send_cpumask);
 + 
-+@@ -1423,7 +1427,11 @@ int tg_nop(struct task_group *tg, void *data)
++@@ -1429,7 +1433,11 @@ int tg_nop(struct task_group *tg, void *data)
 + 
 + void set_load_weight(struct task_struct *p, bool update_load)
 + {
@@ -4587,7 +4587,7 @@ index 000000000..df1e6cde1
 + 	struct load_weight lw;
 + 
 + 	if (task_has_idle_policy(p)) {
-+@@ -8523,6 +8531,10 @@ void __init sched_init(void)
++@@ -8685,6 +8693,10 @@ void __init sched_init(void)
 + 	BUG_ON(!sched_class_above(&ext_sched_class, &idle_sched_class));
 + #endif
 + 
@@ -4599,13 +4599,13 @@ index 000000000..df1e6cde1
 + 
 + #ifdef CONFIG_FAIR_GROUP_SCHED
 +diff --git a/kernel/sched/debug.c b/kernel/sched/debug.c
-+index 557246880..8b4ab7c39 100644
++index 02e16b70a..751df396d 100644
 +--- a/kernel/sched/debug.c
 ++++ b/kernel/sched/debug.c
-+@@ -167,7 +167,53 @@ static const struct file_operations sched_feat_fops = {
++@@ -169,6 +169,53 @@ static const struct file_operations sched_feat_fops = {
++ 	.release	= single_release,
 + };
 + 
-+ #ifdef CONFIG_SMP
 ++#ifdef CONFIG_SCHED_BORE
 ++#define DEFINE_SYSCTL_SCHED_FUNC(name, update_func) \
 ++static ssize_t sched_##name##_write(struct file *filp, const char __user *ubuf, size_t cnt, loff_t *ppos) \
@@ -4648,7 +4648,7 @@ index 000000000..df1e6cde1
 ++	.llseek		= seq_lseek, \
 ++	.release	= single_release, \
 ++};
-+ 
+++
 ++DEFINE_SYSCTL_SCHED_FUNC(min_base_slice, min_base_slice)
 ++
 ++#undef DEFINE_SYSCTL_SCHED_FUNC
@@ -4656,16 +4656,15 @@ index 000000000..df1e6cde1
 + static ssize_t sched_scaling_write(struct file *filp, const char __user *ubuf,
 + 				   size_t cnt, loff_t *ppos)
 + {
-+@@ -213,7 +259,7 @@ static const struct file_operations sched_scaling_fops = {
++@@ -214,6 +261,7 @@ static const struct file_operations sched_scaling_fops = {
 + 	.llseek		= seq_lseek,
 + 	.release	= single_release,
 + };
-+-
 ++#endif /* CONFIG_SCHED_BORE */
-+ #endif /* SMP */
 + 
 + #ifdef CONFIG_PREEMPT_DYNAMIC
-+@@ -507,13 +553,20 @@ static __init int sched_init_debug(void)
++ 
++@@ -500,12 +548,19 @@ static __init int sched_init_debug(void)
 + 	debugfs_create_file("preempt", 0644, debugfs_sched, NULL, &sched_dynamic_fops);
 + #endif
 + 
@@ -4679,14 +4678,13 @@ index 000000000..df1e6cde1
 + 	debugfs_create_u32("latency_warn_ms", 0644, debugfs_sched, &sysctl_resched_latency_warn_ms);
 + 	debugfs_create_u32("latency_warn_once", 0644, debugfs_sched, &sysctl_resched_latency_warn_once);
 + 
-+ #ifdef CONFIG_SMP
 ++#if !defined(CONFIG_SCHED_BORE)
 + 	debugfs_create_file("tunable_scaling", 0644, debugfs_sched, NULL, &sched_scaling_fops);
 ++#endif /* CONFIG_SCHED_BORE */
 + 	debugfs_create_u32("migration_cost_ns", 0644, debugfs_sched, &sysctl_sched_migration_cost);
 + 	debugfs_create_u32("nr_migrate", 0644, debugfs_sched, &sysctl_sched_nr_migrate);
 + 
-+@@ -762,6 +815,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
++@@ -747,6 +802,9 @@ print_task(struct seq_file *m, struct rq *rq, struct task_struct *p)
 + 		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_sleep_runtime)),
 + 		SPLIT_NS(schedstat_val_or_zero(p->stats.sum_block_runtime)));
 + 
@@ -4696,10 +4694,10 @@ index 000000000..df1e6cde1
 + #ifdef CONFIG_NUMA_BALANCING
 + 	SEQ_printf(m, "   %d      %d", task_node(p), task_numa_group_id(p));
 + #endif
-+@@ -1248,6 +1304,9 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
++@@ -1224,6 +1282,9 @@ void proc_sched_show_task(struct task_struct *p, struct pid_namespace *ns,
++ 	__PS("nr_involuntary_switches", p->nivcsw);
 + 
 + 	P(se.load.weight);
-+ #ifdef CONFIG_SMP
 ++#ifdef CONFIG_SCHED_BORE
 ++	P(bore.score);
 ++#endif /* CONFIG_SCHED_BORE */
@@ -4707,7 +4705,7 @@ index 000000000..df1e6cde1
 + 	P(se.avg.runnable_sum);
 + 	P(se.avg.util_sum);
 +diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-+index 042ab0863..de8def952 100644
++index 8ce56a8d5..507e1c1ef 100644
 +--- a/kernel/sched/fair.c
 ++++ b/kernel/sched/fair.c
 +@@ -58,6 +58,10 @@
@@ -4754,7 +4752,7 @@ index 000000000..df1e6cde1
 + 
 + __read_mostly unsigned int sysctl_sched_migration_cost	= 500000UL;
 + 
-+@@ -191,6 +208,13 @@ static inline void update_load_set(struct load_weight *lw, unsigned long w)
++@@ -189,6 +206,13 @@ static inline void update_load_set(struct load_weight *lw, unsigned long w)
 +  *
 +  * This idea comes from the SD scheduler of Con Kolivas:
 +  */
@@ -4768,7 +4766,7 @@ index 000000000..df1e6cde1
 + static unsigned int get_update_sysctl_factor(void)
 + {
 + 	unsigned int cpus = min_t(unsigned int, num_online_cpus(), 8);
-+@@ -221,6 +245,7 @@ static void update_sysctl(void)
++@@ -219,6 +243,7 @@ static void update_sysctl(void)
 + 	SET_SYSCTL(sched_base_slice);
 + #undef SET_SYSCTL
 + }
@@ -4776,7 +4774,7 @@ index 000000000..df1e6cde1
 + 
 + void __init sched_init_granularity(void)
 + {
-+@@ -700,6 +725,9 @@ static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
++@@ -698,6 +723,9 @@ static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
 + 
 + 	vlag = avg_vruntime(cfs_rq) - se->vruntime;
 + 	limit = calc_delta_fair(max_t(u64, 2*se->slice, TICK_NSEC), se);
@@ -4786,50 +4784,66 @@ index 000000000..df1e6cde1
 + 
 + 	se->vlag = clamp(vlag, -limit, limit);
 + }
-+@@ -939,7 +967,16 @@ static struct sched_entity *pick_eevdf(struct cfs_rq *cfs_rq)
-+ 	if (curr && (!curr->on_rq || !entity_eligible(cfs_rq, curr)))
-+ 		curr = NULL;
-+ 
-++#if !defined(CONFIG_SCHED_BORE)
-+ 	if (sched_feat(RUN_TO_PARITY) && curr && protect_slice(curr))
-++#else /* CONFIG_SCHED_BORE */
++@@ -891,10 +919,17 @@ struct sched_entity *__pick_first_entity(struct cfs_rq *cfs_rq)
++  */
++ static inline void set_protect_slice(struct cfs_rq *cfs_rq, struct sched_entity *se)
++ {
+++#ifdef CONFIG_SCHED_BORE
+++	u64 slice = sysctl_sched_base_slice;
 ++	bool run_to_parity = likely(sched_bore) ?
 ++		sched_feat(RUN_TO_PARITY_BORE) : sched_feat(RUN_TO_PARITY);
-++	if (run_to_parity && curr && protect_slice(curr) &&
-++		(!entity_is_task(curr) ||
-++		 !task_of(curr)->bore.futex_waiting ||
-++		 unlikely(!sched_bore)))
+++#else /* CONFIG_SCHED_BORE */
++ 	u64 slice = normalized_sysctl_sched_base_slice;
+++	bool run_to_parity = sched_feat(RUN_TO_PARITY);
+++#endif /* CONFIG_SCHED_BORE */
++ 	u64 vprot = se->deadline;
++ 
++-	if (sched_feat(RUN_TO_PARITY))
+++	if (run_to_parity)
++ 		slice = cfs_rq_min_slice(cfs_rq);
++ 
++ 	slice = min(slice, se->slice);
++@@ -959,6 +994,11 @@ static struct sched_entity *__pick_eevdf(struct cfs_rq *cfs_rq, bool protect)
++ 		curr = NULL;
++ 
++ 	if (curr && protect && protect_slice(curr))
+++#ifdef CONFIG_SCHED_BORE
+++		if (!entity_is_task(curr) ||
+++			!task_of(curr)->bore.futex_waiting ||
+++			unlikely(!sched_bore))
 ++#endif /* CONFIG_SCHED_BORE */
 + 		return curr;
 + 
 + 	/* Pick the leftmost entity if it's eligible */
-+@@ -997,6 +1034,7 @@ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
++@@ -1020,6 +1060,7 @@ struct sched_entity *__pick_last_entity(struct cfs_rq *cfs_rq)
++ /**************************************************************
 +  * Scheduling class statistics methods:
 +  */
-+ #ifdef CONFIG_SMP
 ++#if !defined(CONFIG_SCHED_BORE)
 + int sched_update_scaling(void)
 + {
 + 	unsigned int factor = get_update_sysctl_factor();
-+@@ -1008,6 +1046,7 @@ int sched_update_scaling(void)
++@@ -1031,6 +1072,7 @@ int sched_update_scaling(void)
 + 
 + 	return 0;
 + }
 ++#endif /* CONFIG_SCHED_BORE */
-+ #endif
 + 
 + static void clear_buddies(struct cfs_rq *cfs_rq, struct sched_entity *se);
-+@@ -1244,6 +1283,9 @@ static void update_curr(struct cfs_rq *cfs_rq)
-+ 	if (entity_is_task(curr)) {
-+ 		struct task_struct *p = task_of(curr);
 + 
++@@ -1229,6 +1271,11 @@ static void update_curr(struct cfs_rq *cfs_rq)
++ 	update_min_vruntime(cfs_rq);
++ 
++ 	if (entity_is_task(curr)) {
 ++#ifdef CONFIG_SCHED_BORE
+++		struct task_struct *p = task_of(curr);
 ++		update_curr_bore(p, delta_exec);
 ++#endif /* CONFIG_SCHED_BORE */
-+ 		update_curr_task(p, delta_exec);
-+ 
+++
 + 		/*
-+@@ -3794,7 +3836,7 @@ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se) { }
++ 		 * If the fair_server is active, we need to account for the
++ 		 * fair_server time whether or not the task is running on
++@@ -3767,7 +3814,7 @@ dequeue_load_avg(struct cfs_rq *cfs_rq, struct sched_entity *se)
 + 
 + static void place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags);
 + 
@@ -4838,7 +4852,7 @@ index 000000000..df1e6cde1
 + 			    unsigned long weight)
 + {
 + 	bool curr = cfs_rq->curr == se;
-+@@ -5205,12 +5247,11 @@ void __setparam_fair(struct task_struct *p, const struct sched_attr *attr)
++@@ -5127,12 +5174,11 @@ void __setparam_fair(struct task_struct *p, const struct sched_attr *attr)
 + static void
 + place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 + {
@@ -4852,7 +4866,7 @@ index 000000000..df1e6cde1
 + 
 + 	/*
 + 	 * Due to how V is constructed as the weighted average of entities,
-+@@ -5295,7 +5336,18 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++@@ -5217,7 +5263,18 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 + 		se->rel_deadline = 0;
 + 		return;
 + 	}
@@ -4872,7 +4886,7 @@ index 000000000..df1e6cde1
 + 	/*
 + 	 * When joining the competition; the existing tasks will be,
 + 	 * on average, halfway through their slice, as such start tasks
-+@@ -5304,6 +5356,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++@@ -5226,6 +5283,9 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 + 	if (sched_feat(PLACE_DEADLINE_INITIAL) && (flags & ENQUEUE_INITIAL))
 + 		vslice /= 2;
 + 
@@ -4882,7 +4896,7 @@ index 000000000..df1e6cde1
 + 	/*
 + 	 * EEVDF: vd_i = ve_i + r_i/w_i
 + 	 */
-+@@ -5314,7 +5369,7 @@ static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
++@@ -5236,7 +5296,7 @@ static void check_enqueue_throttle(struct cfs_rq *cfs_rq);
 + static inline int cfs_rq_throttled(struct cfs_rq *cfs_rq);
 + 
 + static void
@@ -4891,7 +4905,7 @@ index 000000000..df1e6cde1
 + 
 + static void
 + enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
-+@@ -5478,6 +5533,10 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
++@@ -5400,6 +5460,10 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
 + 		if (sched_feat(DELAY_DEQUEUE) && delay &&
 + 		    !entity_eligible(cfs_rq, se)) {
 + 			update_load_avg(cfs_rq, se, 0);
@@ -4902,8 +4916,8 @@ index 000000000..df1e6cde1
 + 			set_delayed(se);
 + 			return false;
 + 		}
-+@@ -6894,7 +6953,7 @@ static int sched_idle_cpu(int cpu)
-+ #endif
++@@ -6785,7 +6849,7 @@ static int sched_idle_cpu(int cpu)
++ }
 + 
 + static void
 +-requeue_delayed_entity(struct sched_entity *se)
@@ -4911,7 +4925,7 @@ index 000000000..df1e6cde1
 + {
 + 	struct cfs_rq *cfs_rq = cfs_rq_of(se);
 + 
-+@@ -6907,13 +6966,22 @@ requeue_delayed_entity(struct sched_entity *se)
++@@ -6798,13 +6862,22 @@ requeue_delayed_entity(struct sched_entity *se)
 + 	WARN_ON_ONCE(!se->on_rq);
 + 
 + 	if (sched_feat(DELAY_ZERO)) {
@@ -4935,7 +4949,7 @@ index 000000000..df1e6cde1
 + 			if (se != cfs_rq->curr)
 + 				__enqueue_entity(cfs_rq, se);
 + 			cfs_rq->nr_queued++;
-+@@ -6950,7 +7018,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
++@@ -6841,7 +6914,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 + 		util_est_enqueue(&rq->cfs, p);
 + 
 + 	if (flags & ENQUEUE_DELAYED) {
@@ -4944,7 +4958,7 @@ index 000000000..df1e6cde1
 + 		return;
 + 	}
 + 
-+@@ -6968,7 +7036,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
++@@ -6859,7 +6932,7 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 + 	for_each_sched_entity(se) {
 + 		if (se->on_rq) {
 + 			if (se->sched_delayed)
@@ -4953,7 +4967,7 @@ index 000000000..df1e6cde1
 + 			break;
 + 		}
 + 		cfs_rq = cfs_rq_of(se);
-+@@ -7190,6 +7258,15 @@ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
++@@ -7077,6 +7150,15 @@ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
 + 		util_est_dequeue(&rq->cfs, p);
 + 
 + 	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
@@ -4969,7 +4983,21 @@ index 000000000..df1e6cde1
 + 	if (dequeue_entities(rq, &p->se, flags) < 0)
 + 		return false;
 + 
-+@@ -9019,16 +9096,25 @@ static void yield_task_fair(struct rq *rq)
++@@ -8725,7 +8807,13 @@ static void check_preempt_wakeup_fair(struct rq *rq, struct task_struct *p, int
++ 	if (__pick_eevdf(cfs_rq, !do_preempt_short) == pse)
++ 		goto preempt;
++ 
+++#ifdef CONFIG_SCHED_BORE
+++	bool run_to_parity = likely(sched_bore) ?
+++		sched_feat(RUN_TO_PARITY_BORE) : sched_feat(RUN_TO_PARITY);
+++	if (run_to_parity && do_preempt_short)
+++#else /* CONFIG_SCHED_BORE */
++ 	if (sched_feat(RUN_TO_PARITY) && do_preempt_short)
+++#endif /* CONFIG_SCHED_BORE */
++ 		update_protect_slice(cfs_rq, se);
++ 
++ 	return;
++@@ -8899,16 +8987,25 @@ static void yield_task_fair(struct rq *rq)
 + 	/*
 + 	 * Are we the only task in the tree?
 + 	 */
@@ -4995,7 +5023,7 @@ index 000000000..df1e6cde1
 + 	/*
 + 	 * Tell update_rq_clock() that we've just updated,
 + 	 * so we don't do microscopic update in schedule()
-+@@ -13273,6 +13359,9 @@ static void switched_to_fair(struct rq *rq, struct task_struct *p)
++@@ -13156,6 +13253,9 @@ static void switched_to_fair(struct rq *rq, struct task_struct *p)
 + 	WARN_ON_ONCE(p->se.sched_delayed);
 + 
 + 	attach_task_cfs_rq(p);
@@ -5020,10 +5048,10 @@ index 000000000..df1e6cde1
 +  * Allow wakeup of tasks with a shorter slice to cancel RUN_TO_PARITY for
 +  * current.
 +diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-+index 83e3aa917..fc84b0966 100644
++index cf2109b67..aa70f3608 100644
 +--- a/kernel/sched/sched.h
 ++++ b/kernel/sched/sched.h
-+@@ -2119,7 +2119,11 @@ extern int group_balance_cpu(struct sched_group *sg);
++@@ -2127,7 +2127,11 @@ extern int group_balance_cpu(struct sched_group *sg);
 + extern void update_sched_domain_debugfs(void);
 + extern void dirty_sched_domain_sysctl(int cpu);
 + 
@@ -5035,7 +5063,7 @@ index 000000000..df1e6cde1
 + 
 + static inline const struct cpumask *task_user_cpus(struct task_struct *p)
 + {
-+@@ -2825,7 +2829,12 @@ extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
++@@ -2803,7 +2807,12 @@ extern void wakeup_preempt(struct rq *rq, struct task_struct *p, int flags);
 + extern __read_mostly unsigned int sysctl_sched_nr_migrate;
 + extern __read_mostly unsigned int sysctl_sched_migration_cost;
 + 
@@ -5052,7 +5080,7 @@ index 000000000..df1e6cde1
 +2.51.0
 +
 diff --git a/kernel-x86_64-fedora.config b/kernel-x86_64-fedora.config
-index fb68fe2cb..57363b477 100644
+index a022342b1..7583e1ee9 100644
 --- a/kernel-x86_64-fedora.config
 +++ b/kernel-x86_64-fedora.config
 @@ -49,6 +49,7 @@ CONFIG_ACPI_APEI=y
@@ -5063,7 +5091,7 @@ index fb68fe2cb..57363b477 100644
  # CONFIG_ACPI_CMPC is not set
  # CONFIG_ACPI_CONFIGFS is not set
  CONFIG_ACPI_CONTAINER=y
-@@ -1888,10 +1889,10 @@ CONFIG_DRM_PANEL=y
+@@ -1893,10 +1894,10 @@ CONFIG_DRM_PANEL=y
  CONFIG_DRM_PANIC_BACKGROUND_COLOR=0x000000
  # CONFIG_DRM_PANIC_DEBUG is not set
  CONFIG_DRM_PANIC_FOREGROUND_COLOR=0xffffff
@@ -5076,7 +5104,7 @@ index fb68fe2cb..57363b477 100644
  CONFIG_DRM_PANIC=y
  # CONFIG_DRM_PARADE_PS8622 is not set
  CONFIG_DRM_PARADE_PS8640=m
-@@ -3043,7 +3044,8 @@ CONFIG_IIO_TIGHTLOOP_TRIGGER=m
+@@ -3053,7 +3054,8 @@ CONFIG_IIO_TIGHTLOOP_TRIGGER=m
  CONFIG_IIO_TRIGGERED_BUFFER=m
  CONFIG_IIO_TRIGGERED_EVENT=m
  CONFIG_IIO_TRIGGER=y
@@ -5086,7 +5114,7 @@ index fb68fe2cb..57363b477 100644
  CONFIG_IKHEADERS=m
  CONFIG_IMA_APPRAISE_BOOTPARAM=y
  # CONFIG_IMA_APPRAISE_BUILD_POLICY is not set
-@@ -4461,7 +4463,7 @@ CONFIG_MODULE_COMPRESS=y
+@@ -4479,7 +4481,7 @@ CONFIG_MODULE_COMPRESS=y
  # CONFIG_MODULE_DEBUG is not set
  CONFIG_MODULE_DECOMPRESS=y
  # CONFIG_MODULE_FORCE_LOAD is not set
@@ -5096,10 +5124,10 @@ index fb68fe2cb..57363b477 100644
  # CONFIG_MODULE_SIG_FORCE is not set
  CONFIG_MODULE_SIG_KEY="certs/signing_key.pem"
 diff --git a/kernel.spec b/kernel.spec
-index 957f15227..c27b93d39 100644
+index cc8cef290..97476f935 100644
 --- a/kernel.spec
 +++ b/kernel.spec
-@@ -316,8 +316,6 @@ Summary: The Linux kernel
+@@ -333,8 +333,6 @@ Summary: The Linux kernel
  
  %if %{with_verbose}
  %define make_opts V=1
@@ -5108,7 +5136,7 @@ index 957f15227..c27b93d39 100644
  %endif
  
  %if %{with toolchain_clang}
-@@ -1142,6 +1140,10 @@ Source4002: gating.yaml
+@@ -1163,6 +1161,10 @@ Source4002: gating.yaml
  Patch1: patch-%{patchversion}-redhat.patch
  %endif
  
@@ -5119,7 +5147,7 @@ index 957f15227..c27b93d39 100644
  # empty final patch to facilitate testing of kernel patches
  Patch999999: linux-kernel-test.patch
  
-@@ -1991,6 +1993,10 @@ cp -a %{SOURCE1} .
+@@ -2012,6 +2014,10 @@ cp -a %{SOURCE1} .
  ApplyOptionalPatch patch-%{patchversion}-redhat.patch
  %endif
  
@@ -5130,7 +5158,7 @@ index 957f15227..c27b93d39 100644
  ApplyOptionalPatch linux-kernel-test.patch
  
  %{log_msg "End of patch applications"}
-@@ -2200,7 +2206,7 @@ cp_vmlinux()
+@@ -2227,7 +2233,7 @@ cp_vmlinux()
  # from redhat-rpm-config assume that host == target so target arch
  # flags cause issues with the host compiler.
  %if !%{with_cross}
@@ -5140,10 +5168,10 @@ index 957f15227..c27b93d39 100644
  %endif
  
 diff --git a/process_configs.sh b/process_configs.sh
-index 8526fc759..c42b26878 100755
+index af8fb9520..c2cd905fd 100755
 --- a/process_configs.sh
 +++ b/process_configs.sh
-@@ -271,10 +271,9 @@ function process_config()
+@@ -421,10 +421,9 @@ function process_config()
  	grep -E 'CONFIG_' .listnewconfig"${count}" > .newoptions"${count}"
  	if test -n "$NEWOPTIONS" && test -s .newoptions"${count}"
  	then
