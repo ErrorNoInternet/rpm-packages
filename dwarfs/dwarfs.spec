@@ -62,6 +62,9 @@ Provides:       %{name}-zsh-completion = %{version}-%{release}
 Requires:       zsh
 Requires:       %{name} = %{version}-%{release}
 
+%description zsh-completion
+This package installs Zsh completion files for %{name}
+
 %prep
 %autosetup -p1
 
