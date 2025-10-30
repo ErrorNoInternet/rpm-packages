@@ -3,7 +3,7 @@
 
 # https://github.com/mr-karan/doggo
 %global goipath         github.com/mr-karan/doggo
-Version:                1.0.5
+Version:                1.1.0
 
 %gometa -L -f
 
