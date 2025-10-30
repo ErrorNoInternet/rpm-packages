@@ -86,6 +86,7 @@ export DWARFS_SKIP_FUSE_TESTS=1
 %{_bindir}/dwarfsextract
 %{_bindir}/mkdwarfs
 %{_datadir}/applications/*.desktop
+%{_datarootdir}/mime/packages/dwarfs.xml
 %{_libdir}/libdwarfs*
 %{_mandir}/man1/*
 %{_mandir}/man5/*
