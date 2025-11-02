@@ -80,14 +80,11 @@ end
 %autopatch -p1
 
 %if %{without bootstrap}
-go mod vendor
-%endif
-
-%if %{without bootstrap}
 %build
 %define gomodulesmode GO111MODULE=on
+go get github.com/abenz1267/elephant/cmd/elephant
 for cmd in cmd/* ; do
-  %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
+  go build -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
 done
 for prov in internal/providers/*/; do
   pushd $prov
