@@ -24,6 +24,7 @@ you better performance and improve Linux support.
 
 %build
 export COREPACK_ENABLE_STRICT=0
+pnpm i electron-builder@next
 pnpm i
 pnpm package:dir
 
