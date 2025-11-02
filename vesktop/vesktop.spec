@@ -12,7 +12,6 @@ URL:            https://github.com/Vencord/Vesktop
 Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
 Source1:        vesktop.sh
 Source2:        vesktop.desktop
-Patch0:         tray-improvements.diff
 
 BuildRequires:  pnpm
 
