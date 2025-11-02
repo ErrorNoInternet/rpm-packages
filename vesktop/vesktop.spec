@@ -13,6 +13,7 @@ Source0:        %{url}/archive/refs/tags/v%{version}.tar.gz
 Source1:        vesktop.sh
 Source2:        vesktop.desktop
 
+BuildRequires:  nodejs-npm
 BuildRequires:  pnpm
 
 %description
