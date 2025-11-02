@@ -36,6 +36,7 @@ URL:            %{gourl}
 Source:         %{gosource}
 
 BuildRequires:  git
+BuildRequires:  pkgconfig(wayland-client)
 
 %{lua:
 for prov in string.gmatch(macros.providers, "%S+") do
