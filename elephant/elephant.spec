@@ -10,7 +10,7 @@
 %global __requires_exclude %{?__requires_exclude:%{__requires_exclude}|}^golang\\(.*\\)$
 %endif
 
-%global providers archlinuxpkgs bluetooth calc clipboard desktopapplications files menus providerlist runner symbols todo unicode websearch
+%global providers       archlinuxpkgs bluetooth calc clipboard desktopapplications files menus nirisessions providerlist runner symbols todo unicode websearch
 
 # https://github.com/abenz1267/elephant
 %global goipath         github.com/abenz1267/elephant
@@ -97,8 +97,8 @@ done
 %install
 %gopkginstall
 %if %{without bootstrap}
-install -m 0755 -vd                     %{buildroot}%{_bindir}
-install -m 0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
+install -m0755 -vd                     %{buildroot}%{_bindir}
+install -m0755 -vp %{gobuilddir}/bin/* %{buildroot}%{_bindir}/
 install -Dm755 internal/providers/*/*.so -t %{buildroot}/etc/xdg/elephant/providers/
 %endif
 
@@ -114,6 +114,7 @@ install -Dm755 internal/providers/*/*.so -t %{buildroot}/etc/xdg/elephant/provid
 %license LICENSE
 %doc README.md cmd/elephant/version.txt
 %{_bindir}/*
+/etc/xdg/elephant/providers/*
 %endif
 
 %gopkgfiles
