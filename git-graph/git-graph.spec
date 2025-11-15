@@ -5,7 +5,7 @@
 %global cargo_install_lib 0
 
 Name:           git-graph
-Version:        0.6.0
+Version:        0.7.0
 Release:        %autorelease
 Summary:        Command line tool to show clear git graphs arranged for your branching model
 
