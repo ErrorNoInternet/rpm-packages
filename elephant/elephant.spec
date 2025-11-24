@@ -10,7 +10,7 @@
 %global __requires_exclude %{?__requires_exclude:%{__requires_exclude}|}^golang\\(.*\\)$
 %endif
 
-%global providers       archlinuxpkgs bluetooth calc clipboard desktopapplications files menus nirisessions providerlist runner symbols todo unicode websearch
+%global providers       1password archlinuxpkgs bluetooth bookmarks calc clipboard desktopapplications files menus nirisessions providerlist runner snippets symbols todo unicode websearch windows
 
 # https://github.com/abenz1267/elephant
 %global goipath         github.com/abenz1267/elephant
@@ -70,6 +70,7 @@ for prov in string.gmatch(macros.providers, "%S+") do
   elseif prov == "libnotify" then
     print("Recommends: wl-clipboard")
   end
+  print()
 
   print("%files "..prov.."\n")
   print("/etc/xdg/elephant/providers/"..prov..".so\n\n")
