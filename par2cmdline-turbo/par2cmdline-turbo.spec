@@ -26,6 +26,16 @@ performance on x86/ARM platforms.
 %install
 %make_install
 
+mv %{buildroot}%{_bindir}/par2 %{buildroot}%{_bindir}/par2turbo
+rm -f %{buildroot}%{_bindir}/par2create \
+      %{buildroot}%{_bindir}/par2repair \
+      %{buildroot}%{_bindir}/par2verify \
+      %{buildroot}%{_bindir}/par2
+ln -s par2turbo %{buildroot}%{_bindir}/par2turbo-create
+ln -s par2turbo %{buildroot}%{_bindir}/par2turbo-repair
+ln -s par2turbo %{buildroot}%{_bindir}/par2turbo-verify
+mv %{buildroot}%{_mandir}/man1/par2.1 %{buildroot}%{_mandir}/man1/par2turbo.1
+
 %check
 %make_build check-TESTS
 
@@ -34,11 +44,11 @@ performance on x86/ARM platforms.
 %doc ChangeLog
 %doc README.md
 %license COPYING
-%{_bindir}/par2
-%{_bindir}/par2create
-%{_bindir}/par2repair
-%{_bindir}/par2verify
-%{_mandir}/man1/par2.1*
+%{_bindir}/par2turbo
+%{_bindir}/par2turbo-create
+%{_bindir}/par2turbo-repair
+%{_bindir}/par2turbo-verify
+%{_mandir}/man1/par2turbo.1*
 
 %changelog
 %autochangelog
