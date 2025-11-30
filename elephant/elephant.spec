@@ -28,7 +28,7 @@ productivity tools, or desktop widgets.}
 %global godocs          README.md cmd/elephant/version.txt
 
 Name:           elephant
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        Unified backend service that aggregates data
 
 License:        GPL-3.0-only
@@ -78,7 +78,7 @@ for cmd in cmd/* ; do
 done
 for prov in internal/providers/*/; do
   pushd $prov
-  %gobuild -buildmode=plugin
+  go build -buildmode=plugin
   popd
 done
 %endif
