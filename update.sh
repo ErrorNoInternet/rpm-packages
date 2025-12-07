@@ -165,6 +165,7 @@ for file in "${!git_forges[@]}"; do
         sed -i "s|^%global\(\s\+\)commit\(\s\+\)$current_commit$|%global\1commit\2$latest_commit|" "$file"
         sed -i "s|^%global\(\s\+\)commits\(\s\+\)$current_commits$|%global\1commits\2$latest_commits|" "$file"
         sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
+        sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
 
         if [[ "$NO_GIT" != "1" ]]; then
             git add "$file"
