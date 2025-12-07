@@ -5,7 +5,7 @@
 %global cargo_install_lib   0
 
 Name:           lowfi
-Version:        1.7.2
+Version:        2.0.0~dev
 Release:        %autorelease
 Summary:        Extremely simple lofi player
 
