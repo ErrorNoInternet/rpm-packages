@@ -28,7 +28,7 @@ productivity tools, or desktop widgets.}
 %global godocs          README.md cmd/elephant/version.txt
 
 Name:           elephant
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Unified backend service that aggregates data
 
 License:        GPL-3.0-only
