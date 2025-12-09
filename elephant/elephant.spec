@@ -16,7 +16,7 @@
 %global goipath         github.com/abenz1267/elephant
 Version:                2.17.0
 
-%gometa -L -f
+%gometa -f
 
 %global common_description %{expand:
 Elephant acts as a unified backend service that aggregates data from various
@@ -72,13 +72,12 @@ end
 %if %{without bootstrap}
 %build
 %define gomodulesmode GO111MODULE=on
-go get github.com/abenz1267/elephant/cmd/elephant
 for cmd in cmd/* ; do
-  go build -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
+  %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
 done
 for prov in internal/providers/*/; do
   pushd $prov
-  go build -buildmode=plugin
+  %gobuild -buildmode=plugin
   popd
 done
 %endif
@@ -102,7 +101,8 @@ install -Dm755 internal/providers/*/*.so -t %{buildroot}/etc/xdg/elephant/provid
 %files
 %license LICENSE
 %doc README.md cmd/elephant/version.txt
-%{_bindir}/*
+%{_bindir}/elephant
+%ghost /etc/xdg/elephant/providers/*.so
 %endif
 
 %gopkgfiles
