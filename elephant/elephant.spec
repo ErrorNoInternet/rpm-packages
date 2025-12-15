@@ -14,7 +14,7 @@
 
 # https://github.com/abenz1267/elephant
 %global goipath         github.com/abenz1267/elephant
-Version:                2.17.1
+Version:                2.17.2
 
 %gometa -f
 
@@ -28,7 +28,7 @@ productivity tools, or desktop widgets.}
 %global godocs          README.md cmd/elephant/version.txt
 
 Name:           elephant
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        Unified backend service that aggregates data
 
 License:        GPL-3.0-only
