@@ -2,7 +2,7 @@
 %global debug_package       %{nil}
 
 Name:           vesktop
-Version:        1.6.2
+Version:        1.6.3
 Release:        1%{?dist}
 Summary:        Vesktop is a custom Discord desktop app
 
