@@ -1,7 +1,7 @@
 %bcond_without check
 
-%global commit 4be0cff38c1bedf160de48792ae7c8a7ca4f87bf
-%global snapdate 20251201
+%global commit 144599782f7315eea7c705b33595f5800f4cb489
+%global snapdate 20260102
 
 %global cargo_install_lib 0
 
