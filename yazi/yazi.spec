@@ -6,7 +6,7 @@
 %global cargo_install_lib       0
 
 Name:           yazi
-Version:        25.12.29
+Version:        26.1.4
 Release:        1%{?dist}
 Summary:        Blazing fast terminal file manager
 
