@@ -16,7 +16,7 @@ routines with ParPar’s processing backend, improving par2cmdline’s
 performance on x86/ARM platforms.
 
 %prep
-%autosetup -p1
+%autosetup
 
 %build
 ./automake.sh
@@ -26,11 +26,11 @@ performance on x86/ARM platforms.
 %install
 %make_install
 
+# Rename binaries and man pages to avoid conflicts with the par2cmdline package
 mv %{buildroot}%{_bindir}/par2 %{buildroot}%{_bindir}/par2turbo
 rm -f %{buildroot}%{_bindir}/par2create \
       %{buildroot}%{_bindir}/par2repair \
-      %{buildroot}%{_bindir}/par2verify \
-      %{buildroot}%{_bindir}/par2
+      %{buildroot}%{_bindir}/par2verify
 ln -s par2turbo %{buildroot}%{_bindir}/par2turbo-create
 ln -s par2turbo %{buildroot}%{_bindir}/par2turbo-repair
 ln -s par2turbo %{buildroot}%{_bindir}/par2turbo-verify
