@@ -1,3 +1,5 @@
+%global lss_version 2024.02.01
+
 Name:               breakpad
 Version:            2024.02.16
 Release:            %autorelease
@@ -5,8 +7,8 @@ Summary:            Google Breakpad crash-reporting system
 
 License:            BSD-3-Clause
 URL:                https://chromium.googlesource.com/breakpad/breakpad
-Source0:            %{url}/+archive/v%{version}.tar.gz
-Source1:            https://chromium.googlesource.com/linux-syscall-support/+archive/v2024.02.01.tar.gz
+Source0:            %{url}/+archive/v%{version}.tar.gz#/%{name}-%{version}.tar.gz
+Source1:            https://chromium.googlesource.com/linux-syscall-support/+archive/v%{lss_version}.tar.gz#/linux-syscall-support-%{lss_version}.tar.gz
 
 BuildRequires:      gcc-c++
 BuildRequires:      pkgconfig(gmock)
@@ -29,13 +31,15 @@ Summary: Static library for %{name}
 Static library for the Google Breakpad crash-reporting system.
 
 %prep
-tar xf %{SOURCE0}
+%autosetup -C
 mkdir -p src/third_party/lss
 tar xf %{SOURCE1} -C src/third_party/lss
 
-%build
+%conf
 export CXXFLAGS="$CXXFLAGS -Wno-error=array-bounds -Wno-maybe-uninitialized"
 %configure
+
+%build
 %make_build
 
 %install
@@ -51,7 +55,7 @@ rm -rf %{buildroot}%{_docdir}/breakpad-0.1
 %doc README.md
 %{_bindir}/core2md
 %{_bindir}/dump_syms
-%ifarch x86_64 %{ix86}
+%ifarch %{x86_64} %{ix86}
 %{_bindir}/dump_syms_mac
 %endif
 %{_bindir}/microdump_stackwalk
