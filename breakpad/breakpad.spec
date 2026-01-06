@@ -20,6 +20,7 @@ A set of client and server components which implement a crash-reporting system.
 
 %package devel
 Summary: Development files for %{name}
+Requires: %{name}-static%{?_isa} = %{version}-%{release}
 
 %description devel
 Development files for the Google Breakpad crash-reporting system.
@@ -36,7 +37,7 @@ mkdir -p src/third_party/lss
 tar xf %{SOURCE1} -C src/third_party/lss
 
 %conf
-export CXXFLAGS="$CXXFLAGS -Wno-error=array-bounds -Wno-maybe-uninitialized"
+export CXXFLAGS="%{build_cxxflags} -Wno-error=array-bounds -Wno-maybe-uninitialized"
 %configure
 
 %build
@@ -68,11 +69,13 @@ rm -rf %{buildroot}%{_docdir}/breakpad-0.1
 %{_libexecdir}/core_handler
 
 %files -n %{name}-devel
+%license LICENSE
 %{_includedir}/breakpad
 %{_libdir}/pkgconfig/breakpad-client.pc
 %{_libdir}/pkgconfig/breakpad.pc
 
 %files -n %{name}-static
+%license LICENSE
 %{_libdir}/libbreakpad.a
 %{_libdir}/libbreakpad_client.a
 
