@@ -72,6 +72,7 @@ end
 %if %{without bootstrap}
 %build
 %define gomodulesmode GO111MODULE=on
+go get github.com/abenz1267/elephant/cmd/elephant
 for cmd in cmd/* ; do
   %gobuild -o %{gobuilddir}/bin/$(basename $cmd) %{goipath}/$cmd
 done
