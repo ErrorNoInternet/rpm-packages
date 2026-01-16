@@ -1,7 +1,7 @@
 %global alt_pkg_name swayosd
 
 Name:           SwayOSD
-Version:        0.2.1
+Version:        0.3.0
 Release:        %autorelease
 Summary:        GTK based on screen display
 License:        GPL-3.0-or-later
