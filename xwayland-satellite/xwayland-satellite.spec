@@ -1,4 +1,4 @@
-%global commit      7af39ce41986feee45a91acbe4d417482c9b6458
+%global commit      3af3e3ab78d0eb96fb9b5161693811e050b90991
 %global snapdate    20260124
 
 Name:               xwayland-satellite
