@@ -1,5 +1,5 @@
 Name:           klassy
-Version:        6.5
+Version:        6.5.1
 Release:        1%{?dist}
 Summary:        A highly customizable KDE Plasma Window Decoration
 
