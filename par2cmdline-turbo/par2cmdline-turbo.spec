@@ -1,5 +1,5 @@
 Name:           par2cmdline-turbo
-Version:        1.3.0
+Version:        1.4.0
 Release:        %autorelease
 Summary:        Speed focused par2cmdline fork
 
