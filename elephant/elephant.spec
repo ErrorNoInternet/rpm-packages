@@ -13,7 +13,7 @@
 %global providers       1password archlinuxpkgs bluetooth bookmarks calc clipboard desktopapplications files menus nirisessions providerlist runner snippets symbols todo unicode websearch windows
 
 # https://github.com/abenz1267/elephant
-%global goipath         github.com/abenz1267/elephant
+%global goipath         github.com/abenz1267/elephant/v2
 Version:                2.19.3
 
 %gometa -f
