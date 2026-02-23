@@ -16,7 +16,6 @@ License:        (Apache-2.0 OR BSL-1.0) AND (Apache-2.0 WITH LLVM-exception OR A
 
 URL:            https://github.com/marin-m/SongRec
 Source:         %{url}/archive/%{version}/%{name}-%{version}.tar.gz
-Patch:          songrec-improvements.diff
 
 BuildRequires:  cargo-rpm-macros >= 26
 BuildRequires:  pkgconfig(alsa)
