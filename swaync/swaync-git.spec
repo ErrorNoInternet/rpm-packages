@@ -101,6 +101,7 @@ This package installs Zsh completion files for %{name}
 %config(noreplace) %{_sysconfdir}/xdg/swaync/config.json
 %config(noreplace) %{_sysconfdir}/xdg/swaync/style.css
 %{_userunitdir}/swaync.service
+%{_datadir}/dbus-1/services/org.erikreider.swaync.cc.service
 %{_datadir}/dbus-1/services/org.erikreider.swaync.service
 %{_datadir}/glib-2.0/schemas/org.erikreider.swaync.gschema.xml
 %{_mandir}/man1/swaync-client.1*
