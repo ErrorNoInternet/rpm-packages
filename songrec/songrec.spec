@@ -26,6 +26,7 @@ BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(gdk-3.0)
 BuildRequires:  pkgconfig(gdk-pixbuf-2.0)
 BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(libsoup-3.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(pango)
 BuildRequires:  pulseaudio-libs
