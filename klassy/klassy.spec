@@ -5,7 +5,7 @@ Summary:        A highly customizable KDE Plasma Window Decoration
 
 License:        BSD-3-Clause AND CC0-1.0 AND GPL-2.0-only AND GPL-2.0-or-later AND GPL-3.0-only AND MIT
 URL:            https://github.com/paulmcauley/klassy
-Source:         %{url}/archive/%{version}.tar.gz
+Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  cmake
 BuildRequires:  cmake(KDecoration3)
@@ -65,10 +65,12 @@ Kite, Oxygen/Breeze, and Redmond icon styles.
 %{_datadir}/applications/klassy-settings.desktop
 %{_datadir}/applications/klassystyleconfig.desktop
 %{_datadir}/color-schemes/Klassy*
+%{_datadir}/color-schemes/OpalFruits*
 %{_datadir}/icons/hicolor/scalable/apps/klassy-settings.svgz
 %{_datadir}/icons/klassy*
 %{_datadir}/kstyle/themes/klassy.themerc
-%{_datadir}/plasma/desktoptheme/klassy
+%{_datadir}/locale/*/LC_MESSAGES/klassy_*
+%{_datadir}/plasma/desktoptheme/kite-*
 %{_datadir}/plasma/layout-templates/org.kde.klassy*
 %{_datadir}/plasma/look-and-feel/org.kde.klassy*
 %{_libdir}/cmake/Klassy/KlassyConfig.cmake
