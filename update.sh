@@ -5,6 +5,7 @@ declare -A anitya_ids=(
     ["bandwhich/bandwhich.spec"]=236376
     ["breakpad/breakpad.spec"]=373970
     ["btdu/btdu.spec"]=372783
+    ["cpptrace/cpptrace.spec"]=378001
     ["croc/croc.spec"]=350834
     ["doggo/doggo.spec"]=373317
     ["du-dust/du-dust.spec"]=141344
