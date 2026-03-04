@@ -16,14 +16,12 @@ Source0:            %{url}/archive/%{commit}/quickshell-%{commit}.tar.gz
 
 Conflicts:          quickshell <= %{tag}
 
-%if 0%{fedora} >= 43
-BuildRequires:      breakpad-static
-%endif
 BuildRequires:      cmake
 BuildRequires:      cmake(Qt6Core)
 BuildRequires:      cmake(Qt6Qml)
 BuildRequires:      cmake(Qt6ShaderTools)
 BuildRequires:      cmake(Qt6WaylandClient)
+BuildRequires:      cpptrace-devel
 BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
 BuildRequires:      pkgconfig(breakpad)
@@ -33,6 +31,7 @@ BuildRequires:      pkgconfig(glib-2.0)
 BuildRequires:      pkgconfig(jemalloc)
 BuildRequires:      pkgconfig(libdrm)
 BuildRequires:      pkgconfig(libpipewire-0.3)
+BuildRequires:      pkgconfig(libzstd)
 BuildRequires:      pkgconfig(pam)
 BuildRequires:      pkgconfig(polkit-agent-1)
 BuildRequires:      pkgconfig(wayland-client)
@@ -61,7 +60,6 @@ Wayland and X11.
         -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_BUILD_TYPE=Release \
         -DDISTRIBUTOR="Fedora COPR (errornointernet/quickshell)" \
-        -DDISTRIBUTOR_DEBUGINFO_AVAILABLE=YES \
         -DGIT_REVISION=%{commit} \
         -DINSTALL_QML_PREFIX=%{_lib}/qt6/qml
 %cmake_build
