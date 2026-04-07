@@ -1,5 +1,5 @@
 Name:           mergerfs
-Version:        2.41.1
+Version:        2.42.0~rc0
 Release:        1%{?dist}
 Summary:        A featureful union filesystem
 
