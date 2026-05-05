@@ -17,11 +17,13 @@ Source0:            %{url}/archive/%{commit}/quickshell-%{commit}.tar.gz
 Conflicts:          quickshell <= %{tag}
 
 BuildRequires:      cmake
+BuildRequires:      cmake(cpptrace)
 BuildRequires:      cmake(Qt6Core)
+BuildRequires:      cmake(Qt6CorePrivate)
 BuildRequires:      cmake(Qt6Qml)
 BuildRequires:      cmake(Qt6ShaderTools)
 BuildRequires:      cmake(Qt6WaylandClient)
-BuildRequires:      cpptrace-devel
+BuildRequires:      cmake(VulkanHeaders)
 BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
 BuildRequires:      pkgconfig(breakpad)
@@ -36,7 +38,6 @@ BuildRequires:      pkgconfig(pam)
 BuildRequires:      pkgconfig(polkit-agent-1)
 BuildRequires:      pkgconfig(wayland-client)
 BuildRequires:      pkgconfig(wayland-protocols)
-BuildRequires:      qt6-qtbase-private-devel
 BuildRequires:      spirv-tools
 
 %if %{with asan}
@@ -60,8 +61,8 @@ Wayland and X11.
         -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_BUILD_TYPE=Release \
         -DDISTRIBUTOR="Fedora COPR (errornointernet/quickshell)" \
-        -DGIT_REVISION=%{commit} \
-        -DINSTALL_QML_PREFIX=%{_lib}/qt6/qml
+        -DINSTALL_QML_PREFIX=%{_lib}/qt6/qml \
+        %{?commit:-DGIT_REVISION=%{commit}}
 %cmake_build
 
 %install

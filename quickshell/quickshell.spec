@@ -9,26 +9,28 @@ License:            LGPL-3.0-only AND GPL-3.0-only
 URL:                https://github.com/quickshell-mirror/quickshell
 Source0:            %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
-%if 0%{fedora} >= 43
-BuildRequires:      breakpad-static
-%endif
 BuildRequires:      cmake
+BuildRequires:      cmake(cpptrace)
 BuildRequires:      cmake(Qt6Core)
+BuildRequires:      cmake(Qt6CorePrivate)
 BuildRequires:      cmake(Qt6Qml)
 BuildRequires:      cmake(Qt6ShaderTools)
 BuildRequires:      cmake(Qt6WaylandClient)
+BuildRequires:      cmake(VulkanHeaders)
 BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
 BuildRequires:      pkgconfig(breakpad)
 BuildRequires:      pkgconfig(CLI11)
 BuildRequires:      pkgconfig(gbm)
+BuildRequires:      pkgconfig(glib-2.0)
 BuildRequires:      pkgconfig(jemalloc)
 BuildRequires:      pkgconfig(libdrm)
 BuildRequires:      pkgconfig(libpipewire-0.3)
+BuildRequires:      pkgconfig(libzstd)
 BuildRequires:      pkgconfig(pam)
+BuildRequires:      pkgconfig(polkit-agent-1)
 BuildRequires:      pkgconfig(wayland-client)
 BuildRequires:      pkgconfig(wayland-protocols)
-BuildRequires:      qt6-qtbase-private-devel
 BuildRequires:      spirv-tools
 
 %if %{with asan}
@@ -52,7 +54,6 @@ Wayland and X11.
         -DBUILD_SHARED_LIBS=OFF \
         -DCMAKE_BUILD_TYPE=Release \
         -DDISTRIBUTOR="Fedora COPR (errornointernet/quickshell)" \
-        -DDISTRIBUTOR_DEBUGINFO_AVAILABLE=YES \
         -DINSTALL_QML_PREFIX=%{_lib}/qt6/qml \
         %{?commit:-DGIT_REVISION=%{commit}}
 %cmake_build
