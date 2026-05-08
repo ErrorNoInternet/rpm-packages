@@ -2,7 +2,7 @@
 
 Name:           btdu
 Version:        0.7.2
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Sampling disk usage profiler for btrfs
 
 License:        GPL-2.0-only
