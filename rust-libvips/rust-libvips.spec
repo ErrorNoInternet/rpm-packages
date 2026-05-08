@@ -5,7 +5,7 @@
 %global crate libvips
 
 Name:           rust-libvips
-Version:        1.7.3
+Version:        1.7.4
 Release:        %autorelease
 Summary:        Safe bindings for libvips
 
