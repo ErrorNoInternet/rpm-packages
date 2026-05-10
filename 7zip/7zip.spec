@@ -1,7 +1,7 @@
 %global debug_package %{nil}
 
 Name:           7zip
-Version:        25.01
+Version:        26.01
 Release:        %autorelease
 Summary:        The official 7-Zip console version for Linux
 
