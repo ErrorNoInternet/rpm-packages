@@ -8,7 +8,6 @@ declare -A anitya_ids=(
     ["cpptrace/cpptrace.spec"]=378001
     ["croc/croc.spec"]=350834
     ["doggo/doggo.spec"]=373317
-    ["du-dust/du-dust.spec"]=141344
     ["dwarfs/dwarfs.spec"]=377534
     ["elephant/elephant.spec"]=383324
     ["eza/eza.spec"]=370028
