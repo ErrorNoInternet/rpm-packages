@@ -53,6 +53,11 @@ declare -A git_forges=(
     ["xwayland-satellite/xwayland-satellite.spec"]=github
 )
 
+github_api_headers=(
+    -H "Accept: application/vnd.github+json"
+    -H "X-GitHub-Api-Version: 2022-11-28"
+)
+
 found=false
 
 for file in "${!anitya_ids[@]}"; do
@@ -73,11 +78,22 @@ for file in "${!anitya_ids[@]}"; do
 
     if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/versions/?project_id=${anitya_ids[$file]}") ||
         [[ -z "$api_response" ]]; then
-        echo -e "couldn't query anitya api for $name! api response: $api_response"
-        continue
+        query_name=$(jq -rn --arg name "$name" '$name|@uri')
+        if ! api_response=$(curl -fsSL "https://release-monitoring.org/api/v2/projects/?name=$query_name") ||
+            [[ -z "$api_response" ]]; then
+            echo -e "couldn't query anitya api for $name! api response: $api_response"
+            continue
+        fi
     fi
 
-    if ! latest_version=$(echo "$api_response" | jq -r .latest_version) || [[ -z "$latest_version" ]]; then
+    if ! latest_version=$(echo "$api_response" | jq -r --arg name "$name" '
+        if has("items") then
+            ((.items | map(select((.name | ascii_downcase) == ($name | ascii_downcase))) | first) // (.items | first))
+            | (.latest_version // .version // .stable_versions[0] // .versions[0] // empty)
+        else
+            .latest_version // .version // .stable_versions[0] // .versions[0] // empty
+        end
+    ') || [[ -z "$latest_version" ]]; then
         echo -e "couldn't parse versions for $name! api response: $api_response"
         continue
     fi
@@ -119,19 +135,28 @@ for file in "${!git_forges[@]}"; do
         url=$(sed -n "s|^URL:\s\+\(.*\)$|\1|p" "$file" | head -1)
         owner_repo=$(echo "$url" | sed -n "s|^https://github.com/\(.*\)$|\1|p")
 
-        {
-            IFS=$'\n' read -r -d '' api_response_stderr
-            IFS=$'\n' read -r -d '' api_response_stdout
-        } < <((printf '\0%s\0' "$(curl -fsSLD/dev/stderr "https://api.github.com/repos/$owner_repo/commits?per_page=1&page=1")" 1>&2) 2>&1)
-        if [[ -z "$api_response_stderr" ]] || [[ -z "$api_response_stdout" ]]; then
+        current_tag=$(sed -n "s|^%global\s\+tag\s\+\(.*\)$|\1|p" "$file" | head -1)
+        current_commit=$(sed -n "s|^%global\s\+commit\s\+\(.*\)$|\1|p" "$file" | head -1)
+        current_commits=$(sed -n "s|^%global\s\+commits\s\+\(.*\)$|\1|p" "$file" | head -1)
+        current_snapdate=$(sed -n "s|^%global\s\+snapdate\s\+\(.*\)$|\1|p" "$file" | head -1)
+
+        api_response_headers=$(mktemp)
+        api_response_stdout=$(curl -fsSLD "$api_response_headers" "${github_api_headers[@]}" "https://api.github.com/repos/$owner_repo/commits?per_page=1&page=1")
+        api_response_status=$?
+        api_response_stderr=$(<"$api_response_headers")
+        rm -f "$api_response_headers"
+        if [[ "$api_response_status" != 0 ]] || [[ -z "$api_response_stderr" ]] || [[ -z "$api_response_stdout" ]]; then
             echo -e "couldn't query commits from github api for $name! api response: $api_response_stderr $api_response_stdout"
             continue
         fi
 
-        if ! latest_tag=$(curl -fsSL "https://api.github.com/repos/$owner_repo/tags" | jq -r '.[0].name' | sed -n 's|^v\(.*\)$|\1|p') ||
-            [[ -z "$latest_tag" ]]; then
-            echo -e "couldn't query tags from github api for $name! api response: $api_response"
-            continue
+        latest_tag=
+        if [[ -n "$current_tag" ]]; then
+            if ! latest_tag=$(curl -fsSL "${github_api_headers[@]}" "https://api.github.com/repos/$owner_repo/tags?per_page=1" | jq -r '.[0].name // empty' | sed -n 's|^v\(.*\)$|\1|p') ||
+                [[ -z "$latest_tag" ]]; then
+                echo -e "couldn't query tags from github api for $name! api response: $api_response"
+                continue
+            fi
         fi
 
         if ! latest_commit=$(echo "$api_response_stdout" | jq -r ".[0].sha") || [[ -z "$latest_commit" ]]; then
@@ -139,10 +164,13 @@ for file in "${!git_forges[@]}"; do
             continue
         fi
 
-        if ! latest_commits=$(echo "$api_response_stderr" | sed -n 's|.*&page=\([0-9]\+\)>; rel="last"\r$|\1|p') ||
-            [[ -z "$latest_commits" ]]; then
-            echo -e "couldn't parse commit count for $name! api response: $api_response_stderr $api_response_stdout"
-            continue
+        latest_commits=
+        if [[ -n "$current_commits" ]]; then
+            if ! latest_commits=$(echo "$api_response_stderr" | sed -n 's|.*[?&]page=\([0-9]\+\)>; rel="last"\r$|\1|p'); then
+                echo -e "couldn't parse commit count for $name! api response: $api_response_stderr $api_response_stdout"
+                continue
+            fi
+            latest_commits=${latest_commits:-1}
         fi
 
         if ! latest_snapdate=$(date +"%Y%m%d" -d"$(echo "$api_response_stdout" | jq -r ".[0].commit.committer.date")") ||
@@ -153,17 +181,16 @@ for file in "${!git_forges[@]}"; do
         ;;
     esac
 
-    current_tag=$(sed -n "s|^%global\s\+tag\s\+\(.*\)$|\1|p" "$file" | head -1)
-    current_commit=$(sed -n "s|^%global\s\+commit\s\+\(.*\)$|\1|p" "$file" | head -1)
-    current_commits=$(sed -n "s|^%global\s\+commits\s\+\(.*\)$|\1|p" "$file" | head -1)
-    current_snapdate=$(sed -n "s|^%global\s\+snapdate\s\+\(.*\)$|\1|p" "$file" | head -1)
-
-    if [[ "$current_commit" != "$latest_commit" ]] || { [[ -n "$current_commits" ]] && [[ "$current_commits" < "$latest_commits" ]]; }; then
+    if [[ "$current_commit" != "$latest_commit" ]] || { [[ -n "$current_commits" ]] && ((current_commits < latest_commits)); }; then
         echo "$name is not up-to-date ($current_commit @ $current_snapdate -> $latest_commit @ $latest_snapdate)! modifying attributes..."
 
-        sed -i "s|^%global\(\s\+\)tag\(\s\+\)$current_tag$|%global\1tag\2$latest_tag|" "$file"
+        if [[ -n "$current_tag" ]]; then
+            sed -i "s|^%global\(\s\+\)tag\(\s\+\)$current_tag$|%global\1tag\2$latest_tag|" "$file"
+        fi
         sed -i "s|^%global\(\s\+\)commit\(\s\+\)$current_commit$|%global\1commit\2$latest_commit|" "$file"
-        sed -i "s|^%global\(\s\+\)commits\(\s\+\)$current_commits$|%global\1commits\2$latest_commits|" "$file"
+        if [[ -n "$current_commits" ]]; then
+            sed -i "s|^%global\(\s\+\)commits\(\s\+\)$current_commits$|%global\1commits\2$latest_commits|" "$file"
+        fi
         sed -i "s|^%global\(\s\+\)snapdate\(\s\+\)$current_snapdate$|%global\1snapdate\2$latest_snapdate|" "$file"
         sed -i "s|^Release:\(\s\+\)[0-9]\+%{?dist}|Release:\11%{?dist}|" "$file"
 
