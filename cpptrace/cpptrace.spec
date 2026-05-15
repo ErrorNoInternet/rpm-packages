@@ -33,7 +33,11 @@ Summary: Development files for cpptrace
 Development files for cpptrace
 
 %prep
+%if 0%{?epel} <= 10
+%autosetup -p1
+%else
 %autosetup -C -p1
+%endif
 
 %build
 %cmake \
