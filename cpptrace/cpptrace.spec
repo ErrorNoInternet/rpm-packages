@@ -12,7 +12,7 @@ ExcludeArch: %{ix86}
 
 BuildRequires:  cmake
 BuildRequires:  gcc-c++
-BuildRequires:  libcxxabi-devel
+BuildRequires:  llvm-devel
 BuildRequires:  pkgconfig(libdwarf)
 BuildRequires:  pkgconfig(libunwind)
 BuildRequires:  pkgconfig(libzstd)
