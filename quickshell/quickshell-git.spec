@@ -26,7 +26,6 @@ BuildRequires:      cmake(Qt6WaylandClient)
 BuildRequires:      cmake(VulkanHeaders)
 BuildRequires:      gcc-c++
 BuildRequires:      ninja-build
-BuildRequires:      pkgconfig(breakpad)
 BuildRequires:      pkgconfig(CLI11)
 BuildRequires:      pkgconfig(gbm)
 BuildRequires:      pkgconfig(glib-2.0)
