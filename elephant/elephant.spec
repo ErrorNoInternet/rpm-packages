@@ -10,7 +10,7 @@
 %global __requires_exclude %{?__requires_exclude:%{__requires_exclude}|}^golang\\(.*\\)$
 %endif
 
-%global providers       1password archlinuxpkgs bluetooth bookmarks calc clipboard desktopapplications files menus nirisessions providerlist runner snippets symbols todo unicode websearch windows
+%global providers       1password archlinuxpkgs bitwarden bluetooth bookmarks calc clipboard desktopapplications dnfpackages files menus niriactions nirisessions playerctl providerlist runner snippets symbols todo unicode websearch windows wireplumber
 
 # https://github.com/abenz1267/elephant
 %global goipath         github.com/abenz1267/elephant/v2
@@ -28,7 +28,7 @@ productivity tools, or desktop widgets.}
 %global godocs          README.md cmd/elephant/version.txt
 
 Name:           elephant
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Unified backend service that aggregates data
 
 License:        GPL-3.0-only
