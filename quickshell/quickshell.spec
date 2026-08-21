@@ -1,8 +1,8 @@
 %bcond_with         asan
 
 Name:               quickshell
-Version:            0.3.0
-Release:            3%{?dist}
+Version:            0.3.1
+Release:            1%{?dist}
 Summary:            Flexible QtQuick based desktop shell toolkit
 
 License:            LGPL-3.0-only AND GPL-3.0-only
