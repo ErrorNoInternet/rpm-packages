@@ -2,8 +2,8 @@
 %bcond check 1
 
 %global cargo_install_lib   0
-%global commit              0dbbd283bb797cd3528f140141cd4201d4373eb0
-%global snapdate            20260701
+%global commit              91147b1843d9a0702794409c8e7923bc32df3e28
+%global snapdate            20260830
 
 Name:           minefetch
 Version:        0^%{snapdate}g%(c=%{commit}; echo ${c:0:7})
