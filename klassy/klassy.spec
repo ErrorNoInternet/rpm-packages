@@ -66,10 +66,12 @@ Kite, Oxygen/Breeze, and Redmond icon styles.
 %{_datadir}/applications/klassystyleconfig.desktop
 %{_datadir}/color-schemes/Klassy*
 %{_datadir}/color-schemes/OpalFruits*
+%{_datadir}/config.kcfg/klassy*
 %{_datadir}/icons/hicolor/scalable/apps/klassy-settings.svgz
 %{_datadir}/icons/klassy*
 %{_datadir}/kstyle/themes/klassy.themerc
 %{_datadir}/locale/*/LC_MESSAGES/klassy_*
+%{_datadir}/plasma/desktoptheme/klassy*
 %{_datadir}/plasma/layout-templates/org.kde.klassy*
 %{_datadir}/plasma/look-and-feel/org.kde.klassy*
 %{_libdir}/cmake/Klassy/KlassyConfig.cmake
