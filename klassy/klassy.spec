@@ -70,7 +70,6 @@ Kite, Oxygen/Breeze, and Redmond icon styles.
 %{_datadir}/icons/klassy*
 %{_datadir}/kstyle/themes/klassy.themerc
 %{_datadir}/locale/*/LC_MESSAGES/klassy_*
-%{_datadir}/plasma/desktoptheme/kite-*
 %{_datadir}/plasma/layout-templates/org.kde.klassy*
 %{_datadir}/plasma/look-and-feel/org.kde.klassy*
 %{_libdir}/cmake/Klassy/KlassyConfig.cmake
