@@ -2,8 +2,8 @@
 %global debug_package %{nil}
 
 Name:           try
-Version:        0.2.0
-Release:        5%{?dist}
+Version:        0.2.1
+Release:        1%{?dist}
 Summary:        Inspect a command's effects before modifying your live system
 
 License:        MIT
