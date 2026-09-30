@@ -18,7 +18,16 @@ jobs:
                   fetch-depth: 0
 
             - name: Fetch submodules
-              run: git submodule update --init
+              run: |
+                for i in {1..10}; do
+                  if git submodule update --init; then
+                    exit 0
+                  fi
+                  if [ "$i" -lt 10 ]; then
+                    sleep 300
+                  fi
+                done
+                exit 1
 
             - name: Configure Git user
               run: |
