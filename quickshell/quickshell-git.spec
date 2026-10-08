@@ -1,9 +1,9 @@
 %bcond_with         asan
 
-%global commit      11ca60be22b063478ed9586ca1d7f92f0f261caf
-%global commits     867
-%global snapdate    20261006
-%global tag         0.3.1
+%global commit      4f508be500dea6e5732cc3d50382a0048b17e7b1
+%global commits     868
+%global snapdate    20261008
+%global tag         0.3.2
 
 Name:               quickshell-git
 Version:            %{tag}^%{commits}.git%(c=%{commit}; echo ${c:0:7})
