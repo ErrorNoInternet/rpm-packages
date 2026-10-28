@@ -7,7 +7,7 @@ Summary:        The official 7-Zip console version for Linux
 
 License:        LGPL-2.1-or-later AND BSD-3-Clause
 URL:            https://7-zip.org
-Source0:        %{url}/a/7z%(v='%{version}'; echo "${v//.}")-src.tar.xz
+Source0:        https://github.com/ip7z/7zip/releases/download/%{version}/7z%(v='%{version}'; echo "${v//.}")-src.tar.xz
 
 BuildRequires:  gcc
 BuildRequires:  gcc-c++
