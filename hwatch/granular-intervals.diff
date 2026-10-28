@@ -1,43 +1,6 @@
-diff --git a/man/hwatch.1 b/man/hwatch.1
-index 070f42b..f1200d6 100644
---- a/man/hwatch.1
-+++ b/man/hwatch.1
-@@ -211,10 +211,10 @@ F3
- Display \f[I]Stdout\f[R] and \f[I]Stderr\f[R].
- .TP
- +
--Increase interval by 0.5 seconds.
-+Increase interval by 0.1 seconds.
- .TP
- \-
--Decrease interval by 0.5 seconds (As long as it\[cq]s positive).
-+Decrease interval by 0.1 seconds (As long as it\[cq]s positive).
- .TP
- Tab
- Switch the target(\f[I]history\f[R] or \f[I]watch\f[R] pad).
-diff --git a/man/man.md b/man/man.md
-index ce2a210..6d6ed88 100644
---- a/man/man.md
-+++ b/man/man.md
-@@ -305,11 +305,11 @@ Shif+S
- 
- \+
- 
--:   Increase interval by 0.5 seconds.
-+:   Increase interval by 0.1 seconds.
- 
- \-
- 
--:   Decrease interval by 0.5 seconds (As long as it's positive).
-+:   Decrease interval by 0.1 seconds (As long as it's positive).
- 
- Tab
- 
-diff --git a/src/app.rs b/src/app.rs
-index 8956d48..cee63c0 100644
---- a/src/app.rs
-+++ b/src/app.rs
-@@ -710,13 +710,13 @@ impl App<'_> {
+--- a/crates/core/app.rs
++++ b/crates/core/app.rs
+@@ -597,13 +597,13 @@
  
      ///
      fn increase_interval(&mut self) {
@@ -53,19 +16,31 @@ index 8956d48..cee63c0 100644
          self.header_area.update();
      }
  
-diff --git a/src/keymap.rs b/src/keymap.rs
-index 9c14598..b6ccd75 100644
---- a/src/keymap.rs
-+++ b/src/keymap.rs
-@@ -800,8 +800,8 @@ pub fn get_input_action_description(input_action: InputAction) -> String {
+--- a/crates/core/keymap_description.rs
++++ b/crates/core/keymap_description.rs
+@@ -65,8 +65,8 @@
+         InputAction::PrevKeyword => "Focus previous keyword".to_string(),
+         InputAction::ToggleWrapMode => "Toggle wrap mode".to_string(),
          InputAction::ToggleHistorySummary => "Toggle history summary".to_string(),
- 
-         // Interval
 -        InputAction::IntervalPlus => "Interval +0.5sec".to_string(),
 -        InputAction::IntervalMinus => "Interval -0.5sec".to_string(),
 +        InputAction::IntervalPlus => "Interval +0.1sec".to_string(),
 +        InputAction::IntervalMinus => "Interval -0.1sec".to_string(),
          InputAction::TogglePause => "Toggle Execution Pause".to_string(),
- 
-         // Command/Filter
-
+         InputAction::ChangeFilterMode => "Change filter mode".to_string(),
+         InputAction::ChangeRegexFilterMode => "Change regex filter mode".to_string(),
+--- a/man/hwatch.1
++++ b/man/hwatch.1
+@@ -312,10 +312,10 @@
+ Show summary infomation in history.
+ .TP
+ +
+-Increase interval by 0.5 seconds.
++Increase interval by 0.1 seconds.
+ .TP
+ -
+-Decrease interval by 0.5 seconds (As long as it\[cq]s positive).
++Decrease interval by 0.1 seconds (As long as it\[cq]s positive).
+ .TP
+ p
+ Pause or resume command execution.
