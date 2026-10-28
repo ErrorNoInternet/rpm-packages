@@ -16,7 +16,11 @@ SourceLicense:  LGPL-3.0-or-later
 URL:            https://github.com/ErrorNoInternet/minefetch
 Source:         %{url}/archive/%{commit}/%{name}-%{commit}.tar.gz
 
+BuildRequires:  autoconf
+BuildRequires:  automake
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  gcc-c++
+BuildRequires:  libtool
 
 %global _description %{expand:
 %{summary}.}
