@@ -18,6 +18,7 @@ BuildRequires:  gcc-c++
 BuildRequires:  git
 BuildRequires:  ninja-build
 BuildRequires:  pkgconfig(date)
+BuildRequires:  pkgconfig(flac++)
 BuildRequires:  pkgconfig(fuse3)
 BuildRequires:  pkgconfig(libarchive)
 BuildRequires:  pkgconfig(libcrypto)
