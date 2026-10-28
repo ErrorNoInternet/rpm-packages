@@ -12,7 +12,7 @@ Summary:        Command line tool to show clear git graphs arranged for your bra
 License:        MIT
 
 URL:            https://github.com/mlange-42/git-graph
-Source:         %{url}/archive/refs/tags/%{version}.tar.gz
+Source:         %{url}/archive/refs/tags/v%{version}.tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
 
