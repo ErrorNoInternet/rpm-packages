@@ -17,8 +17,9 @@ BuildRequires:  meson
 
 BuildRequires:  pkgconfig(ffms2)
 BuildRequires:  pkgconfig(libavdevice)
+BuildRequires:  pkgconfig(libdrm)
 BuildRequires:  pkgconfig(libusb-1.0)
-BuildRequires:  pkgconfig(sdl2)
+BuildRequires:  pkgconfig(sdl3)
 BuildRequires:  vulkan-loader
 
 Requires:       android-tools
@@ -71,7 +72,7 @@ desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}{,-console}.d
 %{_bindir}/%{name}
 %{_datadir}/%{name}/%{name}-server
 %{_mandir}/man1/%{name}.1*
-%{_datadir}/icons/hicolor/*/apps/%{name}.png
+%{_datadir}/icons/hicolor/*/apps/*.png
 %{_datadir}/applications/*.desktop
 
 %files bash-completion
