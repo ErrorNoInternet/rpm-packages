@@ -4,6 +4,8 @@
 %global crate wallust
 %global cargo_install_lib 0
 
+%global __brp_mangle_shebangs %{nil}
+
 Name:           wallust
 Version:        4.1.0~alpha
 Release:        1%{?dist}
@@ -11,7 +13,7 @@ Summary:        Generate a 16 color scheme based on an image
 License:        MIT
 
 URL:            https://codeberg.org/explosion-mental/wallust
-Source:         %{url}/archive/%{version}.tar.gz
+Source:         %{url}/archive/%(v=%{version}; echo ${v//\~/-}).tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
 
@@ -90,6 +92,7 @@ install -Dpm644 completions/_wallust %{buildroot}%{zsh_completions_dir}/_wallust
 %license cargo-vendor.txt
 %doc docs/README.md docs/v3.md
 %{_bindir}/wallust
+%{_bindir}/salsort
 %{_mandir}/man1/wallust-cs.1*
 %{_mandir}/man1/wallust-run.1*
 %{_mandir}/man1/wallust-theme.1*
