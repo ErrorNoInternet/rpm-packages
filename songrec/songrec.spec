@@ -18,6 +18,7 @@ URL:            https://github.com/marin-m/SongRec
 Source:         %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 
 BuildRequires:  cargo-rpm-macros >= 26
+BuildRequires:  clang
 BuildRequires:  pkgconfig(alsa)
 BuildRequires:  pkgconfig(atk)
 BuildRequires:  pkgconfig(cairo)
@@ -26,6 +27,7 @@ BuildRequires:  pkgconfig(dbus-1)
 BuildRequires:  pkgconfig(gdk-3.0)
 BuildRequires:  pkgconfig(gdk-pixbuf-2.0)
 BuildRequires:  pkgconfig(glib-2.0)
+BuildRequires:  pkgconfig(libpipewire-0.3)
 BuildRequires:  pkgconfig(libsoup-3.0)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(pango)
