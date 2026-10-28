@@ -65,8 +65,12 @@ This package installs Zsh completion files for %{name}
 
 %prep
 %autosetup -n %{name}-%{version} -p1
-cargo vendor
+cargo vendor > cargo-vendor-config.toml
+mv Cargo.lock Cargo.lock.keep
 %cargo_prep -v vendor
+mv Cargo.lock.keep Cargo.lock
+awk '/^\[source\."git\+/{p=1} /^\[source\.vendored-sources\]/{p=0} p' cargo-vendor-config.toml >> .cargo/config.toml
+rm cargo-vendor-config.toml
 
 %build
 export YAZI_GEN_COMPLETIONS=1
@@ -76,11 +80,8 @@ export YAZI_GEN_COMPLETIONS=1
 %{cargo_vendor_manifest}
 
 %install
-cd yazi-cli
-%cargo_install
-cd ../yazi-fm
-%cargo_install
-cd ..
+install -Dpm755 target/release/ya %{buildroot}%{_bindir}/ya
+install -Dpm755 target/release/%{name} %{buildroot}%{_bindir}/%{name}
 
 install -Dpm644 yazi-boot/completions/%{name}.bash %{buildroot}%{bash_completions_dir}/%{name}
 install -Dpm644 yazi-boot/completions/%{name}.fish %{buildroot}%{fish_completions_dir}/%{name}.fish
