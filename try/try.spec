@@ -10,8 +10,8 @@ License:        MIT
 URL:            https://github.com/binpash/try
 Source:         %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 
-Patch:          ignore-vfat-mounts.diff
-
+BuildRequires:  autoconf
+BuildRequires:  gcc
 BuildRequires:  make
 BuildRequires:  pandoc
 
@@ -35,23 +35,24 @@ Requires:       %{name} = %{version}-%{release}
 This package installs Bash completion files for %{name}
 
 %prep
-%autosetup
+%autosetup -n %{name}-%{version} -p1
 
 %build
-%make_build -C man
-
-%check
-./scripts/lint.sh
+autoconf
+%configure
+%make_build
 
 %install
-install -Dpm755 try %{buildroot}%{_bindir}/try
-install -Dpm644 man/try.1 %{buildroot}%{_mandir}/man1/try.1
+%make_install bindir=%{buildroot}%{_bindir} mandir=%{buildroot}%{_mandir}
 install -Dpm644 completions/try.bash %{buildroot}%{bash_completions_dir}/try
 
 %files
 %license LICENSE
 %doc README.md STYLE.md
 %{_bindir}/try
+%{_bindir}/try-commit
+%{_bindir}/try-parse-trace
+%{_bindir}/try-summary
 %{_mandir}/man1/try.1*
 
 %files bash-completion

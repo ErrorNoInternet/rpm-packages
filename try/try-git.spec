@@ -64,6 +64,7 @@ install -Dpm644 completions/try.bash %{buildroot}%{bash_completions_dir}/try
 %doc README.md STYLE.md
 %{_bindir}/try
 %{_bindir}/try-commit
+%{_bindir}/try-parse-trace
 %{_bindir}/try-summary
 %{_mandir}/man1/try.1*
 
