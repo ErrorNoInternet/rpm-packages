@@ -25,7 +25,6 @@ you better performance and improve Linux support.
 
 %build
 export COREPACK_ENABLE_STRICT=0
-pnpm i electron-builder@next
 pnpm i
 pnpm package:dir
 
@@ -34,7 +33,7 @@ mkdir -p %{buildroot}%{_libdir}
 cp -pr dist/linux*-unpacked %{buildroot}%{_libdir}/vesktop
 install -Dpm755 %{SOURCE1} %{buildroot}%{_bindir}/vesktop
 install -Dpm644 %{SOURCE2} %{buildroot}%{_datarootdir}/applications/vesktop.desktop
-install -Dpm644 static/icon.png %{buildroot}%{_datarootdir}/pixmaps/vesktop.png
+install -Dpm644 build/icon.svg %{buildroot}%{_datarootdir}/icons/hicolor/scalable/apps/vesktop.svg
 
 %files
 %doc README.md
@@ -42,7 +41,7 @@ install -Dpm644 static/icon.png %{buildroot}%{_datarootdir}/pixmaps/vesktop.png
 %{_bindir}/vesktop
 %{_libdir}/vesktop
 %{_datarootdir}/applications/vesktop.desktop
-%{_datarootdir}/pixmaps/vesktop.png
+%{_datarootdir}/icons/hicolor/scalable/apps/vesktop.svg
 
 %changelog
 %autochangelog
