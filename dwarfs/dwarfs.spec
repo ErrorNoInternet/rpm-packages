@@ -1,5 +1,5 @@
 Name:           dwarfs
-Version:        0.15.8
+Version:        0.15.9
 Release:        %autorelease
 Summary:        A fast high compression read-only file system for Linux, Windows and macOS
 
