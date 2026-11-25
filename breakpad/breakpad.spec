@@ -1,7 +1,7 @@
 %global lss_version 2024.02.01
 
 Name:               breakpad
-Version:            2024.02.16
+Version:            2026.07.24
 Release:            %autorelease
 Summary:            Google Breakpad crash-reporting system
 
