@@ -7,7 +7,7 @@
 %global features -n -f ffmpeg,pulse,mpris
 
 Name:           songrec
-Version:        0.8.2
+Version:        0.8.3
 Release:        %autorelease
 Summary:        Open-source Shazam client for Linux, written in Rust
 
